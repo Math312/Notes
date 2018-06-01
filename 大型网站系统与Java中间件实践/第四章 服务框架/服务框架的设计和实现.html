@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>服务框架的设计和实现.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: "Segoe WPC", "Segoe UI", "SFUIText-Light", "HelveticaNeue-Light", sans-serif, "Droid Sans Fallback";
+	font-size: 14px;
+	padding: 0 12px;
+	line-height: 22px;
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	color: #4080D0;
+	text-decoration: none;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+h1 code,
+h2 code,
+h3 code,
+h4 code,
+h5 code,
+h6 code {
+	font-size: inherit;
+	line-height: auto;
+}
+
+a:hover {
+	color: #4080D0;
+	text-decoration: underline;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left: 5px solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 14px;
+	line-height: 19px;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+.mac code {
+	font-size: 12px;
+	line-height: 18px;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+/** Theming */
+
+.vscode-light,
+.vscode-light pre code {
+	color: rgb(30, 30, 30);
+}
+
+.vscode-dark,
+.vscode-dark pre code {
+	color: #DDD;
+}
+
+.vscode-high-contrast,
+.vscode-high-contrast pre code {
+	color: white;
+}
+
+.vscode-light code {
+	color: #A31515;
+}
+
+.vscode-dark code {
+	color: #D7BA7D;
+}
+
+.vscode-light pre:not(.hljs),
+.vscode-light code > div {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre:not(.hljs),
+.vscode-dark code > div {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre:not(.hljs),
+.vscode-high-contrast code > div {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+.vscode-light blockquote,
+.vscode-dark blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.vscode-high-contrast blockquote {
+	background: transparent;
+	border-color: #fff;
+}
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family:  "Meiryo", "Segoe WPC", "Segoe UI", "SFUIText-Light", "HelveticaNeue-Light", sans-serif, "Droid Sans Fallback";
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+</head>
+<body>
+<h2 id="%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6%E7%9A%84%E8%AE%BE%E8%AE%A1%E5%92%8C%E5%AE%9E%E7%8E%B0">服务框架的设计和实现</h2>
+<p>现在我们已经知道服务化方案可以解决应用臃肿的问题，那么，如何进行实现呢？</p>
+<p>服务化会是原来的一些本地调用变为远程调用，压法人员着重提高易用性和降低性能损失。</p>
+<p>下图给出了服务框架要解决的问题：</p>
+<p><img src="image/服务框架要解决的问题.png" alt="服务框架要解决的问题"></p>
+<p>类比单机单进程模式，在单机单进程的程序中，方法调用就是简单的将程序计数器指向相应的入口地址，而在多机之间，调用端要指定特定服务提供端提供服务，并向其发出请求，等待回应，这种方式就好似程序的入口地址变成了特定的服务提供者（其实是服务提供者上的特定实例的特定函数）。</p>
+<p>这里我们将服务调用者和服务提供者分开画，但是实际上，服务框架应该是既包含调用端逻辑又包含服务端逻辑的一个实现，因为，服务框架可能会调用其他服务。</p>
+<p>我们从两个部分来考察一个服务框架如何实现：调用端和服务端。</p>
+<h3 id="1%E8%B0%83%E7%94%A8%E7%AB%AF%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF">1.调用端实现思路</h3>
+<p>假如我们实现一个简单的接口，代码如下：</p>
+<pre><code>public interface Calculator
+{
+    int add(int a,int b);
+
+    int minus(int a,int b);
+
+}
+</code></pre>
+<p>单机模式下，我们如此实现这个接口：</p>
+<pre><code>public class CalculatorImpl implements Calculator
+{
+    public int add(int a,int b)
+    {
+        return a + b;
+    }
+
+    public int minus(int a,int b)
+    {
+        return a - b;
+    }
+}
+</code></pre>
+<p>那么对于远程调用来说，我们应该如下实现该接口：</p>
+<pre><code>public int add(int a,int b)
+{
+    //获取可用服务地址列表；
+    List&lt;String&gt; l = getAvailableServiceAddresses(&quot;Calculator.add&quot;);
+    //选择合适的目标机器；
+    String address = chooseTarget(l);
+    //建立连接
+    Socket s = new Socket(address);
+    //请求的序列化
+    byte[] request = getRequest(a,b);
+    //发送请求
+    s.getOutputStream().write(request);
+    //接受结果
+    byte[] response = new byte[1024];
+    s.getInputStream().read(response);
+    //解析结果
+    int result = getResult(response);
+
+    return result;
+}
+</code></pre>
+<p>和上述图中的流程类似，我们对接口调用首先进行寻址路由，<code>getAvailableServiceAddresses(String)</code>方法返回所有包含该可用服务的目标机器列表。这里就和我们当初讲过的分布式系统模拟控制器的几种方式有关。</p>
+<p>对于透明代理方式，上述方法返回的就是LVS或者负载均衡的地址和端口。如果是名称服务的方式，返回的就是用<code>&quot;Calculator.add&quot;</code>进行定位的服务地址列表。但是，值得一提的是，虽然这里我们使用的是方法名作为的定位标准，但是我们一般采用<code>&quot;全限定名+版本号&quot;</code>的形式作为查找的标准。因为，不同的版本服务实现可能不同，为了保证合理的管理，我们需要使用<code>版本号</code>，至于为何要用全限定名，主要还是为了防止不同包的类重名。规则服务器和名称服务很相似，但是一般规则服务器的方式更多运用在有状态的场景。</p>
+<p>获取了服务列表后，我们需要选择一个合理的具体目标，而<code>chooseTarget(List&lt;String&gt; list)</code>方法为我们完成了这个工作，也就是负载均衡工作。</p>
+<p>然而，接口调用的信息要通过网络进行发送，所以必须要先进行序列化，接收到的结果要进行反序列化。</p>
+<p>最后将反序列化后的数据解析出结果，这样，一个服务框架的请求端也就完成了。</p>
+<p>综上，我们给出服务调用端的具体工作流程：</p>
+<p><img src="image/服务调用端具体工作.png" alt="服务调用端具体工作"></p>
+<p>然而，实现服务框架还存在两个问题：</p>
+<ol>
+<li>服务框架自身的部署方式问题。</li>
+<li>实现自己的服务框架所以来的一些外部jar包与应用自身依赖的jar包之间的冲突问题。</li>
+</ol>
+<p>针对第一个问题，我们考虑3种方案：</p>
+<ol>
+<li>把服务框架作为应用的一个依赖包并与应用一起打包。形如如下方式：</li>
+</ol>
+<p><img src="image/服务框架作为Web应用的扩展.png" alt="服务框架作为web应用的扩展"></p>
+<p>这种方式使服务框架变为应用的一个库，并随应用启动。但是如果要升级服务框架，就要更新应用本身，因为服务框架是与应用打包放在一起的。并且服务框架没有办法接管classloader，也就不能做一些隔离以及包的实现替换工作。</p>
+<ol start="2">
+<li>把服务框架作为容器的一部分。示意图如下：</li>
+</ol>
+<p><img src="image/服务框架是Web容器的一部分.png" alt="服务框架作为Web容器的一部分"></p>
+<p>这时我们就要遵循各个容器所支持的方法，把框架作为容器的一部分，例如，针对JBoss，我们可以通过MBean实现服务框架的启动，将其部署为一个sar包来为应用提供服务。</p>
+<ol start="3">
+<li>服务框架自身变为一个容器提供远程调用和远程服务功能。示例图如下：</li>
+</ol>
+<p><img src="image/服务框架本身作为容器.png" alt="服务框架本身作为容器"></p>
+<p>有些情况不需要容器（不是Web应用，或者不使用现有容器）。</p>
+<p>针对第二个问题，我们可以采用ClassLoader技术进行解决，在此就不详述了。</p>
+<h3 id="2%E6%9C%8D%E5%8A%A1%E7%AB%AF%E7%9A%84%E5%AE%9E%E7%8E%B0%E6%80%9D%E8%B7%AF">2.服务端的实现思路</h3>
+<p>下面给出一份伪代码：</p>
+<pre><code>public class EventHandler
+{
+    public static class Request
+    {
+        public Socket socket;
+        public String serviceName;
+        public String serviceVersion;
+        public String methodName;
+        public Object[] args;
+    }
+
+    public static void eventHandler()
+    {
+        while(true)
+        {
+            byte[] requestData = receiveRequest();
+            Request request = getRequest();
+
+            Object service = getServiceByNameAndVersion(request,serviceName,request.serviceVersion);
+
+            Object Result = callService(service,request.methodName,request.args);
+
+            byte[] data = genResult(result);
+            request.socket.getOutputStream().write(data);
+        }
+    }
+}
+</code></pre>
+<p>服务提供者需要实时监测是否有请求传入，其中的<code>while(true)</code>就是在执行这项工作。<code>receiveRequest()</code>将请求传入的数据进行接收，并使用<code>getRequest()</code>方法进行反序列化。而<code>getServiceByNameAndVersion()</code>方法通过传入的<code>serviceName</code>和<code>serviceVersion</code>查找指定的服务，并将其交给<code>callService()</code>方法进行调用，然后产生结果。后来将其序列化并传给服务调用者。</p>
+<h3 id="3%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8%E8%80%85%E5%92%8C%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85%E4%B9%8B%E9%97%B4%E7%9A%84%E9%80%9A%E4%BF%A1%E6%96%B9%E5%BC%8F%E7%9A%84%E9%80%89%E6%8B%A9">3.服务调用者和服务提供者之间的通信方式的选择</h3>
+<p>我们已经了解了服务调用者和服务提供者的基本逻辑，那么现在让我们从头开始看其实现方式。</p>
+<p>这个问题的实现和我们已知的<code>1对1</code>的端口交换信息不同，而是<code>一个集群和另一个集群</code>进行信息交互，形如下图：</p>
+<p><img src="\image\调用者集群和服务提供者集群通信问题.png" alt="调用者集群和服务提供者集群通信问题"></p>
+<p>由图可以看出，这已经是一个集群与集群交互信息的问题，那么就存在调用者集群中的一台主机到底和服务提供者集群中的哪个主机交互信息的问题。</p>
+<h4 id="1-%E9%87%87%E7%94%A8%E9%80%8F%E6%98%8E%E4%BB%A3%E7%90%86%E4%B8%8E%E8%B0%83%E7%94%A8%E8%80%85%E3%80%81%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85%E7%9B%B4%E8%BF%9E%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88">1. 采用透明代理与调用者、服务提供者直连的解决方案</h4>
+<h5 id="1%E9%87%87%E7%94%A8%E9%80%8F%E6%98%8E%E4%BB%A3%E7%90%86%E8%BF%9B%E8%A1%8C%E8%BF%9C%E7%A8%8B%E6%9C%8D%E5%8A%A1%E8%B0%83%E7%94%A8">1.采用透明代理进行远程服务调用</h5>
+<p>采用硬件的负载均衡或者LVS进行负载均衡，示意图如下：</p>
+<p><img src="image/采用透明代理进行远程服务调用.png" alt="采用透明代理进行远程服务调用"></p>
+<h5 id="2%E8%B0%83%E7%94%A8%E8%80%85%E4%B8%8E%E6%9C%8D%E5%8A%A1%E6%8F%90%E4%BE%9B%E8%80%85%E7%9B%B4%E8%BF%9E">2.调用者与服务提供者直连</h5>
+<p><img src="image/调用者与服务提供者直连.png" alt="调用者与服务提供者直连"></p>
+
+</body>
+</html>
