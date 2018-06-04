@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>第五章 数据访问层.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: "Segoe WPC", "Segoe UI", "SFUIText-Light", "HelveticaNeue-Light", sans-serif, "Droid Sans Fallback";
+	font-size: 14px;
+	padding: 0 12px;
+	line-height: 22px;
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	color: #4080D0;
+	text-decoration: none;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+h1 code,
+h2 code,
+h3 code,
+h4 code,
+h5 code,
+h6 code {
+	font-size: inherit;
+	line-height: auto;
+}
+
+a:hover {
+	color: #4080D0;
+	text-decoration: underline;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left: 5px solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 14px;
+	line-height: 19px;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+.mac code {
+	font-size: 12px;
+	line-height: 18px;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+/** Theming */
+
+.vscode-light,
+.vscode-light pre code {
+	color: rgb(30, 30, 30);
+}
+
+.vscode-dark,
+.vscode-dark pre code {
+	color: #DDD;
+}
+
+.vscode-high-contrast,
+.vscode-high-contrast pre code {
+	color: white;
+}
+
+.vscode-light code {
+	color: #A31515;
+}
+
+.vscode-dark code {
+	color: #D7BA7D;
+}
+
+.vscode-light pre:not(.hljs),
+.vscode-light code > div {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre:not(.hljs),
+.vscode-dark code > div {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre:not(.hljs),
+.vscode-high-contrast code > div {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+.vscode-light blockquote,
+.vscode-dark blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.vscode-high-contrast blockquote {
+	background: transparent;
+	border-color: #fff;
+}
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family:  "Meiryo", "Segoe WPC", "Segoe UI", "SFUIText-Light", "HelveticaNeue-Light", sans-serif, "Droid Sans Fallback";
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+</head>
+<body>
+<h2 id="%E7%AC%AC%E4%BA%94%E7%AB%A0-%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE%E5%B1%82">第五章 数据访问层</h2>
+<p>传统的网站基本都是采用以下的方式进行实现：</p>
+<p><img src="image/应用使用单机数据库.png" alt="应用使用单机数据库"></p>
+<p>但是随着数据量不断增加，单数据库无法满足我们的欲望，我们要对其进行合理的整改。</p>
+<h3 id="1%E5%9E%82%E7%9B%B4%E6%8B%86%E5%88%86%E5%92%8C%E6%B0%B4%E5%B9%B3%E6%8B%86%E5%88%86">1.垂直拆分和水平拆分</h3>
+<p>随着网站的快速发展，数据量和访问量不断上升，数据压力越来越大，我们在硬件不变的基础上就需要给现有数据库减压，减压的思路有3种：</p>
+<ol>
+<li>优化应用，查看是否有不必要的压力给了数据库（应用优化）；</li>
+<li>看看有没有其他方法可以降低对数据库的压力，例如引入缓存、加搜索引擎等；</li>
+<li>把数据库的数据和访问分到多态数据库上，分开支持，这也是我们的核心思路和逻辑。</li>
+</ol>
+<p>数据库拆分有两种方式：垂直拆分和水平拆分，需要注意的是，无论是这两种方式中的哪种，都是将一个数据库中的数据拆分到多个数据库，所以可能会造成一些影响。</p>
+<h4 id="1%E5%9E%82%E7%9B%B4%E6%8B%86%E5%88%86">1.垂直拆分</h4>
+<p>垂直拆分是将一个数据库中不同业务单元的数据拆分到不同的数据库里面，简单的说，就是把单表属性进行拆分，然后构成多表，两表连接后还是原来的数据表。</p>
+<p>影响：</p>
+<ul>
+<li>单机的ACID被打破，数据库到了多机，原来在单机通过事务来进行处理逻辑会受到很大的影响。我们采用的解决办法是，放弃原来的单机事务，修改实现，或者引入分布式事务。</li>
+<li>一些Join操作会变的比较困难。</li>
+<li>靠外键进行约束的场景会受到影响。</li>
+</ul>
+<h4 id="2%E6%B0%B4%E5%B9%B3%E6%8B%86%E5%88%86">2.水平拆分</h4>
+<p>水平拆分是根据一定规则吧统一义务单元的数据拆分到多个数据库，简单的说，就是一个数据库中的数据太多，将其分到几个数据库进行存储。</p>
+<p>影响：</p>
+<ul>
+<li>同样可能有ACID被打破的情况。</li>
+<li>同样可能有Join操作被影响的情况。</li>
+<li>靠外键进行约束的场景会有影响。</li>
+<li>依赖单裤的自增序列生成唯一ID会受影响</li>
+<li>针对单个逻辑意义上的标的查询要跨库了。</li>
+</ul>
+<h4 id="3%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3">3.问题解决</h4>
+<p>针对上述的影响，我们对其一一提出解决方案：</p>
+<h5 id="1%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1">1.分布式事务</h5>
+<h6 id="1%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E5%9F%BA%E7%A1%80">1.分布式事务基础</h6>
+<p>分布式事务是指事务的参与者、支持事务的服务器、资源服务器以及事务管理器分别位于分布式系统的不同节点上。X/Open组织提出了一个分布式事务的规范——XA。在看XA之前，我们首先了解一下X/Open组织定义的分布式事务处理模型——X/Open DTP模型。</p>
+<p>X/Open DTP 模型中定义了3个组件：</p>
+<ol>
+<li>Application Program(AP)，即应用程序，可以理解为使用DTP模型的程序，它定义了事务的边界，并定义了构成该事物的应用程序的特定操作。</li>
+<li>Resource Manager(RM)，即资源管理器，可以理解为一个DBMS系统，注意是对管理资源的DBMS系统，或者消息服务器管理系统。应用程序通过资源管理器对资源进行控制，资源必须实现XA定义的接口。资源管理器提供了存储共享资源的支持。</li>
+<li>Transaction Manager(TM)，即事务管理器，负责协调和管理实务，提供给AP应用程序编程接口并管理资源管理器。事务管理器向事务指定标识，监视他们的进程，并负责处理事务的完成与失败。事务分支标识(XID)由TM指定，以标识一个RM内的全局事务和特定分支事务。它是TM中日志与RM日志之间的相关标记。两阶段提交或回滚都需要XID，以便在系统启动时执行再同步操作（resync），或在需要时允许管理员执行试探操作。</li>
+</ol>
+<p>上述3者的通讯关系如下图：</p>
+<p><img src="image/分布式事务AP_RM_TM之间的关系.png" alt="分布式事务AP RM TM之间的关系"></p>
+<p>其中AP和RM是必要的，而TM是我们额外引入的。至于为什么我们将在下文中介绍。</p>
+<p>DTP中还定义了其他几个概念：</p>
+<ol>
+<li>事务：一个事务是一个完整的工作单元，由多个独立的计算任务组成，这多个任务在逻辑上是原子的。</li>
+<li>全局事务：一次性操作多个资源管理器的事务就是全局事务。</li>
+<li>分支事务：在全局事务中，每个资源管理器有自己的独立任务，这些任务的集合是资源管理器的分支任务。</li>
+<li>控制线程：用来表示一个工作线程，主要是关联AP、TM和RM三者的线程，也就是事务上下文环境。简单地说，就是用来标识全局事务和分支事务关系的线程。</li>
+</ol>
+<p>整体的DTP模型如下：</p>
+<p><img src="image/DTP模型.png" alt="DTP模型"></p>
+<ul>
+<li>AP与RM之间，可以直接使用RM自身提供的native API进行交互，这种方式就和我们使用DBMS的方式一致，不受TM管理。当AP和RM之间需要进行分布式事务的时候，AP需要得到对RM的连接（此链接由TM管理），然后使用XA的native API 进行交互。</li>
+<li>AP和TM之间，该例子中使用的是TX接口，也是由X/Open所规范的。它用于对事务进行控制，包括启动事务、提交事务和回滚事务。</li>
+<li>TM和RM之间是通过XA接口进行交互的。TM管理了到RM的连接，并实现了<code>两阶段提交</code>。</li>
+</ul>
+<h6 id="2%E4%B8%A4%E9%98%B6%E6%AE%B5%E6%8F%90%E4%BA%A4">2.两阶段提交</h6>
+<p>那么何为两阶段提交?对于单库来说，我们完成事务后，只有两种结果，提交和回滚。然而在分布式系统中，在提交之前增加了准备阶段，为了防止一个数据库提交了，而其他数据库没有提交的问题出现，因此成为两阶段提交。具体情况如下：</p>
+<p>两阶段提交的正常情况图如下：</p>
+<ol>
+<li>第一阶段</li>
+</ol>
+<p><img src="image/第一阶段准备成功.png" alt="第一阶段准备成功"></p>
+<ol start="2">
+<li>第二阶段</li>
+</ol>
+<p><img src="image/第二阶段提交成功.png" alt="第二阶段提交成功"></p>
+<p>两阶段提交失败情况：</p>
+<ol>
+<li>出现问题的第一阶段</li>
+</ol>
+<p><img src="image/出现问题的第一阶段.png" alt="出现问题的第一阶段"></p>
+<p>2.第一阶段出现后的第二阶段</p>
+<p><img src="image/第一阶段出现后的第二阶段.png" alt="第一阶段出现后的第二阶段"></p>
+<p>网络上交互次数的增多以及引入事务管理器的开销，是使用两阶段提交协议使分布式事务开销增大的两个方面。因此，在进行垂直拆分或者水平拆分后，要想清楚是否一定要引入两阶段的分布式事务。</p>
+<p>单机事务存在ACID的性质，分布式事务虽然不能做到和单机事务一样，但是也应保存一定特性，在这里我们了解一下CAP理论和BASE模型。</p>
+<h6 id="3cap%E7%90%86%E8%AE%BA">3.CAP理论</h6>
+<ul>
+<li>Consistency：所有的节点在同一时间读到同样的数据，即数据上的一致性（用C表示），也就是当数据写入成功后，所有的节点会同时看到这个新的数据。</li>
+<li>Availability：保证无论成功还是失败，每个请求都能收到一个反馈，即数据的可用性（用A表示），这里的重点是系统一定要有响应。</li>
+<li>Partition-Tolerance:系统中有部分问题或有消息的丢失，但系统仍能够运行，即分区容忍性（用P表示）。</li>
+</ul>
+<p>然而分布式系统并不能同时满足上面3项，我们可以选择上面两个来提升，而另外一个会受到损失。那么我们在系统设计和权衡时，就是在选择CA、AP或CP。</p>
+<p>CAP理论用图示表示如下：</p>
+<p><img src="image/CAP理论.png" alt="CAP理论"></p>
+<ul>
+<li>选择CA，放弃分区容忍性，加强一致性和可用性。这其实就是传统的单机数据库的选择。</li>
+<li>选择AP，放弃一致性，追求分区容忍性和可用性。这是很多分布式系统在设计时的选择。</li>
+<li>选择CP，放弃可用性，追求一致性和分区容忍性。这种选择下的可用性会比较低，网络的问题会直接让整个系统不可用。</li>
+</ul>
+<p>综上所述，<code>我们选择AP，而放弃C，采用这种方式设计分布式系统</code>。</p>
+<h6 id="4base%E6%A8%A1%E5%9E%8B">4.BASE模型</h6>
+<ul>
+<li>Basically Available：基本可用，允许分区失败；</li>
+<li>Soft state：软状态，接受一段时间的状态不同步；</li>
+<li>Eventually consistent：最终一致，保证最终数据的状态是一致的。</li>
+</ul>
+<h6 id="5paxos%E5%8D%8F%E8%AE%AE%E3%80%81quorum%E5%92%8Cvector-clock%E7%AE%97%E6%B3%95">5.Paxos协议、Quorum和Vector Clock算法</h6>
+<p>虽然我们无法保证数据的强一致性，但是我们可以保证数据的最终一致性。Paxos协议是一个相对于两阶段提交更简单的策略，而Quorum和Vector Clock算法也用来提供一致性，下面我们对其进行介绍。</p>
+<h5 id="2%E5%A4%9A%E6%9C%BA%E7%9A%84sequence%E9%97%AE%E9%A2%98%E4%B8%8E%E5%A4%84%E7%90%86">2.多机的Sequence问题与处理</h5>
+<p>转变为水平分库时，原来单库中的Sequence以及自增ID的做法需要改变。因为同一张数据表被分在不同的数据库中，因此，自增ID无法保证唯一性、连续性了，我们需要考虑处理办法。</p>
+<p>关于唯一性，我们可以使用UUID生成方式，但是这种生成方式生成的ID不具备良好的连续性。</p>
+<p>对于连续性，我们可以将所有ID集中放在一个地方进行管理，对每个ID序列独立管理，每台机器使用ID时就从这个ID生成器上取。然而这种方案有几个关键问题要解决：</p>
+<ul>
+<li>性能问题。每次取ID都会有资源消耗。这个问题的改进方案是每次取多个ID，然后缓存到本地，但是如果应用取了一段ID，然后机器突然宕机，那么这部分ID就浪费了。</li>
+<li>生成器的稳定性问题。ID生成器作为一个无状态的集群存在，其可用性要靠整个集群来支持。</li>
+<li>存储的问题。底层存储的选择空间较大，需要根据不同类型进行对应的容灾方案。</li>
+</ul>
+<p>在此提出两种方式：</p>
+<ol>
+<li>独立ID生成器方式</li>
+</ol>
+<p><img src="image/独立ID生成器方式.png" alt="独立ID生成器方式"></p>
+<ol start="2">
+<li>生成器嵌入到应用的方式</li>
+</ol>
+<p><img src="image/生成器嵌入到应用的方式.png" alt="生成器嵌入到应用的方式"></p>
+<p>这种方式由于没有中心的控制节点，并且我们还不希望生成器之间进行通信，否则会是系统非常复杂，因此数据的ID并不是严格按照进入数据库的顺序而增大的，在管理上也要有额外的功能。</p>
+<h5 id="3%E5%BA%94%E5%AF%B9%E5%A4%9A%E6%9C%BA%E7%9A%84%E6%95%B0%E6%8D%AE%E6%9F%A5%E8%AF%A2">3.应对多机的数据查询</h5>
+<h6 id="1%E8%B7%A8%E5%BA%93join">1.跨库Join</h6>
+<p>对于进行分库后，Join的数据还在一个数据库中就不会出现问题。但是，如果需要的业务数据被分在多个库中，那么就会出现问题。解决思路有如下方式：</p>
+<ol>
+<li>将原来数据库中的Join操作分为多次数据库操作。即将Join操作手动进行。</li>
+<li>数据冗余，采用这种方式将Join操作变为单表查询。</li>
+<li>借助外部系统（例如搜索引擎）解决一些跨库的问题。</li>
+</ol>
+<h6 id="2%E5%A4%96%E9%94%AE%E7%BA%A6%E6%9D%9F">2.外键约束</h6>
+<p>如果分库后每个单库数据都是内聚的，即每个库内进行外键约束的数据也在该库内，那么就没有问题，否则就只能靠应用层保证外键约束了。</p>
+<h6 id="3%E8%B7%A8%E5%BA%93%E6%9F%A5%E8%AF%A2%E9%97%AE%E9%A2%98%E5%8F%8A%E5%85%B6%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88">3.跨库查询问题及其解决方案</h6>
+<p>对于数据被分为多库多表的情况，我们对数据库的操作也会相应进行转变。查询操作一般会出现如下的情况。</p>
+<ol>
+<li>排序。对多个来源的数据查询出来后，在应用层进行排序操作，如果查询出的数据是有序的，则进行归并排序，否则进行全排序。</li>
+<li>函数处理。使用Max、Min、Sum、Count等函数对多个数据来源的值进行相应的函数处理，并在应用层进行再处理。</li>
+<li>非排序分页。这分为同等步长地在多个数据源上分页处理和同等比例地分页处理。同等步长的意思是，分页的每页中，来自不同数据源的记录数是一样的；同等比例的意思是，分页的每页中，来自不通过数据源的数据数占这个数据源符合条件的数据总数的比例是一样的。</li>
+<li>排序后分页。对于已经排序的多个数据源的数据，需要从每个数据源取出<code>页号*页大小</code>的数据后，进行排序，然后选出恰当的数据进行传输。</li>
+</ol>
+<h3 id="2%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE%E5%B1%82">2.数据访问层</h3>
+<p>数据访问层就是方便应用进行数据读/写访问的抽象层，我们在这个层上解决各个应用通用的访问数据库的问题。</p>
+<h4 id="1%E5%AF%B9%E5%A4%96%E6%8F%90%E4%BE%9B%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE%E5%B1%82%E7%9A%84%E5%8A%9F%E8%83%BD">1.对外提供数据访问层的功能</h4>
+<p>数据层负责解决应用访问数据库的各种共性问题，数据层的以怎样的方式呈现给应用呢？</p>
+<ol>
+<li>为用户提供专有API。这种方式通用性极差，甚至没有通用性。</li>
+<li>通用的方式。在Java应用中一般通过JDBC访问数据库，数据层自身可以作为一个JDBC实现，暴露出JDBC接口。</li>
+<li>基于ORM或者类ORM的方式。</li>
+</ol>
+<p>下面的图示展示了以上三种方式的结构：</p>
+<p><img src="image/不同接口数据层的结构.png" alt="不同接口数据层的结构"></p>
+<p>通过JDBC方式使用的数据层是兼容性和扩展性最好的，实现成本也是最高的。底层封装了某个ORM框架或者类ORM框架的方式具备一定的通用性（不能提供给另外的ORM/类ORM框架用），实现成本相对JDBC接口方式的要低。而专有API的方式是在特定场景下的选择。</p>
+<p>专有API的方式和对外提供JDBC接口的方式都直接使用了下层数据库提供的JDBC驱动，因此更加灵活，而基于ORM/类ORM框架的方式则在数据层和JDBC驱动之间隔了一个第三方的ORM/类ORM框架，这在有些场景下会造成一些影响。</p>
+<p>上述的数据访问方式，对于查询方面的实现也有很大影响，我们以<code>排序后分页</code>为例。数据形式如下：</p>
+<p><img src="image/内部排好序的数据源的数据.png" alt="内部排好序的数据源的数据"></p>
+<p>基于ORM或者类ORM的方式，由于框架的封装，导致很多东西会很麻烦，这种情况下，我们就需要把足够多的数据加载到内存中，再找出正确数据进行显示，例如上述数据源，查询第10页的数据，就要从数据源1和数据源2分别取出200条数据，总共400条，然后进行归并排序后筛选，丢弃不必要的数据。</p>
+<p>对于采用JDBC的方式访问，我们需要取出对应数据，JDBC驱动中有fetch size这一设置，其用来控制数据库返回的记录数。我们直接使用的JDBC可以直接控制数据的取出，然后使用两个有序链表记性合并排序，而只会浪费一个对象。在页数很大时，直接使用JDBC是有很大优势的。</p>
+<h4 id="2%E7%94%B1%E6%95%B0%E6%8D%AE%E5%B1%82%E6%B5%81%E7%A8%8B%E7%9A%84%E9%A1%BA%E5%BA%8F%E7%9C%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1">2.由数据层流程的顺序看数据库设计</h4>
+<p><img src="image/数据层的整理流程.png" alt="数据层的整理流程"></p>
+<h5 id="1-sql%E8%A7%A3%E6%9E%90%E9%98%B6%E6%AE%B5%E5%A4%84%E7%90%86">1. SQL解析阶段处理</h5>
+<p>SQL解析主要考虑的问题有如下两个：</p>
+<ol>
+<li>对SQL支持的程度，是否需要支持所有SQL，这需要根据具体场景来决定。</li>
+<li>支持多少SQL的语言，对于不同厂商超多标准SQL的部分要支持多少。</li>
+</ol>
+<p>在进行SQL解析时，对于解析的缓存可以提升缓存速度，但仍要注意控制缓存的容量限制。</p>
+<p>通过解析SQL，我们可以得到SQL中的关键信息，例如表名、字段、where条件等。这些信息可以通过提示的方式实现，该方式会把一些要素直接传进来，而不用解析整个SQL语句，使用这种方式的一般情况是：</p>
+<ul>
+<li>SQL解析并不完备。</li>
+<li>SQL中不带有分库条件，但实际上是可以明确指定分库的。</li>
+</ul>
+<h5 id="2-%E8%A7%84%E5%88%99%E5%A4%84%E7%90%86%E9%98%B6%E6%AE%B5">2. 规则处理阶段</h5>
+<h6 id="1%E9%87%87%E7%94%A8%E5%9B%BA%E5%AE%9A%E5%93%88%E5%B8%8C%E4%BD%9C%E4%B8%BA%E8%A7%84%E5%88%99">1.采用固定哈希作为规则</h6>
+<p>固定哈希的方式为，根据某个字段取模，然后将数据分散到不同的数据库和表中。例如我们通过id取模进行分库，那么形式如下：</p>
+<p><img src="image/根据id取模的例子.png" alt="根据id取模的例子"></p>
+<p>除了根据id取模进行分库，我们还可以采用此方法进行分表，示意图如下：</p>
+<p><img src="image/根据id分库分表的例子.png" alt="根据id分库分表的例子"></p>
+<h6 id="2%E4%B8%80%E8%87%B4%E6%80%A7%E5%93%88%E5%B8%8C%E7%AE%97%E6%B3%95%E5%B8%A6%E6%9D%A5%E7%9A%84%E5%A5%BD%E5%A4%84">2.一致性哈希算法带来的好处</h6>
+<p>一致性哈希是MIT的Karger及其合作者在1997年发表的学术论文中提出的。</p>
+<p>一致性哈希所带来的最大变化是节点对应的哈希值变成了一个范围，而不再是离散的。在一致性哈希中，我们会把整个哈希值的范围定义的很大，然后把这个范围分配给现有节点。如果有新节点加入，那么这个新节点会从原有的某个节点上分管一部分范围的哈希值；如果有节点退出，如果这个节点原来管理的哈希值会给它的下一个节点来管理。</p>
+<p>下面给出一个例子，如果哈希值的范围为0到100,共有4个节点，那么他们管理的范围分别为[0,25)，[25,50)，[50,75)，[75,100]。如果第二个系欸但那退出，那么剩下的节点管理范围变为[0,25)，[25,75)，[75,100]。如果从第二个和第三个节点之间增加一个节点，那么管理范围就变成[0,25)，[25,50)，[50,63)，[63,75)，[75,100]。</p>
+<p>然而上述方法是有一定问题的，因为，新增一个节点后，新生成的节点和受影响的节点的范围明显小于其他的，减少一个节点，则合并成的节点范围会明显大于其他的。这样的话，压力就会导致很不平衡。</p>
+<p>为了解决这个问题产生了虚拟节点。一个物理节点可能对应多个虚拟节点，虚拟节点平均分布在整个哈希环上，这样就可以尽量解决负载均衡问题。</p>
+<h6 id="3%E6%98%A0%E5%B0%84%E8%A1%A8">3.映射表</h6>
+<p>映射表是根据分库分表字段的值的查表法来确定数据源的方法，一般用于对热点数据的特殊处理，或者再一些场景下对不完全符合规律的规则进行补充。常见的情况是以前面的方式为基础，配合映射表来执行。</p>
+<h6 id="4%E8%87%AA%E5%AE%9A%E4%B9%89%E8%AE%A1%E7%AE%97%E6%96%B9%E5%BC%8F">4.自定义计算方式</h6>
+<p>自定义计算方式是最灵活的方式，它已经不算是以配置的方式来做规则了，而是通过比较复杂的函数来解决数据访问的规则问题。</p>
+<p>例如下面根据id取模分成了4个库，可以使用下面的方式：</p>
+<pre><code>if(id in hotset)
+{
+    return 4;
+}
+return id % 4;
+</code></pre>
+<h5 id="3-%E6%94%B9%E5%86%99sql">3. 改写SQL</h5>
+<p>为何要改写SQL呢？因为我们现在要解决的问题已经从单库单表变为了多库多表问题，那么在同一数据库中，表的名字由于不能重复，所以就会出现了改写SQL的问题。例如User表在分库分表后表明可能为User_1,User_2等。</p>
+<p>除了修改表名外，有时还要修改索引名。</p>
+<p>当然，还有一种情况，还记得我们对表的查询操作么？求最大值，最小值，平均值，这些我们都是采用间接的方式求的，那么就要改写SQL用来获取源数据。</p>
+<h5 id="4-%E6%95%B0%E6%8D%AE%E6%BA%90%E9%80%89%E6%8B%A9">4. 数据源选择</h5>
+<p>在进行了分库分表后，我们通常都会给库提供备库，如下图：</p>
+<p><img src="image/分库分表后的结构.png" alt="分库分表的结构"></p>
+<p>这样数据库就从单一的一个节点，变为了一个数据库矩阵，我们要决定访问分组后的哪个库。这些苦一般都是一写多读的（有些是多写多读的），根据当前要执行的SQL特点（读、写），是否在事务中以及各个库的权重规则，计算得到这次SQL请求要访问的数据库。</p>
+<h5 id="5-%E6%89%A7%E8%A1%8Csql%E5%92%8C%E7%BB%93%E6%9E%9C%E5%A4%84%E7%90%86">5. 执行SQL和结果处理</h5>
+<p>这也就是最后两部了，只需要注意异常处理，其余的也没啥。</p>
+<h4 id="3%E6%95%B0%E6%8D%AE%E8%AE%BF%E9%97%AE%E5%B1%82%E8%AE%BE%E8%AE%A1">3.数据访问层设计</h4>
+<p>三层数据源整体视图：</p>
+
+</body>
+</html>
