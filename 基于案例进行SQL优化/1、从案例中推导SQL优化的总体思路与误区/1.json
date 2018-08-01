@@ -1,0 +1,1892 @@
+{
+	"global": {
+		"query_count": 1287,
+		"metrics": {
+			"Rows_sent": {
+				"avg": "14",
+				"max": "1000",
+				"stddev": "91",
+				"min": "0",
+				"median": "0",
+				"pct_95": "22",
+				"sum": "19234"
+			},
+			"Lock_time": {
+				"min": "0.000000",
+				"pct_95": "0.001303",
+				"median": "0.000000",
+				"sum": "0.760634",
+				"avg": "0.000591",
+				"max": "0.113557",
+				"stddev": "0.005461"
+			},
+			"Query_length": {
+				"median": "26",
+				"pct_95": "174",
+				"sum": "82483",
+				"min": "0",
+				"max": "1263",
+				"stddev": "123",
+				"avg": "64"
+			},
+			"Rows_examined": {
+				"min": "0",
+				"sum": "245798",
+				"pct_95": "964",
+				"median": "0",
+				"avg": "190",
+				"stddev": "1037",
+				"max": "10924"
+			},
+			"Query_time": {
+				"stddev": "0.007959",
+				"max": "0.122948",
+				"avg": "0.001491",
+				"sum": "1.918556",
+				"pct_95": "0.004411",
+				"median": "0.000176",
+				"min": "0.000002"
+			}
+		},
+		"files": [
+			{
+				"name": "D:\\Data\\mysql_log\\slow.log",
+				"size": 332924
+			}
+		],
+		"unique_query_count": 228
+	},
+	"classes": [
+		{
+			"ts_min": "2018-07-31T03:30:32",
+			"distillate": "SHOW INDEX",
+			"tables": [
+				{
+					"create": "SHOW CREATE TABLE `sakila`.`film`\\G",
+					"status": "SHOW TABLE STATUS FROM `sakila` LIKE 'film'\\G"
+				}
+			],
+			"checksum": "FB45BD7CA3EDF620C5D20D125AA0EAFF",
+			"histograms": {
+				"Query_time": [
+					0,
+					0,
+					0,
+					51,
+					0,
+					1,
+					0,
+					0
+				]
+			},
+			"fingerprint": "show index from `sakila`.`film`",
+			"attribute": "fingerprint",
+			"ts_max": "2018-07-31T12:30:56",
+			"metrics": {
+				"Query_time": {
+					"max": "0.113550",
+					"pct": "0.040404",
+					"pct_95": "0.003135",
+					"avg": "0.003937",
+					"stddev": "0.014938",
+					"min": "0.001016",
+					"sum": "0.204701",
+					"median": "0.001663"
+				},
+				"user": {
+					"value": "root"
+				},
+				"host": {
+					"value": "localhost"
+				},
+				"Lock_time": {
+					"min": "0.000569",
+					"sum": "0.161061",
+					"median": "0.000882",
+					"avg": "0.003097",
+					"stddev": "0.015040",
+					"pct": "0.040404",
+					"pct_95": "0.001746",
+					"max": "0.112018"
+				},
+				"Rows_examined": {
+					"min": "45",
+					"median": "45",
+					"sum": "2340",
+					"avg": "45",
+					"stddev": "0",
+					"pct": "0",
+					"pct_95": "45",
+					"max": "45"
+				},
+				"db": {
+					"value": "sakila"
+				},
+				"Query_length": {
+					"sum": "1612",
+					"median": "31",
+					"min": "31",
+					"stddev": "0",
+					"avg": "31",
+					"pct_95": "31",
+					"pct": "0",
+					"max": "31"
+				},
+				"Rows_sent": {
+					"min": "4",
+					"sum": "208",
+					"median": "4",
+					"avg": "4",
+					"stddev": "0",
+					"pct": "0",
+					"pct_95": "4",
+					"max": "4"
+				}
+			},
+			"query_count": 52,
+			"example": {
+				"Query_time": "0.113550",
+				"ts": "2018-07-31T11:27:25",
+				"query": "SHOW INDEX FROM `sakila`.`film`"
+			}
+		},
+		{
+			"ts_max": "2018-07-31T02:08:58",
+			"metrics": {
+				"Lock_time": {
+					"min": "0.000000",
+					"median": "0.000000",
+					"sum": "0.000000",
+					"avg": "0.000000",
+					"stddev": "0.000000",
+					"pct": "0.001554",
+					"pct_95": "0.000000",
+					"max": "0.000000"
+				},
+				"host": {
+					"value": "localhost"
+				},
+				"Query_time": {
+					"max": "0.122948",
+					"pct_95": "0.122948",
+					"pct": "0.001554",
+					"stddev": "0.059376",
+					"avg": "0.080963",
+					"sum": "0.161926",
+					"median": "0.080963",
+					"min": "0.038978"
+				},
+				"user": {
+					"value": "root"
+				},
+				"Rows_sent": {
+					"pct_95": "0",
+					"pct": "0",
+					"max": "0",
+					"sum": "0",
+					"median": "0",
+					"min": "0",
+					"stddev": "0",
+					"avg": "0"
+				},
+				"Query_length": {
+					"pct_95": "60",
+					"pct": "0",
+					"max": "60",
+					"median": "59",
+					"sum": "119",
+					"min": "59",
+					"stddev": "0",
+					"avg": "59"
+				},
+				"Rows_examined": {
+					"pct": "0",
+					"pct_95": "0",
+					"max": "0",
+					"min": "0",
+					"sum": "0",
+					"median": "0",
+					"avg": "0",
+					"stddev": "0"
+				}
+			},
+			"query_count": 2,
+			"example": {
+				"ts": "2018-07-31T02:08:58",
+				"Query_time": "0.122948",
+				"query": "set global slow_query_log_file='D:/Data/mysql_log/slow.log'"
+			},
+			"distillate": "SET",
+			"ts_min": "2018-07-31T02:08:07",
+			"checksum": "D0FD3104436FD8F0613E02667B90D3BB",
+			"histograms": {
+				"Query_time": [
+					0,
+					0,
+					0,
+					0,
+					1,
+					1,
+					0,
+					0
+				]
+			},
+			"fingerprint": "set global slow_query_log_file=?",
+			"attribute": "fingerprint"
+		},
+		{
+			"metrics": {
+				"Query_length": {
+					"max": "32",
+					"pct_95": "32",
+					"pct": "0",
+					"stddev": "0",
+					"avg": "32",
+					"sum": "128",
+					"median": "32",
+					"min": "32"
+				},
+				"Rows_sent": {
+					"avg": "2",
+					"stddev": "0",
+					"min": "2",
+					"median": "1",
+					"sum": "9",
+					"max": "3",
+					"pct": "0",
+					"pct_95": "2"
+				},
+				"db": {
+					"value": "sakila"
+				},
+				"Rows_examined": {
+					"max": "29",
+					"pct_95": "28",
+					"pct": "0",
+					"stddev": "3",
+					"avg": "23",
+					"sum": "95",
+					"median": "21",
+					"min": "22"
+				},
+				"host": {
+					"value": "localhost"
+				},
+				"Lock_time": {
+					"median": "0.055831",
+					"sum": "0.116641",
+					"min": "0.000887",
+					"stddev": "0.047374",
+					"avg": "0.029160",
+					"pct_95": "0.110421",
+					"pct": "0.003108",
+					"max": "0.113557"
+				},
+				"Query_time": {
+					"sum": "0.122505",
+					"median": "0.058982",
+					"min": "0.001566",
+					"stddev": "0.049456",
+					"avg": "0.030626",
+					"pct_95": "0.115942",
+					"pct": "0.003108",
+					"max": "0.117201"
+				},
+				"user": {
+					"value": "root"
+				}
+			},
+			"example": {
+				"query": "SHOW INDEX FROM `sakila`.`actor`",
+				"ts": "2018-07-31T08:37:21",
+				"Query_time": "0.117201"
+			},
+			"query_count": 4,
+			"ts_max": "2018-07-31T08:37:21",
+			"histograms": {
+				"Query_time": [
+					0,
+					0,
+					0,
+					3,
+					0,
+					1,
+					0,
+					0
+				]
+			},
+			"fingerprint": "show index from `sakila`.`actor`",
+			"attribute": "fingerprint",
+			"checksum": "AD58B1D6B7D55219D9CF9C19515B9E1E",
+			"tables": [
+				{
+					"status": "SHOW TABLE STATUS FROM `sakila` LIKE 'actor'\\G",
+					"create": "SHOW CREATE TABLE `sakila`.`actor`\\G"
+				}
+			],
+			"ts_min": "2018-07-31T05:41:20",
+			"distillate": "SHOW INDEX"
+		},
+		{
+			"example": {
+				"query": "select * from information_schema.tables WHERE table_schema = 'sakila' AND table_name = 'film'",
+				"Query_time": "0.104165",
+				"ts": "2018-07-31T12:00:20"
+			},
+			"metrics": {
+				"host": {
+					"value": "localhost"
+				},
+				"Lock_time": {
+					"stddev": "0.000808",
+					"avg": "0.003331",
+					"sum": "0.006662",
+					"median": "0.003331",
+					"min": "0.002760",
+					"max": "0.003902",
+					"pct_95": "0.003902",
+					"pct": "0.001554"
+				},
+				"Query_time": {
+					"avg": "0.054312",
+					"stddev": "0.070503",
+					"min": "0.004459",
+					"sum": "0.108624",
+					"median": "0.054312",
+					"max": "0.104165",
+					"pct": "0.001554",
+					"pct_95": "0.104165"
+				},
+				"user": {
+					"value": "root"
+				},
+				"Query_length": {
+					"max": "93",
+					"pct": "0",
+					"pct_95": "93",
+					"avg": "93",
+					"stddev": "0",
+					"min": "93",
+					"median": "93",
+					"sum": "186"
+				},
+				"Rows_sent": {
+					"avg": "1",
+					"stddev": "0",
+					"min": "1",
+					"median": "1",
+					"sum": "2",
+					"max": "1",
+					"pct": "0",
+					"pct_95": "1"
+				},
+				"Rows_examined": {
+					"median": "6",
+					"sum": "12",
+					"min": "6",
+					"stddev": "0",
+					"avg": "6",
+					"pct_95": "6",
+					"pct": "0",
+					"max": "6"
+				},
+				"db": {
+					"value": "sakila"
+				}
+			},
+			"query_count": 2,
+			"ts_max": "2018-07-31T12:00:27",
+			"histograms": {
+				"Query_time": [
+					0,
+					0,
+					0,
+					1,
+					0,
+					1,
+					0,
+					0
+				]
+			},
+			"attribute": "fingerprint",
+			"fingerprint": "select * from information_schema.tables where table_schema = ? and table_name = ?",
+			"checksum": "8D33EF5B229D39817CAE9271801492A5",
+			"tables": [
+				{
+					"create": "SHOW CREATE TABLE `information_schema`.`tables`\\G",
+					"status": "SHOW TABLE STATUS FROM `information_schema` LIKE 'tables'\\G"
+				}
+			],
+			"distillate": "SELECT information_schema.tables",
+			"ts_min": "2018-07-31T12:00:20"
+		},
+		{
+			"example": {
+				"ts": "2018-07-31T09:22:45",
+				"Query_time": "0.105981",
+				"query": "SHOW INDEXES FROM `sakila`.`customer`"
+			},
+			"metrics": {
+				"Lock_time": {
+					"stddev": "0.073267",
+					"avg": "0.052327",
+					"sum": "0.104653",
+					"median": "0.052327",
+					"min": "0.000519",
+					"max": "0.104134",
+					"pct_95": "0.104134",
+					"pct": "0.001554"
+				},
+				"host": {
+					"value": "localhost"
+				},
+				"Query_time": {
+					"median": "0.053493",
+					"sum": "0.106987",
+					"min": "0.001006",
+					"stddev": "0.074229",
+					"avg": "0.053493",
+					"pct_95": "0.105981",
+					"pct": "0.001554",
+					"max": "0.105981"
+				},
+				"user": {
+					"value": "root"
+				},
+				"Rows_sent": {
+					"avg": "4",
+					"stddev": "0",
+					"min": "4",
+					"median": "4",
+					"sum": "8",
+					"max": "4",
+					"pct": "0",
+					"pct_95": "4"
+				},
+				"Query_length": {
+					"stddev": "0",
+					"avg": "37",
+					"sum": "74",
+					"median": "37",
+					"min": "37",
+					"max": "37",
+					"pct_95": "37",
+					"pct": "0"
+				},
+				"Rows_examined": {
+					"stddev": "0",
+					"avg": "41",
+					"sum": "82",
+					"median": "41",
+					"min": "41",
+					"max": "41",
+					"pct_95": "41",
+					"pct": "0"
+				},
+				"db": {
+					"value": "sakila"
+				}
+			},
+			"query_count": 2,
+			"ts_max": "2018-07-31T09:25:18",
+			"attribute": "fingerprint",
+			"fingerprint": "show indexes from `sakila`.`customer`",
+			"histograms": {
+				"Query_time": [
+					0,
+					0,
+					0,
+					1,
+					0,
+					1,
+					0,
+					0
+				]
+			},
+			"checksum": "B85974E6D1EC04E6B8F2C23571F0594E",
+			"tables": [
+				{
+					"status": "SHOW TABLE STATUS FROM `sakila` LIKE 'customer'\\G",
+					"create": "SHOW CREATE TABLE `sakila`.`customer`\\G"
+				}
+			],
+			"ts_min": "2018-07-31T09:22:45",
+			"distillate": "SHOW INDEX"
+		},
+		{
+			"query_count": 2,
+			"metrics": {
+				"Query_time": {
+					"pct": "0.001554",
+					"pct_95": "0.103288",
+					"max": "0.103288",
+					"min": "0.001908",
+					"median": "0.052598",
+					"sum": "0.105196",
+					"avg": "0.052598",
+					"stddev": "0.071686"
+				},
+				"user": {
+					"value": "root"
+				},
+				"host": {
+					"value": "localhost"
+				},
+				"Lock_time": {
+					"sum": "0.001892",
+					"median": "0.000946",
+					"min": "0.000900",
+					"stddev": "0.000065",
+					"avg": "0.000946",
+					"pct_95": "0.000992",
+					"pct": "0.001554",
+					"max": "0.000992"
+				},
+				"db": {
+					"value": "sakila"
+				},
+				"Rows_examined": {
+					"max": "14",
+					"pct_95": "14",
+					"pct": "0",
+					"stddev": "0",
+					"avg": "14",
+					"median": "14",
+					"sum": "28",
+					"min": "14"
+				},
+				"Query_length": {
+					"stddev": "0",
+					"avg": "36",
+					"sum": "72",
+					"median": "36",
+					"min": "36",
+					"max": "36",
+					"pct_95": "36",
+					"pct": "0"
+				},
+				"Rows_sent": {
+					"pct": "0",
+					"pct_95": "1",
+					"max": "1",
+					"min": "1",
+					"median": "1",
+					"sum": "2",
+					"avg": "1",
+					"stddev": "0"
+				}
+			},
+			"example": {
+				"query": "SHOW INDEXES FROM `sakila`.`country`",
+				"Query_time": "0.103288",
+				"ts": "2018-07-31T09:25:18"
+			},
+			"ts_max": "2018-07-31T09:25:18",
+			"ts_min": "2018-07-31T05:41:03",
+			"distillate": "SHOW INDEX",
+			"histograms": {
+				"Query_time": [
+					0,
+					0,
+					0,
+					1,
+					0,
+					1,
+					0,
+					0
+				]
+			},
+			"attribute": "fingerprint",
+			"fingerprint": "show indexes from `sakila`.`country`",
+			"checksum": "6D7D1DC9DD3B437411A4340822CAD28E",
+			"tables": [
+				{
+					"create": "SHOW CREATE TABLE `sakila`.`country`\\G",
+					"status": "SHOW TABLE STATUS FROM `sakila` LIKE 'country'\\G"
+				}
+			]
+		},
+		{
+			"ts_max": "2018-07-31T12:26:39",
+			"metrics": {
+				"Query_length": {
+					"pct_95": "51",
+					"pct": "0",
+					"max": "52",
+					"sum": "921",
+					"median": "46",
+					"min": "37",
+					"stddev": "6",
+					"avg": "46"
+				},
+				"Rows_sent": {
+					"max": "1",
+					"pct": "0",
+					"pct_95": "1",
+					"avg": "1",
+					"stddev": "0",
+					"min": "1",
+					"median": "1",
+					"sum": "20"
+				},
+				"db": {
+					"value": "sakila"
+				},
+				"Rows_examined": {
+					"avg": "1094",
+					"stddev": "0",
+					"min": "1094",
+					"sum": "21880",
+					"median": "1094",
+					"max": "1094",
+					"pct": "0",
+					"pct_95": "1094"
+				},
+				"host": {
+					"value": "localhost"
+				},
+				"Lock_time": {
+					"avg": "0.000576",
+					"stddev": "0.000856",
+					"min": "0.000058",
+					"median": "0.000145",
+					"sum": "0.011510",
+					"max": "0.003282",
+					"pct": "0.015540",
+					"pct_95": "0.002579"
+				},
+				"user": {
+					"value": "root"
+				},
+				"Query_time": {
+					"avg": "0.004574",
+					"stddev": "0.003363",
+					"min": "0.001757",
+					"median": "0.003292",
+					"sum": "0.091490",
+					"max": "0.015288",
+					"pct": "0.015540",
+					"pct_95": "0.010111"
+				}
+			},
+			"query_count": 20,
+			"example": {
+				"query": "SHOW SESSION VARIABLES LIKE 'lower_case_table_names'",
+				"Query_time": "0.015288",
+				"ts": "2018-07-31T07:07:26"
+			},
+			"distillate": "SHOW VARIABLES",
+			"ts_min": "2018-07-31T07:07:26",
+			"checksum": "873D3AAF7C4528CF9439C8E2DE90E5FF",
+			"attribute": "fingerprint",
+			"fingerprint": "show session variables like ?",
+			"histograms": {
+				"Query_time": [
+					0,
+					0,
+					0,
+					18,
+					2,
+					0,
+					0,
+					0
+				]
+			}
+		},
+		{
+			"distillate": "SELECT information_schema.INNODB_TABLES information_schema.innodb_datafiles",
+			"ts_min": "2018-07-31T12:00:20",
+			"histograms": {
+				"Query_time": [
+					0,
+					0,
+					0,
+					1,
+					1,
+					0,
+					0,
+					0
+				]
+			},
+			"fingerprint": "select @@datadir datadir,sd.path from information_schema.innodb_tables st join information_schema.innodb_datafiles sd using(space) where st.name = ?",
+			"attribute": "fingerprint",
+			"tables": [
+				{
+					"status": "SHOW TABLE STATUS FROM `information_schema` LIKE 'INNODB_TABLES'\\G",
+					"create": "SHOW CREATE TABLE `information_schema`.`INNODB_TABLES`\\G"
+				},
+				{
+					"create": "SHOW CREATE TABLE `information_schema`.`innodb_datafiles`\\G",
+					"status": "SHOW TABLE STATUS FROM `information_schema` LIKE 'innodb_datafiles'\\G"
+				}
+			],
+			"checksum": "97355BC8FD316E46832FDD8135553C3A",
+			"query_count": 2,
+			"metrics": {
+				"Rows_sent": {
+					"sum": "2",
+					"median": "1",
+					"min": "1",
+					"stddev": "0",
+					"avg": "1",
+					"pct_95": "1",
+					"pct": "0",
+					"max": "1"
+				},
+				"Query_length": {
+					"min": "160",
+					"median": "160",
+					"sum": "320",
+					"avg": "160",
+					"stddev": "0",
+					"pct": "0",
+					"pct_95": "160",
+					"max": "160"
+				},
+				"Rows_examined": {
+					"sum": "194",
+					"median": "97",
+					"min": "97",
+					"stddev": "0",
+					"avg": "97",
+					"pct_95": "97",
+					"pct": "0",
+					"max": "97"
+				},
+				"db": {
+					"value": "sakila"
+				},
+				"Lock_time": {
+					"pct_95": "0.061297",
+					"pct": "0.001554",
+					"max": "0.061297",
+					"sum": "0.061723",
+					"median": "0.030862",
+					"min": "0.000426",
+					"stddev": "0.043042",
+					"avg": "0.030862"
+				},
+				"host": {
+					"value": "localhost"
+				},
+				"user": {
+					"value": "root"
+				},
+				"Query_time": {
+					"pct_95": "0.077739",
+					"pct": "0.001554",
+					"max": "0.077739",
+					"median": "0.041642",
+					"sum": "0.083285",
+					"min": "0.005546",
+					"stddev": "0.051048",
+					"avg": "0.041642"
+				}
+			},
+			"example": {
+				"query": "SELECT @@datadir datadir,sd.path FROM information_schema.INNODB_TABLES st JOIN information_schema.innodb_datafiles sd USING(space) WHERE st.name = 'sakila/film'",
+				"ts": "2018-07-31T12:00:20",
+				"Query_time": "0.077739"
+			},
+			"ts_max": "2018-07-31T12:00:27"
+		},
+		{
+			"ts_max": "2018-07-31T12:26:44",
+			"metrics": {
+				"host": {
+					"value": "localhost"
+				},
+				"Lock_time": {
+					"median": "0.000145",
+					"sum": "0.002863",
+					"min": "0.000085",
+					"stddev": "0.000337",
+					"avg": "0.000286",
+					"pct_95": "0.000424",
+					"pct": "0.007770",
+					"max": "0.001262"
+				},
+				"Query_time": {
+					"min": "0.005828",
+					"median": "0.007922",
+					"sum": "0.079563",
+					"avg": "0.007956",
+					"stddev": "0.001505",
+					"pct": "0.007770",
+					"pct_95": "0.009629",
+					"max": "0.011076"
+				},
+				"user": {
+					"value": "root"
+				},
+				"Query_length": {
+					"avg": "39",
+					"stddev": "0",
+					"min": "39",
+					"sum": "390",
+					"median": "39",
+					"max": "39",
+					"pct": "0",
+					"pct_95": "39"
+				},
+				"Rows_sent": {
+					"stddev": "0",
+					"avg": "1000",
+					"median": "1000",
+					"sum": "10000",
+					"min": "1000",
+					"max": "1000",
+					"pct_95": "1000",
+					"pct": "0"
+				},
+				"db": {
+					"value": "sakila"
+				},
+				"Rows_examined": {
+					"median": "1000",
+					"sum": "10000",
+					"min": "1000",
+					"stddev": "0",
+					"avg": "1000",
+					"pct_95": "1000",
+					"pct": "0",
+					"max": "1000"
+				}
+			},
+			"example": {
+				"query": "SELECT * FROM sakila.film\nLIMIT 0, 1000",
+				"ts": "2018-07-31T12:26:07",
+				"Query_time": "0.011076"
+			},
+			"query_count": 10,
+			"distillate": "SELECT sakila.film",
+			"ts_min": "2018-07-31T05:41:10",
+			"checksum": "CE377CDE17444CEEB3366E04B55F7AC2",
+			"tables": [
+				{
+					"create": "SHOW CREATE TABLE `sakila`.`film`\\G",
+					"status": "SHOW TABLE STATUS FROM `sakila` LIKE 'film'\\G"
+				}
+			],
+			"attribute": "fingerprint",
+			"fingerprint": "select * from sakila.film limit ?",
+			"histograms": {
+				"Query_time": [
+					0,
+					0,
+					0,
+					8,
+					2,
+					0,
+					0,
+					0
+				]
+			}
+		},
+		{
+			"histograms": {
+				"Query_time": [
+					0,
+					0,
+					0,
+					7,
+					1,
+					0,
+					0,
+					0
+				]
+			},
+			"fingerprint": "select actor.first_name,actor.last_name,count(*) from film_actor inner join actor using(actor_id) group by actor_id limit ?",
+			"attribute": "fingerprint",
+			"tables": [
+				{
+					"status": "SHOW TABLE STATUS FROM `sakila` LIKE 'film_actor'\\G",
+					"create": "SHOW CREATE TABLE `sakila`.`film_actor`\\G"
+				},
+				{
+					"status": "SHOW TABLE STATUS FROM `sakila` LIKE 'actor'\\G",
+					"create": "SHOW CREATE TABLE `sakila`.`actor`\\G"
+				}
+			],
+			"checksum": "2F343AAA4775901EE5F36ABC99D5E678",
+			"ts_min": "2018-07-31T08:30:34",
+			"distillate": "SELECT film_actor actor",
+			"query_count": 8,
+			"metrics": {
+				"db": {
+					"value": "sakila"
+				},
+				"Rows_examined": {
+					"max": "10924",
+					"pct": "0",
+					"pct_95": "10924",
+					"avg": "10924",
+					"stddev": "0",
+					"min": "10924",
+					"sum": "87392",
+					"median": "10924"
+				},
+				"Rows_sent": {
+					"avg": "200",
+					"stddev": "0",
+					"min": "200",
+					"sum": "1600",
+					"median": "200",
+					"max": "200",
+					"pct": "0",
+					"pct_95": "200"
+				},
+				"Query_length": {
+					"sum": "1035",
+					"median": "124",
+					"min": "129",
+					"stddev": "0",
+					"avg": "129",
+					"pct_95": "124",
+					"pct": "0",
+					"max": "130"
+				},
+				"Query_time": {
+					"min": "0.002255",
+					"median": "0.003000",
+					"sum": "0.040615",
+					"avg": "0.005077",
+					"stddev": "0.005733",
+					"pct": "0.006216",
+					"pct_95": "0.020018",
+					"max": "0.020528"
+				},
+				"user": {
+					"value": "root"
+				},
+				"Lock_time": {
+					"avg": "0.000735",
+					"stddev": "0.001010",
+					"min": "0.000130",
+					"sum": "0.005883",
+					"median": "0.000449",
+					"max": "0.003432",
+					"pct": "0.006216",
+					"pct_95": "0.003292"
+				},
+				"host": {
+					"value": "localhost"
+				}
+			},
+			"example": {
+				"ts": "2018-07-31T08:30:34",
+				"Query_time": "0.020528",
+				"query": "SELECT actor.first_name,actor.last_name,COUNT(*)\nFROM film_actor\nINNER JOIN actor using(actor_id)\nGROUP BY actor_id\nLIMIT 0, 1000"
+			},
+			"ts_max": "2018-07-31T10:47:42"
+		},
+		{
+			"metrics": {
+				"Rows_examined": {
+					"stddev": "0",
+					"avg": "0",
+					"median": "0",
+					"sum": "0",
+					"min": "0",
+					"max": "0",
+					"pct_95": "0",
+					"pct": "0"
+				},
+				"db": {
+					"value": "sakila"
+				},
+				"Rows_sent": {
+					"stddev": "0",
+					"avg": "0",
+					"sum": "0",
+					"median": "0",
+					"min": "0",
+					"max": "0",
+					"pct_95": "0",
+					"pct": "0"
+				},
+				"Query_length": {
+					"min": "0",
+					"median": "0",
+					"sum": "0",
+					"avg": "0",
+					"stddev": "0",
+					"pct": "0",
+					"pct_95": "0",
+					"max": "0"
+				},
+				"Query_time": {
+					"stddev": "0.000747",
+					"avg": "0.000422",
+					"sum": "0.040088",
+					"median": "0.000214",
+					"min": "0.000117",
+					"max": "0.006160",
+					"pct_95": "0.001833",
+					"pct": "0.073815"
+				},
+				"user": {
+					"value": "root"
+				},
+				"Lock_time": {
+					"stddev": "0.000000",
+					"avg": "0.000000",
+					"median": "0.000000",
+					"sum": "0.000000",
+					"min": "0.000000",
+					"max": "0.000000",
+					"pct_95": "0.000000",
+					"pct": "0.073815"
+				},
+				"host": {
+					"value": "localhost"
+				}
+			},
+			"query_count": 95,
+			"example": {
+				"Query_time": "0.006160",
+				"ts": "2018-07-31T08:30:33",
+				"query": "/* No query */"
+			},
+			"ts_max": "2018-07-31T12:30:56",
+			"distillate": "",
+			"ts_min": "2018-07-31T03:04:12",
+			"fingerprint": "",
+			"attribute": "fingerprint",
+			"histograms": {
+				"Query_time": [
+					0,
+					0,
+					88,
+					7,
+					0,
+					0,
+					0,
+					0
+				]
+			},
+			"checksum": "D41D8CD98F00B204E9800998ECF8427E"
+		},
+		{
+			"tables": [
+				{
+					"status": "SHOW TABLE STATUS FROM `performance_schema` LIKE 'events_statements_current'\\G",
+					"create": "SHOW CREATE TABLE `performance_schema`.`events_statements_current`\\G"
+				},
+				{
+					"create": "SHOW CREATE TABLE `performance_schema`.`threads`\\G",
+					"status": "SHOW TABLE STATUS FROM `performance_schema` LIKE 'threads'\\G"
+				}
+			],
+			"checksum": "6B18859E0CFC8086C0F01DC5D4A2A982",
+			"fingerprint": "select st.* from performance_schema.events_statements_current st join performance_schema.threads thr on thr.thread_id = st.thread_id where thr.processlist_id = ?",
+			"attribute": "fingerprint",
+			"histograms": {
+				"Query_time": [
+					0,
+					0,
+					12,
+					7,
+					0,
+					0,
+					0,
+					0
+				]
+			},
+			"ts_min": "2018-07-31T02:08:31",
+			"distillate": "SELECT performance_schema.events_statements_current performance_schema.threads",
+			"ts_max": "2018-07-31T12:26:44",
+			"example": {
+				"Query_time": "0.006615",
+				"ts": "2018-07-31T10:47:42",
+				"query": "SELECT st.* FROM performance_schema.events_statements_current st JOIN performance_schema.threads thr ON thr.thread_id = st.thread_id WHERE thr.processlist_id = 27"
+			},
+			"metrics": {
+				"user": {
+					"value": "root"
+				},
+				"Query_time": {
+					"min": "0.000327",
+					"median": "0.000627",
+					"sum": "0.029951",
+					"avg": "0.001576",
+					"stddev": "0.001708",
+					"pct": "0.014763",
+					"pct_95": "0.004411",
+					"max": "0.006615"
+				},
+				"Lock_time": {
+					"pct": "0.014763",
+					"pct_95": "0.001583",
+					"max": "0.002899",
+					"min": "0.000108",
+					"median": "0.000210",
+					"sum": "0.009588",
+					"avg": "0.000505",
+					"stddev": "0.000651"
+				},
+				"host": {
+					"value": "localhost"
+				},
+				"Rows_examined": {
+					"pct": "0",
+					"pct_95": "2",
+					"max": "2",
+					"min": "2",
+					"median": "2",
+					"sum": "38",
+					"avg": "2",
+					"stddev": "0"
+				},
+				"db": {
+					"value": "sakila"
+				},
+				"Rows_sent": {
+					"min": "1",
+					"sum": "19",
+					"median": "1",
+					"avg": "1",
+					"stddev": "0",
+					"pct": "0",
+					"pct_95": "1",
+					"max": "1"
+				},
+				"Query_length": {
+					"pct": "0",
+					"pct_95": "162",
+					"max": "162",
+					"min": "162",
+					"median": "162",
+					"sum": "3078",
+					"avg": "162",
+					"stddev": "0"
+				}
+			},
+			"query_count": 19
+		},
+		{
+			"ts_max": "2018-07-31T12:00:20",
+			"example": {
+				"ts": "2018-07-31T12:00:20",
+				"Query_time": "0.025527",
+				"query": "select `constraint_name`, `constraint_schema`, `table_name`, `column_name`, `referenced_table_schema`, `referenced_table_name`, `referenced_column_name`                     FROM information_schema.KEY_COLUMN_USAGE                     WHERE ((REFERENCED_TABLE_SCHEMA = 'sakila' AND referenced_table_name = 'film') OR (TABLE_SCHEMA='sakila' and table_name = 'film')) AND                     REFERENCED_TABLE_NAME is not null ORDER BY TABLE_NAME, COLUMN_NAME"
+			},
+			"metrics": {
+				"Rows_sent": {
+					"pct": "0",
+					"pct_95": "5",
+					"max": "5",
+					"min": "5",
+					"sum": "5",
+					"median": "5",
+					"avg": "5",
+					"stddev": "0"
+				},
+				"Query_length": {
+					"max": "455",
+					"pct": "0",
+					"pct_95": "455",
+					"avg": "455",
+					"stddev": "0",
+					"min": "455",
+					"median": "455",
+					"sum": "455"
+				},
+				"db": {
+					"value": "sakila"
+				},
+				"Rows_examined": {
+					"max": "4790",
+					"pct": "0",
+					"pct_95": "4790",
+					"avg": "4790",
+					"stddev": "0",
+					"min": "4790",
+					"median": "4790",
+					"sum": "4790"
+				},
+				"Lock_time": {
+					"pct": "0.000777",
+					"pct_95": "0.004316",
+					"max": "0.004316",
+					"min": "0.004316",
+					"median": "0.004316",
+					"sum": "0.004316",
+					"avg": "0.004316",
+					"stddev": "0.000000"
+				},
+				"host": {
+					"value": "localhost"
+				},
+				"user": {
+					"value": "root"
+				},
+				"Query_time": {
+					"avg": "0.025527",
+					"stddev": "0.000000",
+					"min": "0.025527",
+					"median": "0.025527",
+					"sum": "0.025527",
+					"max": "0.025527",
+					"pct": "0.000777",
+					"pct_95": "0.025527"
+				}
+			},
+			"query_count": 1,
+			"distillate": "SELECT information_schema.KEY_COLUMN_USAGE",
+			"ts_min": "2018-07-31T12:00:20",
+			"tables": [
+				{
+					"status": "SHOW TABLE STATUS FROM `information_schema` LIKE 'KEY_COLUMN_USAGE'\\G",
+					"create": "SHOW CREATE TABLE `information_schema`.`KEY_COLUMN_USAGE`\\G"
+				}
+			],
+			"checksum": "FFF8916037F4F7BF3C332EAC8DB54FD3",
+			"histograms": {
+				"Query_time": [
+					0,
+					0,
+					0,
+					0,
+					1,
+					0,
+					0,
+					0
+				]
+			},
+			"attribute": "fingerprint",
+			"fingerprint": "select `constraint_name`, `constraint_schema`, `table_name`, `column_name`, `referenced_table_schema`, `referenced_table_name`, `referenced_column_name` from information_schema.key_column_usage where ((referenced_table_schema = ? and referenced_table_name = ?) or (table_schema=? and table_name = ?)) and referenced_table_name is not ? order by table_name, column_name"
+		},
+		{
+			"example": {
+				"query": "SELECT DATABASE()",
+				"ts": "2018-07-31T03:30:20",
+				"Query_time": "0.002904"
+			},
+			"metrics": {
+				"host": {
+					"value": "localhost"
+				},
+				"Lock_time": {
+					"median": "0.000000",
+					"sum": "0.000000",
+					"min": "0.000000",
+					"stddev": "0.000000",
+					"avg": "0.000000",
+					"pct_95": "0.000000",
+					"pct": "0.074592",
+					"max": "0.000000"
+				},
+				"user": {
+					"value": "root"
+				},
+				"Query_time": {
+					"max": "0.002904",
+					"pct_95": "0.000762",
+					"pct": "0.074592",
+					"stddev": "0.000496",
+					"avg": "0.000251",
+					"sum": "0.024083",
+					"median": "0.000093",
+					"min": "0.000056"
+				},
+				"Query_length": {
+					"pct": "0",
+					"pct_95": "17",
+					"max": "17",
+					"min": "17",
+					"median": "17",
+					"sum": "1632",
+					"avg": "17",
+					"stddev": "0"
+				},
+				"Rows_sent": {
+					"sum": "96",
+					"median": "1",
+					"min": "1",
+					"stddev": "0",
+					"avg": "1",
+					"pct_95": "1",
+					"pct": "0",
+					"max": "1"
+				},
+				"Rows_examined": {
+					"max": "0",
+					"pct": "0",
+					"pct_95": "0",
+					"avg": "0",
+					"stddev": "0",
+					"min": "0",
+					"sum": "0",
+					"median": "0"
+				},
+				"db": {
+					"value": "sakila"
+				}
+			},
+			"query_count": 96,
+			"ts_max": "2018-07-31T12:30:56",
+			"attribute": "fingerprint",
+			"fingerprint": "select database()",
+			"histograms": {
+				"Query_time": [
+					0,
+					54,
+					37,
+					5,
+					0,
+					0,
+					0,
+					0
+				]
+			},
+			"checksum": "A11944C87A6A5C16FB38455BF7035609",
+			"ts_min": "2018-07-31T03:04:12",
+			"distillate": "SELECT"
+		},
+		{
+			"tables": [
+				{
+					"status": "SHOW TABLE STATUS FROM `sakila` LIKE 'customer'\\G",
+					"create": "SHOW CREATE TABLE `sakila`.`customer`\\G"
+				}
+			],
+			"checksum": "74351E3CD0F76A24E87024354D6EE3BB",
+			"histograms": {
+				"Query_time": [
+					0,
+					0,
+					0,
+					4,
+					1,
+					0,
+					0,
+					0
+				]
+			},
+			"fingerprint": "show full columns from `sakila`.`customer`",
+			"attribute": "fingerprint",
+			"ts_min": "2018-07-31T03:04:12",
+			"distillate": "SHOW COLUMNS",
+			"ts_max": "2018-07-31T12:26:40",
+			"metrics": {
+				"Rows_examined": {
+					"stddev": "0",
+					"avg": "50",
+					"sum": "250",
+					"median": "50",
+					"min": "50",
+					"max": "50",
+					"pct_95": "50",
+					"pct": "0"
+				},
+				"db": {
+					"value": "sakila"
+				},
+				"Rows_sent": {
+					"avg": "9",
+					"stddev": "0",
+					"min": "9",
+					"median": "9",
+					"sum": "45",
+					"max": "9",
+					"pct": "0",
+					"pct_95": "9"
+				},
+				"Query_length": {
+					"avg": "42",
+					"stddev": "0",
+					"min": "42",
+					"sum": "210",
+					"median": "42",
+					"max": "42",
+					"pct": "0",
+					"pct_95": "42"
+				},
+				"Query_time": {
+					"stddev": "0.005202",
+					"avg": "0.004803",
+					"median": "0.002122",
+					"sum": "0.024013",
+					"min": "0.001290",
+					"max": "0.015213",
+					"pct_95": "0.014938",
+					"pct": "0.003885"
+				},
+				"user": {
+					"value": "root"
+				},
+				"Lock_time": {
+					"stddev": "0.001792",
+					"avg": "0.002115",
+					"sum": "0.010574",
+					"median": "0.001072",
+					"min": "0.000655",
+					"max": "0.005565",
+					"pct_95": "0.005362",
+					"pct": "0.003885"
+				},
+				"host": {
+					"value": "localhost"
+				}
+			},
+			"example": {
+				"Query_time": "0.015213",
+				"ts": "2018-07-31T09:22:45",
+				"query": "SHOW FULL COLUMNS FROM `sakila`.`customer`"
+			},
+			"query_count": 5
+		},
+		{
+			"histograms": {
+				"Query_time": [
+					0,
+					430,
+					26,
+					1,
+					0,
+					0,
+					0,
+					0
+				]
+			},
+			"attribute": "fingerprint",
+			"fingerprint": "administrator command: Ping",
+			"checksum": "E8390778DC20D4CC04FE01C5B31FD305",
+			"distillate": "ADMIN PING",
+			"ts_min": "2018-07-31T02:08:31",
+			"example": {
+				"Query_time": "0.000988",
+				"ts": "2018-07-31T02:54:59",
+				"query": "administrator command: Ping"
+			},
+			"metrics": {
+				"Rows_sent": {
+					"pct": "0",
+					"pct_95": "0",
+					"max": "0",
+					"min": "0",
+					"sum": "0",
+					"median": "0",
+					"avg": "0",
+					"stddev": "0"
+				},
+				"Query_length": {
+					"avg": "27",
+					"stddev": "0",
+					"min": "27",
+					"median": "27",
+					"sum": "12339",
+					"max": "27",
+					"pct": "0",
+					"pct_95": "27"
+				},
+				"db": {
+					"value": "sakila"
+				},
+				"Rows_examined": {
+					"median": "0",
+					"sum": "0",
+					"min": "0",
+					"stddev": "0",
+					"avg": "0",
+					"pct_95": "0",
+					"pct": "0",
+					"max": "0"
+				},
+				"Lock_time": {
+					"pct_95": "0.000000",
+					"pct": "0.355089",
+					"max": "0.000000",
+					"sum": "0.000000",
+					"median": "0.000000",
+					"min": "0.000000",
+					"stddev": "0.000000",
+					"avg": "0.000000"
+				},
+				"host": {
+					"value": "localhost"
+				},
+				"user": {
+					"value": "root"
+				},
+				"Query_time": {
+					"min": "0.000014",
+					"median": "0.000034",
+					"sum": "0.021789",
+					"avg": "0.000048",
+					"stddev": "0.000058",
+					"pct": "0.355089",
+					"pct_95": "0.000103",
+					"max": "0.000988"
+				}
+			},
+			"query_count": 457,
+			"ts_max": "2018-07-31T12:46:33"
+		},
+		{
+			"distillate": "SHOW STATUS",
+			"ts_min": "2018-07-31T12:26:38",
+			"checksum": "0C9C70920DA7300E0B14E77CA2C09D3E",
+			"histograms": {
+				"Query_time": [
+					0,
+					0,
+					0,
+					1,
+					1,
+					0,
+					0,
+					0
+				]
+			},
+			"fingerprint": "show session status like ?",
+			"attribute": "fingerprint",
+			"ts_max": "2018-07-31T12:26:38",
+			"example": {
+				"query": "SHOW SESSION STATUS LIKE 'Ssl_cipher'",
+				"Query_time": "0.014270",
+				"ts": "2018-07-31T12:26:38"
+			},
+			"metrics": {
+				"Lock_time": {
+					"stddev": "0.001295",
+					"avg": "0.001738",
+					"median": "0.001738",
+					"sum": "0.003476",
+					"min": "0.000822",
+					"max": "0.002654",
+					"pct_95": "0.002654",
+					"pct": "0.001554"
+				},
+				"host": {
+					"value": "localhost"
+				},
+				"Query_time": {
+					"pct_95": "0.014270",
+					"pct": "0.001554",
+					"max": "0.014270",
+					"sum": "0.019987",
+					"median": "0.009993",
+					"min": "0.005717",
+					"stddev": "0.006048",
+					"avg": "0.009993"
+				},
+				"user": {
+					"value": "root"
+				},
+				"Rows_sent": {
+					"stddev": "0",
+					"avg": "1",
+					"sum": "2",
+					"median": "1",
+					"min": "1",
+					"max": "1",
+					"pct_95": "1",
+					"pct": "0"
+				},
+				"Query_length": {
+					"max": "37",
+					"pct_95": "37",
+					"pct": "0",
+					"stddev": "0",
+					"avg": "37",
+					"median": "37",
+					"sum": "74",
+					"min": "37"
+				},
+				"db": {
+					"value": "sakila"
+				},
+				"Rows_examined": {
+					"max": "862",
+					"pct_95": "862",
+					"pct": "0",
+					"stddev": "0",
+					"avg": "862",
+					"sum": "1724",
+					"median": "862",
+					"min": "862"
+				}
+			},
+			"query_count": 2
+		},
+		{
+			"metrics": {
+				"user": {
+					"value": "root"
+				},
+				"Query_time": {
+					"max": "0.009575",
+					"pct": "0.002331",
+					"pct_95": "0.009171",
+					"avg": "0.006621",
+					"stddev": "0.002061",
+					"min": "0.004313",
+					"sum": "0.019863",
+					"median": "0.005911"
+				},
+				"host": {
+					"value": "localhost"
+				},
+				"Lock_time": {
+					"pct_95": "0.005107",
+					"pct": "0.002331",
+					"max": "0.005127",
+					"sum": "0.009748",
+					"median": "0.002339",
+					"min": "0.002248",
+					"stddev": "0.001331",
+					"avg": "0.003249"
+				},
+				"Rows_examined": {
+					"max": "29",
+					"pct_95": "29",
+					"pct": "0",
+					"stddev": "0",
+					"avg": "29",
+					"median": "29",
+					"sum": "87",
+					"min": "29"
+				},
+				"db": {
+					"value": "sakila"
+				},
+				"Query_length": {
+					"pct_95": "39",
+					"pct": "0",
+					"max": "39",
+					"median": "39",
+					"sum": "117",
+					"min": "39",
+					"stddev": "0",
+					"avg": "39"
+				},
+				"Rows_sent": {
+					"min": "3",
+					"sum": "9",
+					"median": "3",
+					"avg": "3",
+					"stddev": "0",
+					"pct": "0",
+					"pct_95": "3",
+					"max": "3"
+				}
+			},
+			"query_count": 3,
+			"example": {
+				"ts": "2018-07-31T09:25:18",
+				"Query_time": "0.009575",
+				"query": "SHOW PROCEDURE STATUS WHERE Db='sakila'"
+			},
+			"ts_max": "2018-07-31T12:26:40",
+			"ts_min": "2018-07-31T03:04:12",
+			"distillate": "SHOW PROCEDURE STATUS",
+			"histograms": {
+				"Query_time": [
+					0,
+					0,
+					0,
+					3,
+					0,
+					0,
+					0,
+					0
+				]
+			},
+			"fingerprint": "show procedure status where db=?",
+			"attribute": "fingerprint",
+			"checksum": "507A8C3C929392C00CD32C60BE1E87EA"
+		},
+		{
+			"checksum": "5E0CB4EFB556B4CFC832889DFEA6BC57",
+			"tables": [
+				{
+					"status": "SHOW TABLE STATUS FROM `sakila` LIKE 'actor'\\G",
+					"create": "SHOW CREATE TABLE `sakila`.`actor`\\G"
+				},
+				{
+					"status": "SHOW TABLE STATUS FROM `sakila` LIKE 'film_actor'\\G",
+					"create": "SHOW CREATE TABLE `sakila`.`film_actor`\\G"
+				}
+			],
+			"attribute": "fingerprint",
+			"fingerprint": "select actor.first_name,actor.last_name,count(*) from actor inner join film_actor using(actor_id) group by actor_id limit ?",
+			"histograms": {
+				"Query_time": [
+					0,
+					0,
+					0,
+					5,
+					0,
+					0,
+					0,
+					0
+				]
+			},
+			"distillate": "SELECT actor film_actor",
+			"ts_min": "2018-07-31T10:38:37",
+			"ts_max": "2018-07-31T10:56:49",
+			"metrics": {
+				"db": {
+					"value": "sakila"
+				},
+				"Rows_examined": {
+					"max": "5662",
+					"pct": "0",
+					"pct_95": "5662",
+					"avg": "5662",
+					"stddev": "0",
+					"min": "5662",
+					"median": "5662",
+					"sum": "28310"
+				},
+				"Rows_sent": {
+					"max": "200",
+					"pct_95": "200",
+					"pct": "0",
+					"stddev": "0",
+					"avg": "200",
+					"median": "200",
+					"sum": "1000",
+					"min": "200"
+				},
+				"Query_length": {
+					"pct_95": "129",
+					"pct": "0",
+					"max": "129",
+					"median": "129",
+					"sum": "645",
+					"min": "129",
+					"stddev": "0",
+					"avg": "129"
+				},
+				"Query_time": {
+					"stddev": "0.002732",
+					"avg": "0.003936",
+					"median": "0.002228",
+					"sum": "0.019682",
+					"min": "0.002037",
+					"max": "0.009497",
+					"pct_95": "0.009171",
+					"pct": "0.003885"
+				},
+				"user": {
+					"value": "root"
+				},
+				"Lock_time": {
+					"max": "0.000900",
+					"pct_95": "0.000882",
+					"pct": "0.003885",
+					"stddev": "0.000302",
+					"avg": "0.000450",
+					"sum": "0.002250",
+					"median": "0.000273",
+					"min": "0.000165"
+				},
+				"host": {
+					"value": "localhost"
+				}
+			},
+			"example": {
+				"query": "SELECT actor.first_name,actor.last_name,COUNT(*)\nFROM actor\nINNER JOIN film_actor using(actor_id)\nGROUP BY actor_id\nLIMIT 0, 1000",
+				"Query_time": "0.009497",
+				"ts": "2018-07-31T10:38:37"
+			},
+			"query_count": 5
+		},
+		{
+			"fingerprint": "show full tables from `sakila`",
+			"attribute": "fingerprint",
+			"histograms": {
+				"Query_time": [
+					0,
+					0,
+					0,
+					2,
+					1,
+					0,
+					0,
+					0
+				]
+			},
+			"tables": [
+				{
+					"create": "SHOW CREATE TABLE `sakila`.`sakila`\\G",
+					"status": "SHOW TABLE STATUS FROM `sakila` LIKE 'sakila'\\G"
+				}
+			],
+			"checksum": "ABBC867F2947446F00A7202A612A2B9B",
+			"distillate": "SHOW TABLES",
+			"ts_min": "2018-07-31T03:04:12",
+			"metrics": {
+				"Rows_examined": {
+					"stddev": "0",
+					"avg": "151",
+					"sum": "453",
+					"median": "151",
+					"min": "151",
+					"max": "151",
+					"pct_95": "151",
+					"pct": "0"
+				},
+				"db": {
+					"value": "sakila"
+				},
+				"Query_length": {
+					"stddev": "0",
+					"avg": "30",
+					"median": "30",
+					"sum": "90",
+					"min": "30",
+					"max": "30",
+					"pct_95": "30",
+					"pct": "0"
+				},
+				"Rows_sent": {
+					"stddev": "0",
+					"avg": "23",
+					"sum": "69",
+					"median": "23",
+					"min": "23",
+					"max": "23",
+					"pct_95": "23",
+					"pct": "0"
+				},
+				"Query_time": {
+					"stddev": "0.003176",
+					"avg": "0.006459",
+					"median": "0.006517",
+					"sum": "0.019378",
+					"min": "0.002372",
+					"max": "0.010473",
+					"pct_95": "0.010111",
+					"pct": "0.002331"
+				},
+				"user": {
+					"value": "root"
+				},
+				"host": {
+					"value": "localhost"
+				},
+				"Lock_time": {
+					"max": "0.008574",
+					"pct_95": "0.008318",
+					"pct": "0.002331",
+					"stddev": "0.002696",
+					"avg": "0.004813",
+					"sum": "0.014438",
+					"median": "0.004001",
+					"min": "0.001845"
+				}
+			},
+			"example": {
+				"query": "SHOW FULL TABLES FROM `sakila`",
+				"ts": "2018-07-31T09:25:18",
+				"Query_time": "0.010473"
+			},
+			"query_count": 3,
+			"ts_max": "2018-07-31T12:26:40"
+		}
+	]
+}

@@ -169,7 +169,7 @@ System.err|PrintStream|标准错误流
 
 System类提供了3个方法进行标准IO重定向，即setIn(InputStream),setOut(PrintStream),setErr(PrintStream)。
 
-但要注意，使用完标准IO重定向一定要重定向回来。==
+但要注意，使用完标准IO重定向一定要重定向回来。
 
 ### 9. nio
 
