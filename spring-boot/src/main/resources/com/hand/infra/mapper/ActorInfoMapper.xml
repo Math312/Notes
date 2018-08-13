@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hand.infra.mapper.ActorInfoMapper">
+  <resultMap id="BaseResultMap" type="com.hand.domain.entity.ActorInfo">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="actor_id" jdbcType="SMALLINT" property="actorId" />
+    <result column="first_name" jdbcType="VARCHAR" property="firstName" />
+    <result column="last_name" jdbcType="VARCHAR" property="lastName" />
+    <result column="film_info" jdbcType="LONGVARCHAR" property="filmInfo" />
+  </resultMap>
+</mapper>

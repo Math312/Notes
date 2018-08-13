@@ -214,3 +214,65 @@ count(object_id):
 
     讹传：表的where过滤是从后往前来的，因此要把能尽量过滤多的数据的条件放在后面。
 
+我们模拟这种情况，创建如下数据库：
+
+    drop table t1 purge;
+    drop table t2 purge;
+    create table t1 as select * from dba_objects;
+    create table t2 as select rownum id ,dbms_random.string('b', 50) n ,data_object_id data_id from dba_objects where rownum<=10000;
+
+我们首先将数据筛选条件不等条件放在后面，等于条件放在左边：
+
+    select  * from t1,t2 where t1.object_id=29 and t2.data_id>8
+
+执行计划如下：
+
+![条件顺序影响效率1](images/条件顺序影响效率1.png)
+
+下面我们将条件调换位置：
+
+    select  * from t1,t2 where t2.data_id>8 and t1.object_id=29 
+
+执行计划如下：
+
+![条件顺序影响效率2](images/条件顺序影响效率2.png)
+
+看见没，就没nei事儿，其实以前是有的，但是被SQL优化器优化了，就没这事了。
+
+结论：
+
+`并没有什么条件顺序不同就就会导致效率不同的事情`
+
+#### 4. 表的连接顺序与效率有关
+
+    讹传：表的连接顺序与查询效率有关，小表放后面，大表放前面。
+
+我们考虑如下情况：
+
+    drop table tab_big;
+    drop table tab_small;
+    create table tab_big  as select * from dba_objects where rownum<=30000;
+    create table tab_small  as select * from dba_objects where rownum<=10;
+
+然后我们对这两个表，按照特定顺序进行连接：
+
+    select count(*) from tab_big,tab_small   ;  
+    select count(*) from tab_small,tab_big   ;
+
+执行计划如下：
+
+![连接顺序影响效率1](images/连接顺序影响效率1.png)
+
+![连接顺序影响效率2](images/连接顺序影响效率2.png)
+
+没错，就是两个一模一样，所以，没必要考虑那么多啦，SQL优化器已经给你优化好了。
+
+## 2. 不具备少做事的意识
+
+### 1. 分区
+
+
+
+#### 1.分区删除
+
+#### 2.分区查询

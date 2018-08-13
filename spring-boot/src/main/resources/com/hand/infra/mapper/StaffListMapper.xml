@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hand.infra.mapper.StaffListMapper">
+  <resultMap id="BaseResultMap" type="com.hand.domain.entity.StaffList">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="ID" jdbcType="TINYINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="zip code" jdbcType="VARCHAR" property="zipCode" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="city" jdbcType="VARCHAR" property="city" />
+    <result column="country" jdbcType="VARCHAR" property="country" />
+    <result column="SID" jdbcType="TINYINT" property="sid" />
+  </resultMap>
+</mapper>

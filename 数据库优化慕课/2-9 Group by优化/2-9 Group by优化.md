@@ -26,7 +26,7 @@
 
 ### 1. 消除临时表
 
-参考(https://www.cnblogs.com/jevo/p/3262227.html)得知，mysql中临时表的创建条件如下：
+参考(https://www.cnblogs.com/jevo/p/3262227.html) 得知，mysql中临时表的创建条件如下：
 1. group by 和 order by中的列不相同
 2. order by的列不是引用from 表列表中 的第一表
 3. group by的列不是引用from 表列表中 的第一表
