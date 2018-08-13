@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hand.infra.mapper.SalesByFilmCategoryMapper">
+  <resultMap id="BaseResultMap" type="com.hand.domain.entity.SalesByFilmCategory">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="category" jdbcType="VARCHAR" property="category" />
+    <result column="total_sales" jdbcType="DECIMAL" property="totalSales" />
+  </resultMap>
+</mapper>

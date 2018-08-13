@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hand.infra.mapper.AddressMapper">
+  <resultMap id="BaseResultMap" type="com.hand.domain.entity.Address">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="address_id" jdbcType="SMALLINT" property="addressId" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="address2" jdbcType="VARCHAR" property="address2" />
+    <result column="district" jdbcType="VARCHAR" property="district" />
+    <result column="city_id" jdbcType="SMALLINT" property="cityId" />
+    <result column="postal_code" jdbcType="VARCHAR" property="postalCode" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="last_update" jdbcType="TIMESTAMP" property="lastUpdate" />
+    <result column="location" jdbcType="BINARY" property="location" />
+  </resultMap>
+</mapper>
