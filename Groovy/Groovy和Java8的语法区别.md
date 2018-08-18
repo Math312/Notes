@@ -18,15 +18,17 @@
 
  10. Groovy 可以使用 Java I/O 的所有类，除此之外还有 I/O 操作的快捷方式：
 
-    * 对文件进行逐行处理：
+  * 对文件进行逐行处理：
 
-        // java.io.File
-        new File(filepath).eachLine {
-            line -> processLine(line);
-        };
-    
-    * 获取文件的整个文本：
-        
-        // java.io.File
-        new File(filepath).text
+    ```
+    // java.io.File
+    new File(filepath).eachLine {
+        line -> processLine(line);
+    };
+    ```
+  * 获取文件的整个文本：
+    ```    
+    // java.io.File
+    new File(filepath).text
+    ```
         
