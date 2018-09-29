@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>hystrix.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: "Segoe WPC", "Segoe UI", "SFUIText-Light", "HelveticaNeue-Light", sans-serif, "Droid Sans Fallback";
+	font-size: 14px;
+	padding: 0 12px;
+	line-height: 22px;
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	color: #4080D0;
+	text-decoration: none;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+h1 code,
+h2 code,
+h3 code,
+h4 code,
+h5 code,
+h6 code {
+	font-size: inherit;
+	line-height: auto;
+}
+
+a:hover {
+	color: #4080D0;
+	text-decoration: underline;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left: 5px solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 14px;
+	line-height: 19px;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+.mac code {
+	font-size: 12px;
+	line-height: 18px;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+/** Theming */
+
+.vscode-light,
+.vscode-light pre code {
+	color: rgb(30, 30, 30);
+}
+
+.vscode-dark,
+.vscode-dark pre code {
+	color: #DDD;
+}
+
+.vscode-high-contrast,
+.vscode-high-contrast pre code {
+	color: white;
+}
+
+.vscode-light code {
+	color: #A31515;
+}
+
+.vscode-dark code {
+	color: #D7BA7D;
+}
+
+.vscode-light pre:not(.hljs),
+.vscode-light code > div {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre:not(.hljs),
+.vscode-dark code > div {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre:not(.hljs),
+.vscode-high-contrast code > div {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+.vscode-light blockquote,
+.vscode-dark blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.vscode-high-contrast blockquote {
+	background: transparent;
+	border-color: #fff;
+}
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family:  "Meiryo", "Segoe WPC", "Segoe UI", "SFUIText-Light", "HelveticaNeue-Light", sans-serif, "Droid Sans Fallback";
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+</head>
+<body>
+<h1 id="hystrix">Hystrix</h1>
+<h2 id="%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B">工作流程</h2>
+<p><img src="images/Hystrix运行过程.png" alt="Hystrix工作流程"></p>
+<p>上图描述了Hystrix的工作流程，下面我们对其进行进一步的解释：</p>
+<h3 id="1-%E5%88%9B%E5%BB%BAhystrixcommand%E6%88%96%E8%80%85hystrixobservablecommand%E5%AF%B9%E8%B1%A1">1. 创建HystrixCommand或者HystrixObservableCommand对象</h3>
+<p>构建HystrixCommand和HystrixObservableCommand对象，用于表示对依赖服务的请求操作，同时传递所有需要的参数。而两者的区别如下：</p>
+<ul>
+<li>HystrixCommand:用在依赖的服务返回单个操作结果的时候。</li>
+<li>HystrixObservableCommand:用在依赖的服务返回多个结果的时候。</li>
+</ul>
+<h3 id="2-%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C">2. 命令执行</h3>
+<p>根据图中我们看到，总共具有4中执行方式，大图如下：</p>
+<p><img src="images/Hystrix运行过程2.png" alt="Hystrix运行过程2"></p>
+<p>我们可以看到HystrixCommand具有execute()和queue()方法，HystrixObservableCommand具有observe()和toObservable()方法。</p>
+<p>下面我们对其进行详细的描述：</p>
+<ul>
+<li>execute():同步执行，从依赖的服务返回单一的结果对象，或是在发生错误时抛出异常。</li>
+<li>queue():异步执行，直接返回一个Future对象，其中包含了服务执行结束时要返回的单一对象。</li>
+<li>observe():返回Observable对象，它代表了操作的多个结果，它是一个Hot Observable。</li>
+<li>toObservable():同样返回Observable对象，代表了操作的多个结果，返回到是一个Cold Observable。</li>
+</ul>
+<p>事实上所有的的执行逻辑都依赖于toObservable()方法。</p>
+<h3 id="3-%E7%BB%93%E6%9E%9C%E6%98%AF%E5%90%A6%E8%A2%AB%E7%BC%93%E5%AD%98">3. 结果是否被缓存</h3>
+<p>注意，从这里开始是execute()、queue()和observe()、toObservable()的执行逻辑。</p>
+<p><img src="images/Hystrix运行过程3.png" alt="Hystrix运行过程3"></p>
+<p>若当前命令的请求缓存功能是启用的，并且该命令缓存命中，缓存的结果会立刻以Observable对象的形式返回。</p>
+<h3 id="4-%E6%96%AD%E8%B7%AF%E5%99%A8%E6%98%AF%E5%90%A6%E6%89%93%E5%BC%80">4. 断路器是否打开</h3>
+<p><img src="images/Hystrix运行过程4.png" alt="Hystrix运行过程4"></p>
+<p>在命令结果没有缓存命中的时候，Hystrix在执行命令前就要检查断路器是否是打开状态。</p>
+<p>可以看到，如果断路器是打开的就跳到第八步，否则跳到第五步。</p>
+<h3 id="5-%E7%BA%BF%E7%A8%8B%E6%B1%A0%E4%BF%A1%E5%8F%B7%E9%87%8F%E8%AF%B7%E6%B1%82%E9%98%9F%E5%88%97%E6%98%AF%E5%90%A6%E5%8D%A0%E6%BB%A1">5. 线程池/信号量/请求队列是否占满</h3>
+<p><img src="images/Hystrix运行过程5.png" alt="Hystrix运行过程5"></p>
+<p>如果与命令相关的线程池和请求队列，或者信号量已经被占满，那么会执行第八步。</p>
+<p>需要注意的是，这里Hystrix所判断的线程并非容器的线程池，而是每个依赖服务的专有线程池。Hystrix为了保证不会因为某个依赖服务的问题影响到其他依赖服务而采用“舱壁模式”来隔离每个依赖服务。</p>
+<h3 id="6-hystrixobservablecommandconstruct%E6%88%96hystrixcommandrun">6. HystrixObservableCommand.construct()或HystrixCommand.run()</h3>
+<p>Hystrix会根据我们编写的方法来决定采用什么样的方式去请求依赖服务。</p>
+<ul>
+<li>HystrixCommand.run(): 返回单一结果，或抛出异常。</li>
+<li>HystrixObservableCommand.construct():返回一个Observable对象来发射多个结果，或通过onError来发送错误通知。</li>
+</ul>
+<p><img src="images/Hystrix运行过程6.png" alt="Hystrix运行过程6"></p>
+<p>如果上述两个方法执行失败或者执行超时，则跳到第八步，否则返回Observable对象。</p>
+<h3 id="7-%E8%AE%A1%E7%AE%97%E6%96%AD%E8%B7%AF%E5%99%A8%E7%9A%84%E5%81%A5%E5%BA%B7%E5%BA%A6">7. 计算断路器的健康度</h3>
+<p><img src="images/Hystrix运行过程7.png" alt="Hystrix运行过程7"></p>
+<p>如图，我们看到Hystrix会将&quot;成功“、”失败“、”拒绝“、”超时“等信息报告给断路器，而断路器会维护一组计数器来统计这些数据。</p>
+<p>断路器通过这些统计数据来判断断路器是否打开，来对某个服务进行”熔断/短路“,直到恢复期结束。若在恢复期结束后，该服务仍未达到健康指标，则再次”熔断/短路“。</p>
+<h3 id="8-fallback%E5%A4%84%E7%90%86">8. fallback处理</h3>
+<p><img src="images/Hystrix运行过程8.png" alt="Hystrix运行过程8"></p>
+<p>根据上文所述，有3种情况会交给fallback处理，这种处理我们也称其为”降级服务“，三种情况分别为：</p>
+<ol>
+<li>第四步，当前命令处于断路/熔断状态，断路器被打开的时候。</li>
+<li>第五步，当前线程池、请求队列、信号量被占满的时候。</li>
+<li>第六步，HystrixObservableCommand.construct()或HystrixCommand.run()抛出异常的时候。</li>
+</ol>
+<p>需要注意的是，在服务降级逻辑中，实现的逻辑应该是一个通用的结果，并且不要依赖于网络。如果一定要包含网络请求，那么该请求也应该被包含在HystrixObservableCommand或者HystrixCommand中，从而形成级联的降级策略，但是需要注意，最终的降级策略，仍然需要不依赖于网络。</p>
+<p>事实上，HystrixObservableCommand执行降级策略，执行的函数与HystrixCommand还有明显不同：</p>
+<ol>
+<li>HystrixObservableCommand执行的方法是resumeWithFallback()实现降级逻辑，并且返回一个包含有多个返回结果的Observable对象。</li>
+<li>HystrixCommand执行的方法是getFallback()方法，返回一个Observable对象，发射getFallback()的处理结果。</li>
+</ol>
+<p>如果，我们没有为命令实现降级逻辑或者降级处理逻辑中出现了异常，那么Hystrix仍然会返回一个Observable对象，但是不会发送任何数据，而是通过onError方法通知请求中断。</p>
+<p>当降级策略失败时,Hystrix会根据不同的时间方法做出不同的处理:</p>
+<ul>
+<li>execute():抛出异常；</li>
+<li>queue():正常返回Future对象，但是调用get()方法时会抛出异常。</li>
+<li>observe():正常返回Observable对象，当订阅它时,将立即通过调用订阅者的onError方法来终止请求。</li>
+<li>toOberverable():正常返回Observable对象，当订阅它的时候，将通过onError方法终止请求。</li>
+</ul>
+<h3 id="9-%E8%BF%94%E5%9B%9E%E6%88%90%E5%8A%9F%E7%9A%84%E5%93%8D%E5%BA%94">9. 返回成功的响应</h3>
+<p><img src="images/Hystrix运行过程9.png" alt="Hystrix运行过程9"></p>
+<ul>
+<li>toObservable():返回最原始的Observable，必须通过订阅它才会触发命令的执行流程。</li>
+<li>observe():在toObservable()产生Observable之后立即订阅它，让命令能马上开始异步执行，并返回一个Observable对象，当调用它的subscribe时，将重新产生结果和通知给订阅者。</li>
+<li>queue():将toObservable()产生的原始Observable通过toBlocking()方法转化成BlockingObservable对象，并调用它的toFuture()方法返回异步的Future对象。</li>
+<li>execute()：在queue()产生异步结果Future对象之后，通过get()方法阻塞并等待结果的返回。</li>
+</ul>
+<h2 id="%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90">源码分析</h2>
+<h3 id="hystrixcircuitbreaker">HystrixCircuitBreaker</h3>
+<p>顾名思义，该类描述的就是断路器，考察源码可知，该类是一个接口，需要实现如下方法：</p>
+<ol>
+<li>boolean allowRequest():每个Hystrix命令都通过该接口的判断是否执行。</li>
+<li>boolean isOpen():返回当前断路器是否打开。</li>
+<li>boolean markSuccess():关闭断路器。</li>
+</ol>
+<p>并且接口中还有三个类：</p>
+<ol>
+<li>Factory:该类维护了一个ConcurrentHashMap&lt;String,HystrixCircuitBreaker&gt;类型的列表，用于表述一个Hystrix命令和HystrixCircuitBreaker的关系。</li>
+<li>NoOpCircuitBreaker:该类定义了一个什么都不做的HystrixCircuitBreaker，允许所有请求，断路器状态始终闭合。</li>
+<li>HystrixCircuitBreakerImpl:该类包含了4个对象：</li>
+</ol>
+<ul>
+<li>HystrixCommandProperties properties:断路器对应HystrixCommand实例的属性对象。</li>
+<li>HystrixCommandMetrics metrics:用来让HystrixCommand记录各类度量指标的对象。</li>
+<li>AtomicBoolean circuitOpen:断路器是否打开的标志，默认为false;</li>
+<li>AtomicLong circuitOpenedOrLastTestedTime:断路器打开或是上一次测试的时间戳。</li>
+</ul>
+<h4 id="hystrixcircuitbreakerimpl">HystrixCircuitBreakerImpl</h4>
+<p>源码如下：</p>
+<pre><code>static class HystrixCircuitBreakerImpl implements HystrixCircuitBreaker {
+    private final HystrixCommandProperties properties;
+    private final HystrixCommandMetrics metrics;
+
+    /* track whether this circuit is open/closed at any given point in time (default to false==closed) */
+    private AtomicBoolean circuitOpen = new AtomicBoolean(false);
+
+    /* when the circuit was marked open or was last allowed to try a 'singleTest' */
+    private AtomicLong circuitOpenedOrLastTestedTime = new AtomicLong();
+
+    protected HystrixCircuitBreakerImpl(HystrixCommandKey key, HystrixCommandGroupKey commandGroup, HystrixCommandProperties properties, HystrixCommandMetrics metrics) {
+        this.properties = properties;
+        this.metrics = metrics;
+    }
+
+    public void markSuccess() {
+        if (circuitOpen.get()) {
+            if (circuitOpen.compareAndSet(true, false)) {
+                //win the thread race to reset metrics
+                //Unsubscribe from the current stream to reset the health counts stream.  This only affects the health counts view,
+                //and all other metric consumers are unaffected by the reset
+                metrics.resetStream();
+            }
+        }
+    }
+
+    @Override
+    public boolean allowRequest() {
+        if (properties.circuitBreakerForceOpen().get()) {
+            // properties have asked us to force the circuit open so we will allow NO requests
+            return false;
+        }
+        if (properties.circuitBreakerForceClosed().get()) {
+            // we still want to allow isOpen() to perform it's calculations so we simulate normal behavior
+            isOpen();
+            // properties have asked us to ignore errors so we will ignore the results of isOpen and just allow all traffic through
+            return true;
+        }
+        return !isOpen() || allowSingleTest();
+    }
+
+    public boolean allowSingleTest() {
+        long timeCircuitOpenedOrWasLastTested = circuitOpenedOrLastTestedTime.get();
+        // 1) if the circuit is open
+        // 2) and it's been longer than 'sleepWindow' since we opened the circuit
+        if (circuitOpen.get() &amp;&amp; System.currentTimeMillis() &gt; timeCircuitOpenedOrWasLastTested + properties.circuitBreakerSleepWindowInMilliseconds().get()) {
+            // We push the 'circuitOpenedTime' ahead by 'sleepWindow' since we have allowed one request to try.
+            // If it succeeds the circuit will be closed, otherwise another singleTest will be allowed at the end of the 'sleepWindow'.
+            if (circuitOpenedOrLastTestedTime.compareAndSet(timeCircuitOpenedOrWasLastTested, System.currentTimeMillis())) {
+                // if this returns true that means we set the time so we'll return true to allow the singleTest
+                // if it returned false it means another thread raced us and allowed the singleTest before we did
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isOpen() {
+        if (circuitOpen.get()) {
+            // if we're open we immediately return true and don't bother attempting to 'close' ourself as that is left to allowSingleTest and a subsequent successful test to close
+            return true;
+        }
+
+        // we're closed, so let's see if errors have made us so we should trip the circuit open
+        HealthCounts health = metrics.getHealthCounts();
+
+        // check if we are past the statisticalWindowVolumeThreshold
+        if (health.getTotalRequests() &lt; properties.circuitBreakerRequestVolumeThreshold().get()) {
+            // we are not past the minimum volume threshold for the statisticalWindow so we'll return false immediately and not calculate anything
+            return false;
+        }
+
+        if (health.getErrorPercentage() &lt; properties.circuitBreakerErrorThresholdPercentage().get()) {
+            return false;
+        } else {
+            // our failure rate is too high, trip the circuit
+            if (circuitOpen.compareAndSet(false, true)) {
+                // if the previousValue was false then we want to set the currentTime
+                circuitOpenedOrLastTestedTime.set(System.currentTimeMillis());
+                return true;
+            } else {
+                // How could previousValue be true? If another thread was going through this code at the same time a race-condition could have
+                // caused another thread to set it to true already even though we were in the process of doing the same
+                // In this case, we know the circuit is open, so let the other thread set the currentTime and report back that the circuit is open
+                return true;
+            }
+        }
+    }
+
+}
+</code></pre>
+
+</body>
+</html>
