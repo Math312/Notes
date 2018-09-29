@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>设计模式.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: "Segoe WPC", "Segoe UI", "SFUIText-Light", "HelveticaNeue-Light", sans-serif, "Droid Sans Fallback";
+	font-size: 14px;
+	padding: 0 12px;
+	line-height: 22px;
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	color: #4080D0;
+	text-decoration: none;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+h1 code,
+h2 code,
+h3 code,
+h4 code,
+h5 code,
+h6 code {
+	font-size: inherit;
+	line-height: auto;
+}
+
+a:hover {
+	color: #4080D0;
+	text-decoration: underline;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left: 5px solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 14px;
+	line-height: 19px;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+.mac code {
+	font-size: 12px;
+	line-height: 18px;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+/** Theming */
+
+.vscode-light,
+.vscode-light pre code {
+	color: rgb(30, 30, 30);
+}
+
+.vscode-dark,
+.vscode-dark pre code {
+	color: #DDD;
+}
+
+.vscode-high-contrast,
+.vscode-high-contrast pre code {
+	color: white;
+}
+
+.vscode-light code {
+	color: #A31515;
+}
+
+.vscode-dark code {
+	color: #D7BA7D;
+}
+
+.vscode-light pre:not(.hljs),
+.vscode-light code > div {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre:not(.hljs),
+.vscode-dark code > div {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre:not(.hljs),
+.vscode-high-contrast code > div {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+.vscode-light blockquote,
+.vscode-dark blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.vscode-high-contrast blockquote {
+	background: transparent;
+	border-color: #fff;
+}
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family:  "Meiryo", "Segoe WPC", "Segoe UI", "SFUIText-Light", "HelveticaNeue-Light", sans-serif, "Droid Sans Fallback";
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+</head>
+<body>
+<h1 id="%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F">设计模式</h1>
+<h2 id="%E4%B8%80%E3%80%81%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E5%88%86%E7%B1%BB">一、设计模式分类</h2>
+<p>设计模式分为3类：</p>
+<p>创建型模式：工厂方法模式、抽象工厂模式、单例模式、建造者模式、原型模式。</p>
+<p>结构型模式：适配器模式、装饰者模式、代理模式、外观模式、桥接模式、组合模式、享元模式。</p>
+<p>行为型模式：策略模式、模板方法模式、观察者模式、迭代子模式、责任链模式、命令模式、备忘录模式、状态模式、访问者模式、中介者模式、解释器模式。</p>
+<p><img src="images/设计模式之间的关系.jpg" alt="设计模式之间的关系"></p>
+<h2 id="%E4%BA%8C%E3%80%81%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%85%AD%E5%A4%A7%E5%8E%9F%E5%88%99">二、设计模式的六大原则</h2>
+<ol>
+<li>开闭原则：对扩展开放，对修改关闭。</li>
+<li>里氏替换原则：任何基类出现的地方，子类一定可以出现。</li>
+<li>依赖倒置原则：针对接口编程，依赖于抽象而不依赖于具体。</li>
+<li>接口隔离原则：使用多个隔离的接口要比使用单个接口好。</li>
+<li>迪米特原则（最少知道原则）：一个实体应当尽量少地与其他实体发生相互作用，使得系统功能模块相互独立。</li>
+<li>合成复用原则：尽量使用组合/聚合，而不是继承。</li>
+</ol>
+<h2 id="%E4%B8%89%E3%80%81%E5%88%9B%E5%BB%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F">三、创建型模式</h2>
+<ol>
+<li>工厂模式：创建工厂接口，接口中的方法用于创建新的实例，然后让子类实现该接口，将实例化对象放到子类中去执行。</li>
+</ol>
+<p>类图如下：</p>
+<p><img src="images/工厂模式.png" alt="工厂模式"></p>
+<p>上述的工厂模式通过传入一个字符串类型的style变量来确定创建哪种产品，但是由于字符串可能会输入出错。虽然这种错误可以通过创建枚举进行处理，但是我们可以介绍一下下一种方式：</p>
+<p><img src="images/工厂模式2.png" alt="工厂模式2"></p>
+<p>通过上述的类图可以看出，我们针对于每一种产品都给定一个生产函数，而不是通过传入字符串了。因此，避免了传入字符串参数不符合标准的情况。而且在添加一个新的商品时，我们只需要去添加一个新的函数，而不是再去原函数中进行寻找、添加，降低了耦合。</p>
+<p>当然，上述的两种方法中，我们都要创建一个新的工厂实例，我们可以将其中的创建实例方法都设置为静态方法，通过这种方法，我们可以通过类名直接调用创建函数，这样更方便。</p>
+<p>但是这样问题又会出现，考虑我们要添加一个新的产品类，我们需要再去修改工厂方法，无论是使用上述的哪种方法都逃不过去修改工厂类的命运，因此，我们通常使每个类对应一个工厂方法，或者我们可以把工厂类作为内部类写在产品类中。</p>
+<ol start="2">
+<li>抽象工厂模式：抽象工厂模式是工厂模式的一个小的集合，一个对象可能由多个对象进行组成，那么这么子对象又是怎么生成的呢，答案是通过工厂模式，而我们还要为大的对象创建一个工厂，因此，就出现了如下类图：</li>
+</ol>
+<p><img src="images/抽象工厂模式.png" alt="抽象工厂模式"></p>
+<ol start="3">
+<li>单例模式：单例模式用于保证该类对象仅有一个，并且提供一个访问它的全局访问点。</li>
+</ol>
+<p>使用情况：控制实例数目，节省系统资源。</p>
+<p>单例模式的构造函数一半是私有的。单例模式有4种实现方式，分别如下：</p>
+<ul>
+<li>
+<p>懒汉式实现方式，这种方式是线程不安全的，但是相对容易。</p>
+<pre><code>  public class Singleton {  
+      private static Singleton instance;  
+      private Singleton (){}  
+
+      public static Singleton getInstance() {  
+      if (instance == null) {  
+      instance = new Singleton();  
+      }  
+      return instance;  
+      }  
+  }
+</code></pre>
+</li>
+<li>
+<p>懒汉式的线程安全的实现方式：</p>
+<pre><code>  public class Singleton {  
+      private static Singleton instance;  
+      private Singleton (){}  
+      public static synchronized Singleton getInstance() {  
+          if (instance == null) {  
+          instance = new Singleton();  
+          }  
+          return instance;  
+      }  
+  }
+</code></pre>
+</li>
+</ul>
+<p>这种方式由于要实现同步，所以效率不高。</p>
+<p>其实上述两种方式都实现了懒加载，即用到时才进行创建对象。</p>
+<ul>
+<li>
+<p>饿汉式实现方式：</p>
+<pre><code>  public class Singleton {  
+      private static Singleton instance = new Singleton();  
+      private Singleton (){}  
+      public static Singleton getInstance() {  
+      return instance;  
+      }  
+  }
+</code></pre>
+</li>
+</ul>
+<p>这种方式是实现最简单的，由于单例对象是static的，在类初始化时就对其进行了实例化。基于 classloader 机制避免了多线程的同步问题。</p>
+<ul>
+<li>
+<p>双检锁/双重校验锁：</p>
+<pre><code>  public class Singleton {  
+      private volatile static Singleton singleton;  
+      private Singleton (){}  
+      public static Singleton getSingleton() {  
+          if (singleton == null) {  
+              synchronized (Singleton.class) {  
+                  if (singleton == null) {  
+                      singleton = new Singleton();  
+                  }  
+              }  
+          }  
+      return singleton;  
+      }  
+  }
+</code></pre>
+</li>
+</ul>
+<p>这种方式实现了懒加载，并且是线程安全的，但是实现方式较复杂。</p>
+<ol start="4">
+<li>建造者模式</li>
+</ol>
+<p>建造者模式将一个复杂的构建与其表示相分离，使得同样的构建过程可以创建不同的表示。</p>
+<p>类图如下：</p>
+<p><img src="images/建造者模式.png" alt="建造者模式"></p>
+<p>这里使用Item将所有信息封装起来。所有的组装策略都被封装在Item里，无论ItemImpl有多复杂，Product只取Item中的数据，这样无论如何创建都会按照特定方式创建，因为创建方式根本就没有改变。</p>
+<ol start="5">
+<li>原型模式：用于重复拷贝对象，同时可以保证性能。</li>
+</ol>
+<p>实现方式如下：</p>
+<pre><code>public class Prototype implements Cloneable {  
+
+    public Object clone() throws   CloneNotSupportedException {  
+        Prototype proto = (Prototype) super.clone();  
+        return proto;  
+    }  
+}
+</code></pre>
+<p>由于原型模式用来对对象进行快速拷贝，所以我们只要实现一个如此的接口即可，但是Java中的拷贝分为两种形式：</p>
+<ul>
+<li>浅拷贝：即仅仅拷贝基本数据类型，而引用类型的都使用原对象的，Object方法提供的clone()就是浅拷贝。</li>
+<li>深拷贝：即无论基本数据类型，还是引用类型，都创建新的。</li>
+</ul>
+<p>对于浅拷贝，可以调用clone()方法，而对于深拷贝，我们可以使用序列化的方法进行。</p>
+<h2 id="%E5%9B%9B%E3%80%81-%E7%BB%93%E6%9E%84%E6%A8%A1%E5%BC%8F">四、 结构模式</h2>
+<ol>
+<li>适配器模式</li>
+</ol>
+<p>适配器模式就像一个转接口，它作为两个不兼容的接口之间的桥梁。</p>
+<p>主要在需要的类与现有的类接口不同的情况时使用。</p>
+<p>适配器模式有3种实现方式：</p>
+<ul>
+<li>类适配器模式：</li>
+</ul>
+<p>类图如下：
+<img src="images/类适配模式.png" alt="类适配器模式"></p>
+<p>目标接口为上图中的Targetable接口，我们将Source适配成Targetable接口的模样。由于是创建一个新类，并且是继承原类的，所以称这种方式为类适配器方式。</p>
+<ul>
+<li>对象适配器模式：
+<img src="images/对象适配模式.png" alt="对象适配器模式"></li>
+</ul>
+<p>上一种方式中适配器类是继承Source类，而这种方式是将Source类作为一个对象组合到适配器类中。所以称为对象适配器模式。</p>
+<ul>
+<li>接口适配器模式</li>
+</ul>
+<p><img src="images/接口适配模式.png" alt="接口适配器模式">
+当然这里也可以使用如下模式：
+<img src="images/接口适配模式2.png" alt="接口适配器模式">
+上面两者的区别就是使用类适配和对象适配。接口适配器主要解决的问题是，目标接口要求实现的方法有时是我们不需要的，例如java swing中的很多Listener里一样，很多的实现方法是我们用不到的。例如，MouseMotionListener接口中，提供了如下方法：
+<img src="images/MouseMotionListener.png" alt="MouseMotionListener">,但是我们知道很多时候我们只需要监听其中的一个事件，因此Java API给我们提供了MouseMotionAdapter类，这个类就是采用了接口适配器方式实现的。</p>
+<ol start="2">
+<li>装饰器模式</li>
+</ol>
+<p>装饰器模式允许向一个现有的对象添加新的功能，而又不改变其结构。例如我们使用的Java IO中很多类都是使用的装饰器模式。</p>
+<p>下面我们提供类图：</p>
+<p><img src="images/装饰器模式.png" alt="装饰器模式"></p>
+<p>我们看到Decorator和DecorateImpl都实现了Decorated接口，而Decorator的构造需要一个Decorated作为输入，这样就可以让Decorator包装自己，形成一种递归的情况，而递归的最底层就是DecoratedImpl。</p>
+<p>下面我们来看以下Java IO库的API，我们经常写出如下代码：</p>
+<pre><code>BufferedReader buff = new BufferedReader(new FileReader(filename));
+</code></pre>
+<p>这里我们来看一下上述提到的BufferedReader和FileReader的目录结构。</p>
+<p>首先FileReader如下：</p>
+<p><img src="images/FileReader2.png" alt="FileReader"></p>
+<p><img src="images/FileReader.png" alt="FileReader"></p>
+<p>我们看到FileReader继承了java.io.Reader，并且构造函数中没有继承自Reader的参数传入。</p>
+<p>下面我们查看BufferedReader：</p>
+<p><img src="images/BUfferedReader2.png" alt="BufferedReader"></p>
+<p><img src="images/BUfferedReader.png" alt="BufferedReader"></p>
+<p>我们看到BufferedReader继承自java.io.Reader，并且构造函数中具有继承自Reader的参数传入。</p>
+<p>最后我们考察java.io.Reader：</p>
+<p><img src="images/Reader.png" alt="Reader"></p>
+<p>这里的Reader是个抽象类。</p>
+<p>Reader相当于Decorated接口，BufferedReader相当于Decorator，FileReader相当于DecoratedImpl。</p>
+<p>由于我们使用的组合，我们还可以在添加了装饰器后，还能将被装饰器装饰的内核掏出来，只需实现一个getDecorated()方法就行了。</p>
+<ol start="3">
+<li>代理模式</li>
+</ol>
+<p>代理模式用来使用一个类代表另一个类的功能。考虑生活中的中介，我们直接访问卖房的人可能会有很多繁琐的事宜要去处理，因此我们需要代理帮助我们处理。</p>
+<p>类图如下：</p>
+<p><img src="images/代理模式.png" alt="代理模式"></p>
+<p>这里，我们使Proxy和Source实现相同的接口Targetable，保证了代理能实现Source的开放出来的功能，保证Source的部分功能被封装。Proxy中的method方法可以处理外界对Source的method的访问，进行一系列工作的处理。</p>
+<ol start="4">
+<li>外观模式</li>
+</ol>
+<p>外观模式降低了类和类之间的耦合度，它将类与类之间的关系全部封装到了另一个类中，使类本身之间关系变得隔离。主要用来为用户提供简单的使用方式。例如，一台电脑开机时，显示屏、CPU、内存等都要进行必要的初始化、启动操作，这对于普通用户来说都是看不到的，但是这些操作确实做了，而且这些操作之间也没有很大联系。外观模式帮我们实现了这样的操作。</p>
+<p>类图如下：</p>
+<p><img src="images/外观模式.png" alt="外观模式"></p>
+<p>当我们执行openComputer()方法时，会自动调用Computer的start()方法，用户只需要知道这些，而后面启动各种组件的操作都会被包含在这个start方法中，对用户关闭。并且各个组件之间不知道自己与别的组件调用函数的前后关系，做到了松耦合。就和Spring的配置文件一样。</p>
+<ol start="5">
+<li>桥接模式</li>
+</ol>
+<p>桥接模式可以将抽象和具体化相隔离，这样说起来可能太过抽象，考虑如下场景，一个产品可能对于同一种操作具有不同表现形式，那么这些操作如果和产品绑定，更改就很难了，这种模式就将其区分开。</p>
+<p>类图：</p>
+<p><img src="images/桥接模式.png" alt="桥接模式"></p>
+<p>桥接模式的思想和策略模式的思想很像，我们后面再介绍策略设计模式。</p>
+<ol start="6">
+<li>组合模式</li>
+</ol>
+<p>组合模式适用于解决类似树形的问题。话不多说，上类图，一看便知：</p>
+<p><img src="images/组合模式.png" alt="组合模式"></p>
+<p>TreeNode实现了Node接口，但是TreeNode中还有一个由Node组成的链表，形成了一种树形关系。</p>
+<ol start="7">
+<li>享元模式</li>
+</ol>
+<p>享元模式，说白了就是资源池。享元模式的主要目的是实现对象的共享，即共享池，当系统中对象多的时候可以减少内存的开销，通常与工厂模式一起使用。</p>
+<p><img src="images/享元模式.png" alt="享元模式"></p>
+<p>资源池在初始化时，初始化了很多的Resource，当用户要使用的时候，直接从资源池中getResource()。这样有效避免了请求来了再建资源的情况，而且可以有效控制资源的数量。</p>
+<h2 id="%E4%BA%94%E3%80%81%E8%A1%8C%E4%B8%BA%E5%9E%8B%E6%A8%A1%E5%BC%8F">五、行为型模式</h2>
+<p><img src="images/关系型模式.jpg" alt="行为型模式"></p>
+<p>上图列出了各种行为型模式的分类。下面我们将对每个模式一一介绍。</p>
+<ol>
+<li>策略模式</li>
+</ol>
+<p>策略模式通过将操作作为一个类，使其在运行过程中可以动态替换。例如游戏中的人物，装备武器不同可以使用不同的攻击方式，我们就可以将不同武器的攻击设置成不同的类，然后让人物类与攻击类之间使用组合关系，达到动态替换。类图如下：</p>
+<p><img src="images/策略设计模式.png" alt="策略设计模式"></p>
+<p>用户可以使用Role中的setAttack()和setDefence()进行动态更改Attack和Defence。</p>
+<p>（悄悄说，我觉得和桥接没啥大区别）如果说非要说区别就是桥接模式将实例的Role和操作分离开来，毕竟桥接中将Role继承自一个抽象类，Role是看不到它能使用的方法的。</p>
+<ol start="2">
+<li>模板方法模式</li>
+</ol>
+<p>模板定义一个操作中的算法的骨架，而将一些步骤延迟到子类中。模板方法使得子类可以不改变一个算法的结构即可重定义该算法的某些特定步骤。</p>
+<p><img src="images/模板方法模式.png" alt="模板方法模式"></p>
+<ol start="3">
+<li>观察者模式</li>
+</ol>
+<p>观察者模式构造了一种类似于博客关注的情况，当你观察的Subject进行更新时，你会收到通知，可以获取到最新数据。观察者模式具有推和拉两种情况，下面我们将分别介绍：</p>
+<ul>
+<li>推：这种情况下，当Subject更新了数据，Subject会自己将新数据推到Obervable里去。类图如下：</li>
+</ul>
+<p><img src="images/观察者模式(推).png" alt="观察者模式(推)"></p>
+<p>这种情况下，Subject执行notice()方法时,会遍历observablelist中每个Observable，然后分别执行其中的update()方法。</p>
+<ul>
+<li>拉：这种情况下，Observer中会放一个变量，用于标识是否有新的消息推送，如果有新的消息推送，就从Subject上获取新的消息。</li>
+</ul>
+<p><img src="images/观察者模式（拉）.png" alt="观察者模式（拉）"></p>
+<p>由于观察者可以取消对Subject的关注，因此要保存Subject对象，这里省略了添加关注的函数。</p>
+<ol start="4">
+<li>迭代子模式</li>
+</ol>
+<p>迭代子模式，也就是所谓的迭代器。提供一种方法顺序访问一个聚合对象中各个元素, 而又无须暴露该对象的内部表示。但是在使用迭代器的过程中，无法更改被迭代的对象中的数据，否则会出现错误。</p>
+<p>类图如下：</p>
+<p><img src="images/迭代子模式.png" alt="迭代子模式"></p>
+<p>迭代子模式一般用于各种容器中，自己实现要实现Iterator接口,一般实现方式如下：</p>
+<pre><code>public Iterator&lt;T&gt; iterator()
+{
+    return new Iterator&lt;T&gt;()
+    {
+        public boolean hasNext()
+        {
+
+        }
+
+        public T next()
+        {
+
+        }
+
+        public T previous()
+        {
+
+        }
+    };
+}
+</code></pre>
+<p>一般使用匿名内部类实现迭代器。</p>
+<ol start="5">
+<li>责任链模式</li>
+</ol>
+<p>责任链模式可以在有多个对象，每个对象持有对下一个对象的引用，这样就会形成一条链，请求在这条链上传递，直到某一对象决定处理该请求。但是发出者并不清楚到底最终那个对象会处理该请求，所以，责任链模式可以实现，在隐瞒客户端的情况下，对系统进行动态的调整。</p>
+<p>类图如下：</p>
+<p><img src="images/责任链模式.png" alt="责任链模式"></p>
+<p>每个HandlerImpl中都有一个nextHandler，如果本HandlerImpl解决不了这个问题，就交给下一个Handler，直到nextHandler为空为止。Spring Security的delegatingProxyChain就是使用的该模式。</p>
+<ol start="6">
+<li>命令模式</li>
+</ol>
+<p>命令模式（Command Pattern）是一种数据驱动的设计模式，它属于行为型模式。请求以命令的形式包裹在对象中，并传给调用对象。调用对象寻找可以处理该命令的合适的对象，并把该命令传给相应的对象，该对象执行命令。 在软件系统中，行为请求者与行为实现者通常是一种紧耦合的关系，但某些场合，比如需要对行为进行记录、撤销或重做、事务等处理时，这种无法抵御变化的紧耦合的设计就不太合适。</p>
+<p>类图如下：</p>
+<p><img src="images/命令模式.png" alt="命令模式"></p>
+<ol start="7">
+<li>备忘录模式</li>
+</ol>
+<p>备忘录模式用来保存一个对象的状态，以便在特定时候恢复。</p>
+<p>类图如下：</p>
+<p><img src="images/备忘录模式.png" alt="备忘录模式"></p>
+<p>这里Source是要备份的类，Memento是备忘录类，CareTaker是保存备忘录的容器。</p>
+<ol start="8">
+<li>状态模式</li>
+</ol>
+<p>状态模式就是根据类的不同状态执行不同的命令。具体就像电灯，处于开状态就执行亮操作，处于关状态就执行暗操作。</p>
+<p>类图如下：</p>
+<p><img src="images/状态模式.png" alt="状态模式"></p>
+<p>当执行changeState()函数时，调用State的action()函数。</p>
+<ol start="9">
+<li>访问者模式</li>
+</ol>
+<p>在访问者模式（Visitor Pattern）中，我们使用了一个访问者类，它改变了元素类的执行算法。通过这种方式，元素的执行算法可以随着访问者改变而改变。访问者模式可以防止被访问的类中的数据被污染。</p>
+<p>类图如下，之后我们再解释。</p>
+<p><img src="images/访问者模式.png" alt="访问者模式"></p>
+<p>当一个访问者需要访问时，会调用visit()方法访问对应的Subject,而Subject会通过getSubject给出需要的数据，注意这里的数据是只读的、或者是原数据的备份。否则，数据会被污染。</p>
+<ol start="10">
+<li>中介者模式</li>
+</ol>
+<p>中介者模式用一个中介对象来封装一系列的对象交互，中介者使各对象不需要显式地相互引用，从而使其耦合松散，而且可以独立地改变它们之间的交互。</p>
+<p>例如：考虑一个聊天室场景，我们使用下面的类图构建聊天室：</p>
+<p><img src="images/中介者模式.png" alt="中介者模式"></p>
+<p>当一个人发消息时，调用User的sendMessage()方法，sendMessage()方法再盗用ChatRoom中的showMessage()方法，这样消息就被显示出来，又保证了两个User之间没有相互引用，有松耦合的特点。</p>
+<ol start="11">
+<li>解释器模式</li>
+</ol>
+<p>解释器模式主要用于做解释器。定一个语言，定义它的文法表示，并定义一个解释器，这个解释器使用该标识来解释语言中的句子。</p>
+<p>类图如下，就不详细说了，不常用：</p>
+<p><img src="images/解释器模式.png" alt="解释器模式"></p>
+<p>Expression中的interpret()方法用来对Context进行操作。</p>
+
+</body>
+</html>

@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Restful接口设计规范.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: "Segoe WPC", "Segoe UI", "SFUIText-Light", "HelveticaNeue-Light", sans-serif, "Droid Sans Fallback";
+	font-size: 14px;
+	padding: 0 12px;
+	line-height: 22px;
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	color: #4080D0;
+	text-decoration: none;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+h1 code,
+h2 code,
+h3 code,
+h4 code,
+h5 code,
+h6 code {
+	font-size: inherit;
+	line-height: auto;
+}
+
+a:hover {
+	color: #4080D0;
+	text-decoration: underline;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left: 5px solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 14px;
+	line-height: 19px;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+.mac code {
+	font-size: 12px;
+	line-height: 18px;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+/** Theming */
+
+.vscode-light,
+.vscode-light pre code {
+	color: rgb(30, 30, 30);
+}
+
+.vscode-dark,
+.vscode-dark pre code {
+	color: #DDD;
+}
+
+.vscode-high-contrast,
+.vscode-high-contrast pre code {
+	color: white;
+}
+
+.vscode-light code {
+	color: #A31515;
+}
+
+.vscode-dark code {
+	color: #D7BA7D;
+}
+
+.vscode-light pre:not(.hljs),
+.vscode-light code > div {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre:not(.hljs),
+.vscode-dark code > div {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre:not(.hljs),
+.vscode-high-contrast code > div {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+.vscode-light blockquote,
+.vscode-dark blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.vscode-high-contrast blockquote {
+	background: transparent;
+	border-color: #fff;
+}
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family:  "Meiryo", "Segoe WPC", "Segoe UI", "SFUIText-Light", "HelveticaNeue-Light", sans-serif, "Droid Sans Fallback";
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+</head>
+<body>
+<h1 id="rest-api-%E8%A7%84%E8%8C%83">Rest api 规范</h1>
+<p>Fielding是一个非常重要的人，他是HTTP协议（1.0版和1.1版）的主要设计者、Apache服务器软件的作者之一、Apache基金会的第一任主席。Fielding将他对互联网软件的架构原则，定名为 REST，即 Representational State Transfer 的缩写。</p>
+<p>如果一个架构符合 REST 原则，就称它为RESTful架构。</p>
+<h2 id="restful-api-design-%E5%90%8D%E8%AF%8D%E5%AE%9A%E4%B9%89">RESTful API Design 名词定义</h2>
+<p>Resource: 一个简单的实例。有一些属性或者一些子资源，子资源可以是 一个简单的资源或者一组资源例如：book, userCollection: 一组同类的资源对象。例如：books, usersHTTP: 网络协议</p>
+<h2 id="http-verbs">HTTP Verbs</h2>
+<p>GET（SELECT）：从服务器取出资源（一项或多项）。POST（CREATE）：在服务器新建一个资源。PUT（UPDATE）：在服务器更新完整的资源（客户端提供改变后的完整资源）。DELETE（DELETE）：从服务器删除资源。</p>
+<h2 id="resource-oriented-design">Resource Oriented Design</h2>
+<h3 id="%E8%AE%BE%E8%AE%A1%E6%B5%81%E7%A8%8B">设计流程</h3>
+<p>确定一个api提供什么类型的资源确定资源之间的依赖关系基于类型和依赖关系确定资源的命名确定资源的结构为资源添加最少的方法</p>
+<h3 id="resource-names">Resource Names</h3>
+<p>资源是一个实体对象，那么资源名就是这个资源的标识。</p>
+<p>一个资源名应该由Resource ID，Collection ID 和API Service 名组成。</p>
+<p>例1：存储服务有 buckets 的集合,其中每个桶包含一个 objects 集合。</p>
+<table>
+<thead>
+<tr>
+<th>API Service Name</th>
+<th>Collection ID</th>
+<th>Resource ID</th>
+<th>Sub-Collection ID</th>
+<th>Sub-Resource ID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>//gateway.com.cn/storage</td>
+<td>/buckets</td>
+<td>/bucket-id</td>
+<td>/objects</td>
+<td>/object-id</td>
+</tr>
+</tbody>
+</table>
+<p>例2：电子邮件服务用户的集合。sub-resource 每个用户都有一个设置,设置 sub-resource 有许多其他的子资源,包括 customFrom:</p>
+<table>
+<thead>
+<tr>
+<th>API Service Name</th>
+<th>Collection ID</th>
+<th>Resource ID</th>
+<th>Sub-Collection ID</th>
+<th>Sub-Resource ID</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>//gateway.com.cn/mails</td>
+<td>/users</td>
+<td><a href="mailto:/name@example.com">/name@example.com</a></td>
+<td>/settings</td>
+<td>/customFrom</td>
+</tr>
+</tbody>
+</table>
+<p>全名：//gateway.com.cn/storage/buckets/1/materials/wood相对名：buckets/1/materials/woodHTTP URL：<a href="http://gateway.com.cn/storage/v1/buckets/1/materials/wood">http://gateway.com.cn/storage/v1/buckets/1/materials/wood</a></p>
+<h3 id="resource-id">Resource ID</h3>
+<p>Resource ID 标识着资源属于父资源中。Resource ID 可能不止一个单词，也有可能是一个相对路径。Resource ID 必须清楚地被记录，无论是客户端,服务器,或第三方。</p>
+<h3 id="collection-id">Collection ID</h3>
+<p>Collection ID 必须是有效的程序标识符。Collection ID 必须是驼峰形式的复数结构，如果没有复数形式，应使用单数。Collection ID 必须是清晰简洁的英文单词。Collection ID 避免使用笼统的表示，例如objects、values、types。</p>
+<h2 id="action-%E5%91%BD%E5%90%8D%E8%A7%84%E8%8C%83">Action 命名规范</h2>
+<h3 id="%E5%9F%BA%E6%9C%AC%E8%A7%84%E8%8C%83">基本规范</h3>
+<p>使用”/“表示层级关系url 不能以”/“结尾url 中不能包含空格””url 中不能以文件后缀结尾url 中字母小写，单词间加下划线不要再url中添加CRUD</p>
+<h3 id="%E7%B1%BB%E5%88%AB">类别</h3>
+<table>
+<thead>
+<tr>
+<th>Description</th>
+<th>Action Name</th>
+<th>HTTP Mapping</th>
+<th>HTTP Request Body</th>
+<th>HTTP Response Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>查询所有</td>
+<td>list</td>
+<td>GET</td>
+<td>N/A</td>
+<td>Resource* list</td>
+</tr>
+<tr>
+<td>获取单个资源</td>
+<td>query</td>
+<td>GET</td>
+<td>N/A</td>
+<td>Resource*</td>
+</tr>
+<tr>
+<td>创建单个资源</td>
+<td>create</td>
+<td>POST</td>
+<td>Resource</td>
+<td>Resource*</td>
+</tr>
+<tr>
+<td>更新单个资源</td>
+<td>update</td>
+<td>PUT</td>
+<td>Resource</td>
+<td>Resource*</td>
+</tr>
+<tr>
+<td>删除单个资源</td>
+<td>delete</td>
+<td>DELETE</td>
+<td>N/A</td>
+<td>Empty</td>
+</tr>
+</tbody>
+</table>
+<h4 id="list">List</h4>
+<p>List 方法接受一个 Collection id 和0或多个参数作为输入,并返回一个列表的资源。</p>
+<p>List 必须使用 GET 方法接口必须以 collection id 结尾。其他的请求字段必须作为 url 查询参数。没有请求体，接口上必须不能包含request body。响应体应该包含一组资源和一些可选项元数据。</p>
+<h4 id="query">Query</h4>
+<p>Query 方法接受一个 Resource name 和0或多个参数,并返回指定的资源。</p>
+<p>Query 必须使 GET 方法。请求url 必须包含 Resource name。其他的请求字段必须作为 url 查询参数。没有请求体，接口上必须不能包含request body。响应体应该返回整个资源对象。</p>
+<h4 id="create">Create</h4>
+<p>Create 方法接受一个 Collection id ,一个资源,和0或多个参数。它创建一个新的资源在指定的父资源下,并返回新创建的资源。</p>
+<p>Create 必须使用 POST 方法。应该包含父资源名用于指定资源创建的位置。创建的资源应该对应在request body。响应体应该返回整个资源对象。Create 必须传递一个resource，这样即使resource 的结构发生变化，也不需要去更新方法或者资源结构，那些弃用的字段则需要标识为“只读”。</p>
+<h4 id="update">Update</h4>
+<p>Update 方法接受一个资源和0或多个参数。更新指定的资源和其属性,并返回更新的资源。</p>
+<p>除了Resource Name 和其父资源之外，这个资源的所有属性应该是可以更新的。资源的重命名和移动则需要自定义方法。如果只支持一个完整对象的更新，Update 必须使用 PUT 方法。Resource Name必须包含在请求的url中。资源应该对应在request body。</p>
+<h4 id="delete">Delete</h4>
+<p>Delete 方法接受一个Resource Name 和0或多个参数,并删除指定的资源。</p>
+<p>Delete 必须使用 DELETE 方法。Resource Name 必须包含在请求的url中。没有请求体，接口上必须不能包含request body。如果是立即删除，应该返回空如果是启动一个删除操作，应该返回一个删除操作。如果只是标识某个资源是“被删除的”，应该返回一个更新后的资源。如果多个删除请求删除同一资源，那么只有第一个请求才应该成功，其他的返回not found。</p>
+<h2 id="%E8%87%AA%E5%AE%9A%E4%B9%89%E6%96%B9%E6%B3%95">自定义方法</h2>
+<p>自定义的方法应该参考5个基本方法。应该用于基本方法不能实现的功能性方法。可能需要一个任意请求并返回一个任意的响应,也可能是流媒体请求和响应。</p>
+<p>可以对应a resource, a collection 甚至 a service。</p>
+<p>自定义方法应该使用 POST 方法。不应该使用PATCH 方法。自定义方法对应的 Resource Name 或者 Collection id 必须包含在请求的url中。如果使用的HTTP 方法接受request body，则需要对应一个请求体。如果使用的HTTP 方法不接受request body，则需要声明不使用body，并且参数应该作为url查询参数。</p>
+<h3 id="%E6%89%B9%E9%87%8F%E6%B7%BB%E5%8A%A0">批量添加</h3>
+<table>
+<thead>
+<tr>
+<th>Description</th>
+<th>Action Name</th>
+<th>HTTP Mapping</th>
+<th>HTTP Request Body</th>
+<th>HTTP Response Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>批量添加</td>
+<td>batchCreate</td>
+<td>POST /batch_create</td>
+<td>Resource* list</td>
+<td>Resource IDS</td>
+</tr>
+</tbody>
+</table>
+<h3 id="%E6%89%B9%E9%87%8F%E5%88%A0%E9%99%A4">批量删除</h3>
+<table>
+<thead>
+<tr>
+<th>Description</th>
+<th>Action Name</th>
+<th>HTTP Mapping</th>
+<th>HTTP Request Body</th>
+<th>HTTP Response Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>批量删除</td>
+<td>batchDelete</td>
+<td>POST /batch_delete</td>
+<td>Resource IDS</td>
+<td>Empty</td>
+</tr>
+</tbody>
+</table>
+<h3 id="%E6%9B%B4%E6%96%B0%E5%8D%95%E4%B8%AA%E8%B5%84%E6%BA%90%E4%B8%AD%E7%9A%84%E5%B1%9E%E6%80%A7">更新单个资源中的属性</h3>
+<table>
+<thead>
+<tr>
+<th>Description</th>
+<th>Action Name</th>
+<th>HTTP Mapping</th>
+<th>HTTP Request Body</th>
+<th>HTTP Response Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>更新资源的状态</td>
+<td>updateAttribute</td>
+<td>POST /:attribute?value=</td>
+<td>N/A</td>
+<td>{“key”:“”,“value”:“”}</td>
+</tr>
+<tr>
+<td>更新用户的年龄</td>
+<td>updateAge</td>
+<td>POST /v1/users/1/age?value=20</td>
+<td>N/A</td>
+<td>{“key”:“age”,“value”:“20”}</td>
+</tr>
+</tbody>
+</table>
+<h3 id="%E5%AF%B9%E8%B5%84%E6%BA%90%E6%89%A7%E8%A1%8C%E6%9F%90%E4%B8%80%E5%8A%A8%E4%BD%9C">对资源执行某一动作</h3>
+<p>比如发送消息，启用什么功能。如果是针对资源，则Action Name为动词。如果是针对资源的属性，则Action Name为动词+属性名。请求以动词结尾，属性作为参数。</p>
+<table>
+<thead>
+<tr>
+<th>Description</th>
+<th>Action Name</th>
+<th>HTTP Mapping</th>
+<th>HTTP Request Body</th>
+<th>HTTP Response Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>对资源执行某一动作</td>
+<td>customVerb</td>
+<td>POST /custom_verb</td>
+<td>N/A</td>
+<td>*</td>
+</tr>
+<tr>
+<td>取消某种操作</td>
+<td>cancel</td>
+<td>POST /cancel</td>
+<td>N/A</td>
+<td>Boolean</td>
+</tr>
+<tr>
+<td>从回收站中恢复一个资源</td>
+<td>undelete</td>
+<td>POST /v1/projects/1/undelete</td>
+<td>N/A</td>
+<td>Boolean</td>
+</tr>
+<tr>
+<td>检查项目是否重名</td>
+<td>checkName</td>
+<td>POST /v1/projects/1/check?name=</td>
+<td>N/A</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="%E6%9F%A5%E8%AF%A2%E6%9F%90%E4%B8%80%E8%B5%84%E6%BA%90%E7%9A%84%E5%8D%95%E4%B8%AA%E5%B1%9E%E6%80%A7">查询某一资源的单个属性</h3>
+<p>对于单个资源的所有的查询Action Name，都需要以query开头。Action Name以query+属性名结尾</p>
+<table>
+<thead>
+<tr>
+<th>Description</th>
+<th>Action Name</th>
+<th>HTTP Mapping</th>
+<th>HTTP Request Body</th>
+<th>HTTP Response Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>查询资源的某属性</td>
+<td>queryAttribute</td>
+<td>GET /:attribute</td>
+<td>N/A</td>
+<td>{“key”:“”,“value”:“”}</td>
+</tr>
+<tr>
+<td>查询用户的年龄</td>
+<td>queryAge</td>
+<td>GET /v1/users/1/age</td>
+<td>N/A</td>
+<td>{“key”:“age”,“value”:“25”}</td>
+</tr>
+<tr>
+<td>查询用户下的项目</td>
+<td>queryProjects</td>
+<td>GET /v1/users/1/projects</td>
+<td>N/A</td>
+<td>{“key”:“projects”,“value”:[]}</td>
+</tr>
+</tbody>
+</table>
+<h3 id="%E6%9F%A5%E8%AF%A2collection-%E7%9A%84%E6%95%B0%E9%87%8F">查询collection 的数量</h3>
+<p>计算集合自身的数量，使用count作为Action Name计算资源中子集合的数量，使用count+集合名作为Action Name</p>
+<table>
+<thead>
+<tr>
+<th>Description</th>
+<th>Action Name</th>
+<th>HTTP Mapping</th>
+<th>HTTP Request Body</th>
+<th>HTTP Response Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>查询Collection 的数量</td>
+<td>count</td>
+<td>GET /count</td>
+<td>N/A</td>
+<td>{“key”:“”,“count”:“”}</td>
+</tr>
+<tr>
+<td>查询组织的数目</td>
+<td>count</td>
+<td>GET /v1/organizations/count</td>
+<td>N/A</td>
+<td>{“key”:“organizations”,“count”:“100”}</td>
+</tr>
+<tr>
+<td>查询用户下的所有项目数量</td>
+<td>countProjects</td>
+<td>GET /v1/users/1/projects/count</td>
+<td>N/A</td>
+<td>{“key”:“projects”,“count”:“100”}</td>
+</tr>
+</tbody>
+</table>
+<h3 id="%E5%A4%8D%E6%9D%82%E6%9D%A1%E4%BB%B6%E6%9F%A5%E8%AF%A2">复杂条件查询</h3>
+<p>对于collection的所有查询Action Name，都需要以list开头。查询的条件中，如果条件为一到两个，使用By和And。eg.: listByUserIdAndName如果查询条件大于3个，则使用ByOptions，查询条件作为请求体传入。eg.: listByOptions</p>
+<h2 id="%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6">版本控制</h2>
+<p>主版本号必须作为包名的最后一个字符。如：com.hand.controller.v1。</p>
+<p>版本兼容的修改：</p>
+<p>添加一个服务接口添加一个api方法添加一个请求字段添加一个相应字段添加一个字段的枚举值</p>
+<p>版本不兼容的修改：</p>
+<p>删除或重命名一个服务，接口，方法，枚举值改变一种HTTP method改变字段的类型改变一个resource name</p>
+<h2 id="demo">Demo</h2>
+<pre class="hljs"><code><div><span class="hljs-meta">@RestController</span>(<span class="hljs-string">"/v1/users"</span>)
+
+<span class="hljs-keyword">public</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">UserController</span> </span>{
+
+<span class="hljs-meta">@GetMapping</span>(<span class="hljs-string">"/"</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">public</span> ResponseEntity&lt;User&gt; <span class="hljs-title">list</span><span class="hljs-params">()</span> </span>{
+
+<span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+
+}
+
+<span class="hljs-meta">@GetMapping</span>(<span class="hljs-string">"/{id}"</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">public</span> User <span class="hljs-title">query</span><span class="hljs-params">(@PathVariable(<span class="hljs-string">"id"</span>)</span> String id) </span>{
+
+<span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+
+}
+
+<span class="hljs-meta">@PostMapping</span>(<span class="hljs-string">"/"</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">public</span> ResponseEntity&lt;User&gt; <span class="hljs-title">create</span><span class="hljs-params">(@RequestBody User user)</span> </span>{
+
+<span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+
+}
+
+<span class="hljs-meta">@PutMapping</span>(<span class="hljs-string">"/{id}"</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">public</span> ResponseEntity&lt;User&gt; <span class="hljs-title">update</span><span class="hljs-params">(@PathVariable(<span class="hljs-string">"id"</span>)</span> String id, @RequestBody User user) </span>{
+
+<span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+
+}
+
+<span class="hljs-meta">@DeleteMapping</span>(<span class="hljs-string">"/{id}"</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">public</span> ResponseEntity&lt;User&gt; <span class="hljs-title">delete</span><span class="hljs-params">(@PathVariable(<span class="hljs-string">"id"</span>)</span> String id) </span>{
+
+<span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+
+}
+
+<span class="hljs-meta">@PostMapping</span>(<span class="hljs-string">"/batch_create"</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">public</span> ResponseEntity&lt;User&gt; <span class="hljs-title">batchCreate</span><span class="hljs-params">(@RequestBody List&lt;User&gt; users)</span> </span>{
+
+<span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+
+}
+
+<span class="hljs-meta">@PostMapping</span>(<span class="hljs-string">"/batch_delete"</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">public</span> ResponseEntity&lt;User&gt; <span class="hljs-title">batchDelete</span><span class="hljs-params">(@RequestBody List&lt;User&gt; users)</span> </span>{
+
+<span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+
+}
+
+<span class="hljs-meta">@PostMapping</span>(<span class="hljs-string">"/age"</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">public</span> ResponseEntity&lt;User&gt; <span class="hljs-title">updateAge</span><span class="hljs-params">(@RequestParam(<span class="hljs-string">"value"</span>)</span> Integer age) </span>{
+
+<span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+
+}
+
+<span class="hljs-meta">@PostMapping</span>(<span class="hljs-string">"/{:id}/undelete"</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">public</span> ResponseEntity&lt;User&gt; <span class="hljs-title">undelete</span><span class="hljs-params">(@PathVariable(<span class="hljs-string">"id"</span>)</span> String id) </span>{
+
+<span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+
+}
+
+<span class="hljs-meta">@PostMapping</span>(<span class="hljs-string">"/check"</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">public</span> ResponseEntity&lt;User&gt; <span class="hljs-title">checkName</span><span class="hljs-params">(@RequestParam(<span class="hljs-string">"name"</span>)</span> String name) </span>{
+
+<span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+
+}
+
+<span class="hljs-meta">@GetMapping</span>(<span class="hljs-string">"/{:id}/age"</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">public</span> ResponseEntity&lt;User&gt; <span class="hljs-title">queryAge</span><span class="hljs-params">(@PathVariable(<span class="hljs-string">"id"</span>)</span> String id) </span>{
+
+<span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+
+}
+
+<span class="hljs-meta">@GetMapping</span>(<span class="hljs-string">"/{:id}/name"</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">public</span> ResponseEntity&lt;User&gt; <span class="hljs-title">queryByUserIdAndName</span><span class="hljs-params">(@PathVariable(<span class="hljs-string">"id"</span>)</span> String id, @<span class="hljs-title">RequestParam</span><span class="hljs-params">(<span class="hljs-string">"name"</span>)</span> String name) </span>{
+
+<span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+
+}
+
+<span class="hljs-meta">@GetMapping</span>(<span class="hljs-string">"/{:id}/projects/count"</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">public</span> ResponseEntity&lt;User&gt; <span class="hljs-title">countProjects</span><span class="hljs-params">(@PathVariable(<span class="hljs-string">"id"</span>)</span> String id, @<span class="hljs-title">RequestParam</span><span class="hljs-params">(<span class="hljs-string">"name"</span>)</span> String name) </span>{
+
+<span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+
+}
+
+<span class="hljs-meta">@GetMapping</span>(<span class="hljs-string">"/"</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">public</span> ResponseEntity&lt;User&gt; <span class="hljs-title">listByOptions</span><span class="hljs-params">(@RequestBody Map&lt;String, Object&gt; options)</span> </span>{
+
+<span class="hljs-keyword">return</span> <span class="hljs-keyword">null</span>;
+
+}
+
+}
+</div></code></pre>
+
+</body>
+</html>
