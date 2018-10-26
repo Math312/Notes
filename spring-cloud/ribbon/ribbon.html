@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ribbon.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: "Segoe WPC", "Segoe UI", "SFUIText-Light", "HelveticaNeue-Light", sans-serif, "Droid Sans Fallback";
+	font-size: 14px;
+	padding: 0 12px;
+	line-height: 22px;
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	color: #4080D0;
+	text-decoration: none;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+h1 code,
+h2 code,
+h3 code,
+h4 code,
+h5 code,
+h6 code {
+	font-size: inherit;
+	line-height: auto;
+}
+
+a:hover {
+	color: #4080D0;
+	text-decoration: underline;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left: 5px solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 14px;
+	line-height: 19px;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+.mac code {
+	font-size: 12px;
+	line-height: 18px;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+/** Theming */
+
+.vscode-light,
+.vscode-light pre code {
+	color: rgb(30, 30, 30);
+}
+
+.vscode-dark,
+.vscode-dark pre code {
+	color: #DDD;
+}
+
+.vscode-high-contrast,
+.vscode-high-contrast pre code {
+	color: white;
+}
+
+.vscode-light code {
+	color: #A31515;
+}
+
+.vscode-dark code {
+	color: #D7BA7D;
+}
+
+.vscode-light pre:not(.hljs),
+.vscode-light code > div {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre:not(.hljs),
+.vscode-dark code > div {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre:not(.hljs),
+.vscode-high-contrast code > div {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+.vscode-light blockquote,
+.vscode-dark blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.vscode-high-contrast blockquote {
+	background: transparent;
+	border-color: #fff;
+}
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family:  "Meiryo", "Segoe WPC", "Segoe UI", "SFUIText-Light", "HelveticaNeue-Light", sans-serif, "Droid Sans Fallback";
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+</head>
+<body>
+<h1 id="ribbon">Ribbon</h1>
+<h2 id="%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E6%B5%81%E7%A8%8B%E6%95%B4%E7%90%86">源码分析流程整理</h2>
+<p>我们已经知道使用<code>@LoadBalanced</code>注解，注解到<code>RestTemplate</code>就可以实现Ribbon客户端的负载均衡，那么这是为什么呢？</p>
+<p>首先我们查看<code>@LoadBalanced</code>注解的源码，源码如下：</p>
+<pre><code>package org.springframework.cloud.client.loadbalancer;
+
+import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Inherited;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
+* Annotation to mark a RestTemplate bean to be configured to use a LoadBalancerClient
+* @author Spencer Gibb
+*/
+@Target({ ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD })
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Inherited
+@Qualifier
+public @interface LoadBalanced {
+}
+</code></pre>
+<p>根据上述注释</p>
+<pre><code>/**
+* Annotation to mark a RestTemplate bean to be configured to use a LoadBalancerClient
+* @author Spencer Gibb
+*/
+</code></pre>
+<p>我们可以看到标记了这个注解的<code>RestTemplate bean</code>都会被使用<code>LoadBalanceClient</code>进行配置。</p>
+<p>那么下面我们去查看<code>LoadBalanceClient</code>类，源码如下：</p>
+<pre><code>/**
+* Represents a client side load balancer
+* @author Spencer Gibb
+*/
+public interface LoadBalancerClient {
+/**
+ * Choose a ServiceInstance from the LoadBalancer for the specified service
+ * @param serviceId the service id to look up the LoadBalancer
+ * @return a ServiceInstance that matches the serviceId
+ */
+ServiceInstance choose(String serviceId);
+
+/**
+ * execute request using a ServiceInstance from the LoadBalancer for the specified
+ * service
+ * @param serviceId the service id to look up the LoadBalancer
+ * @param request allows implementations to execute pre and post actions such as
+ * incrementing metrics
+ * @return the result of the LoadBalancerRequest callback on the selected
+ * ServiceInstance
+ */
+&lt;T&gt; T execute(String serviceId, LoadBalancerRequest&lt;T&gt; request) throws IOException;
+
+/**
+ * Create a proper URI with a real host and port for systems to utilize.
+ * Some systems use a URI with the logical serivce name as the host,
+ * such as http://myservice/path/to/service.  This will replace the
+ * service name with the host:port from the ServiceInstance.
+ * @param instance
+ * @param original a URI with the host as a logical service name
+ * @return a reconstructed URI
+ */
+URI reconstructURI(ServiceInstance instance, URI original);
+
+}
+</code></pre>
+<p>我们看到<code>LoadBalancerClient</code>是一个接口，该接口拥有三个方法，分别是下面3个：</p>
+<ul>
+<li>ServiceInstance choose(String serviceId):根据服务名，从<code>LoadBalancer</code>中选择一个特定的实例。</li>
+<li><T> T execute(String serviceId, LoadBalancerRequest<T> request) throws
+IOException; 使用一个<code>ServiceInstance</code>去为指定的服务实现请求。</li>
+<li>URI reconstructURI(ServiceInstance instance, URI original):为系统构建一个合适的host:port形式的URI。在分布式系统中,我们使用逻辑上的服务名称作为host来构建URI(替代服务实例的host:port形式)进行请求,比如http://myservice/path/to/service。在该操作的定义中,前者的<code>ServiceInstance</code>对象是带有host和port的具体服务实例，而后者URI对象则是使用逻辑服务名定义为host的URI,而返回的URI内容则是通过<code>ServiceInstance</code>的服务实例详情拼接出具体的host:post形式的请求地址。</li>
+</ul>
+<p>通过类图我们可知LoadBalancerAutoConfiguration实现客户端复杂均衡器的自动化配置。源码如下：</p>
+<pre><code>/**
+ * Auto configuration for Ribbon (client side load balancing).
+*
+* @author Spencer Gibb
+* @author Dave Syer
+*/
+@Configuration
+@ConditionalOnClass(RestTemplate.class)
+@ConditionalOnBean(LoadBalancerClient.class)
+public class LoadBalancerAutoConfiguration {
+
+@LoadBalanced
+@Autowired(required = false)
+private List&lt;RestTemplate&gt; restTemplates = Collections.emptyList();
+
+@Bean
+public SmartInitializingSingleton loadBalancedRestTemplateInitializer(
+		final List&lt;RestTemplateCustomizer&gt; customizers) {
+	return new SmartInitializingSingleton() {
+		@Override
+		public void afterSingletonsInstantiated() {
+			for (RestTemplate restTemplate : LoadBalancerAutoConfiguration.this.restTemplates) {
+				for (RestTemplateCustomizer customizer : customizers) {
+					customizer.customize(restTemplate);
+				}
+			}
+		}
+	};
+}
+
+@Bean
+@ConditionalOnMissingBean
+public RestTemplateCustomizer restTemplateCustomizer(
+		final LoadBalancerInterceptor loadBalancerInterceptor) {
+	return new RestTemplateCustomizer() {
+		@Override
+		public void customize(RestTemplate restTemplate) {
+			List&lt;ClientHttpRequestInterceptor&gt; list = new ArrayList&lt;&gt;(
+					restTemplate.getInterceptors());
+			list.add(loadBalancerInterceptor);
+			restTemplate.setInterceptors(list);
+		}
+	};
+}
+
+@Bean
+public LoadBalancerInterceptor ribbonInterceptor(
+		LoadBalancerClient loadBalancerClient) {
+	return new LoadBalancerInterceptor(loadBalancerClient);
+}
+
+}
+</code></pre>
+<p><code>LoadBalancerAutoConfiguration</code>上被如下注解标记：</p>
+<pre><code>@ConditionalOnClass(RestTemplate.class)
+@ConditionalOnBean(LoadBalancerClient.class)
+</code></pre>
+<p>这要求<code>RestTemplate</code>类必须存在于当前工程环境中，Spring的bean工程中必须有<code>LoadBalancerClient</code>的实现bean。</p>
+<p>同时该类具有三个方法,这个类要由下往上看：</p>
+<ul>
+<li>public LoadBalancerInterceptor ribbonInterceptor(LoadBalancerClient loadBalancerClient) 在这里创建了一个<code>LoadBalancerInterceptor</code>的bean。对客户端的请求发出拦截,进行负载均衡。</li>
+<li>public RestTemplateCustomizer restTemplateCustomizer(
+final LoadBalancerInterceptor loadBalancerInterceptor) 该方法则为每个进入的<code>RestTemplate</code>添加<code>LoadBalancerInterceptor</code>拦截器进行拦截。</li>
+<li>public SmartInitializingSingleton loadBalancedRestTemplateInitializer(
+final List<RestTemplateCustomizer> customizers 这里维护了一个被<code>LoadBanlanced</code>注释修饰的<code>RestTemplate</code>列表,并在此进行初始化，以及调用上述两个方法添加拦截器。</li>
+</ul>
+<p>那么下面我们查看被添加的<code>LoadBalancerInterceptor</code>拦截器的源码：</p>
+<pre><code>public class LoadBalancerInterceptor implements ClientHttpRequestInterceptor {
+
+private LoadBalancerClient loadBalancer;
+
+public LoadBalancerInterceptor(LoadBalancerClient loadBalancer) {
+	this.loadBalancer = loadBalancer;
+}
+
+@Override
+public ClientHttpResponse intercept(final HttpRequest request, final byte[] body,
+		final ClientHttpRequestExecution execution) throws IOException {
+	final URI originalUri = request.getURI();
+	String serviceName = originalUri.getHost();
+	return this.loadBalancer.execute(serviceName,
+			new LoadBalancerRequest&lt;ClientHttpResponse&gt;() {
+
+				@Override
+				public ClientHttpResponse apply(final ServiceInstance instance)
+						throws Exception {
+					HttpRequest serviceRequest = new ServiceRequestWrapper(request,
+							instance);
+					return execution.execute(serviceRequest, body);
+				}
+
+			});
+}
+
+private class ServiceRequestWrapper extends HttpRequestWrapper {
+
+	private final ServiceInstance instance;
+
+	public ServiceRequestWrapper(HttpRequest request, ServiceInstance instance) {
+		super(request);
+		this.instance = instance;
+	}
+
+	@Override
+	public URI getURI() {
+		URI uri = LoadBalancerInterceptor.this.loadBalancer.reconstructURI(
+				this.instance, getRequest().getURI());
+		return uri;
+	}
+
+}
+
+}
+</code></pre>
+<p>当用户请求进入后，都会被<code>LoadBalancerInterceptor</code>所拦截，然后交给<code>intercept</code>函数所拦截，然后从其中取出<code>serviceName</code>,交由<code>LoadBalanceClient</code>执行<code>execute</code>函数，进行处理，即调用如下方法：</p>
+<pre><code>@Override
+public ClientHttpResponse intercept(final HttpRequest request, final byte[] body,
+		final ClientHttpRequestExecution execution) throws IOException {
+	final URI originalUri = request.getURI();
+	String serviceName = originalUri.getHost();
+	return this.loadBalancer.execute(serviceName,
+			new LoadBalancerRequest&lt;ClientHttpResponse&gt;() {
+
+				@Override
+				public ClientHttpResponse apply(final ServiceInstance instance)
+						throws Exception {
+					HttpRequest serviceRequest = new ServiceRequestWrapper(request,
+							instance);
+					return execution.execute(serviceRequest, body);
+				}
+
+			});
+}
+</code></pre>
+<p>首先通过</p>
+<pre><code>final URI originalUri = request.getURI();
+String serviceName = originalUri.getHost();
+</code></pre>
+<p>获取到serviceName，然后构建一个<code>LoadBalancerRequest()</code>并实现其<code>apply(ServiceInstance instance)</code>方法，我们在<code>apply()</code>方法中，创建了一个<code>ServiceRequestWrapper</code>，查看该类源码：</p>
+<pre><code>private class ServiceRequestWrapper extends HttpRequestWrapper {
+
+	private final ServiceInstance instance;
+
+	public ServiceRequestWrapper(HttpRequest request, ServiceInstance instance) {
+		super(request);
+		this.instance = instance;
+	}
+
+	@Override
+	public URI getURI() {
+		URI uri = LoadBalancerInterceptor.this.loadBalancer.reconstructURI(
+				this.instance, getRequest().getURI());
+		return uri;
+	}
+
+}
+</code></pre>
+<p>这里的<code>getURI()</code>方法就是使用的<code>LoadBalancerClient</code>的</p>
+<p>这里的 <code>loadBalancer</code>使用的是<code>RibbonLoadBalancerClient</code>(<code>org.springframework.cloud.netflix.ribbon</code>包中),调用其中<code>execute(....)</code>方法，方法源码如下：</p>
+<pre><code>@Override
+public &lt;T&gt; T execute(String serviceId, LoadBalancerRequest&lt;T&gt; request) throws IOException {
+	ILoadBalancer loadBalancer = getLoadBalancer(serviceId);
+	Server server = getServer(loadBalancer);
+	if (server == null) {
+		throw new IllegalStateException(&quot;No instances available for &quot; + serviceId);
+	}
+	RibbonServer ribbonServer = new RibbonServer(serviceId, server, isSecure(server,
+			serviceId), serverIntrospector(serviceId).getMetadata(server));
+
+	RibbonLoadBalancerContext context = this.clientFactory
+			.getLoadBalancerContext(serviceId);
+	RibbonStatsRecorder statsRecorder = new RibbonStatsRecorder(context, server);
+
+	try {
+		T returnVal = request.apply(ribbonServer);
+		statsRecorder.recordStats(returnVal);
+		return returnVal;
+	}
+	// catch IOException and rethrow so RestTemplate behaves correctly
+	catch (IOException ex) {
+		statsRecorder.recordStats(ex);
+		throw ex;
+	}
+	catch (Exception ex) {
+		statsRecorder.recordStats(ex);
+		ReflectionUtils.rethrowRuntimeException(ex);
+	}
+	return null;
+}
+</code></pre>
+<p>执行过程中，首先通过<code>getLoadBalancer(serviceId)</code>获取与名称相关的负载均衡器。然后通过<code>getServer(loadBalancer)</code>获取Server实例，该方法中调用了<code>loadBalancer</code>的<code>chooseServer()</code>方法，负载均衡选择<code>server</code>实例。选择完实例后使用构造器(<code>new RibbonServer(serviceId, server, isSecure(server,serviceId), serverIntrospector(serviceId).getMetadata(server))</code>)获取<code>RibbonServer</code>,该对象表示发现系统的服务实例。需要serviceId,server实例，以及是否安全和元数据。其中<code>isSecure(server,serviceId)</code>用来判断是否安全，源码如下：</p>
+<pre><code>private boolean isSecure(Server server, String serviceId) {
+	IClientConfig config = this.clientFactory.getClientConfig(serviceId);
+	if (config != null) {
+		Boolean isSecure = config.get(CommonClientConfigKey.IsSecure);
+		if (isSecure != null) {
+			return isSecure;
+		}
+	}
+
+	return serverIntrospector(serviceId).isSecure(server);
+}
+</code></pre>
+<p><code>SpringClientFactory</code>类是一个用来创建客户端负载均衡器的工厂类，该工厂会为每一个不同名的ribbon客户端生成不同的Spring上下文。
+该方法首先获取<code>IClientConfig</code>，该类定义各种API用于初始化客户端的客户端配置 。如果配置不为空，那么就获取配置中的<code>IsSecure</code>信息来进行判断，如果<code>isSecure</code>属性为空，那么就调用<code>serverIntrospector(serviceId).isSecure(server)</code>该方法。<code>serverIntrospector()</code>方法如下：</p>
+<pre><code>private ServerIntrospector serverIntrospector(String serviceId) {
+	ServerIntrospector serverIntrospector = this.clientFactory.getInstance(serviceId,
+			ServerIntrospector.class);
+	if (serverIntrospector == null) {
+		serverIntrospector = new DefaultServerIntrospector();
+	}
+	return serverIntrospector;
+}
+</code></pre>
+<p>首先我们获取<code>ServerIntrospector</code>，该接口如下：</p>
+<pre><code>public interface ServerIntrospector {
+
+boolean isSecure(Server server);
+
+Map&lt;String, String&gt; getMetadata(Server server);
+}
+</code></pre>
+<p>通过接口我们知道，该对象可以获取服务器是否安全，以及相关的元数据，达到特定效果。如果，获取不到<code>ServerIntrospector</code>，那么就自己建造一个，源码如下：</p>
+<pre><code>public class DefaultServerIntrospector implements ServerIntrospector {
+@Override
+public boolean isSecure(Server server) {
+	// Can we do better?
+	return (&quot;&quot;+server.getPort()).endsWith(&quot;443&quot;);
+}
+
+@Override
+public Map&lt;String, String&gt; getMetadata(Server server) {
+	return Collections.emptyMap();
+}
+}
+</code></pre>
+<p>根据源码我们知道，该对象的<code>isSecure(Server server)</code>方法判断逻辑是，返回服务器端口号是否以<code>443</code>结尾，而元数据则是空Map。</p>
+<p>然后继续调用<code>isSecure()</code>方法，笔者这里是获取了<code>EurekaServerIntrospector</code>对象，而该对象的源码如下：</p>
+<pre><code>public class EurekaServerIntrospector extends DefaultServerIntrospector {
+
+@Override
+public boolean isSecure(Server server) {
+	if (server instanceof DiscoveryEnabledServer) {
+		DiscoveryEnabledServer discoveryServer = (DiscoveryEnabledServer) server;
+		return discoveryServer.getInstanceInfo().isPortEnabled(InstanceInfo.PortType.SECURE);
+	}
+	return super.isSecure(server);
+}
+
+@Override
+public Map&lt;String, String&gt; getMetadata(Server server) {
+	if (server instanceof DiscoveryEnabledServer) {
+		DiscoveryEnabledServer discoveryServer = (DiscoveryEnabledServer) server;
+		return discoveryServer.getInstanceInfo().getMetadata();
+	}
+	return super.getMetadata(server);
+}
+}
+</code></pre>
+<p>可以看到，该类继承了上面所说的<code>DefaultServerIntrospector</code>,名字为<code>EurekaServerIntrospector</code>，这样该类是做什么的就很明显了。<code>isSecure(Server)</code>方法首先将<code>server</code>转化成<code>DiscoveryEnableServer</code>对象，然后调用其<code>getInstanceInfo().isPortEnabled(InstanceInfo.PortType.SECURE)</code>进行判断。对此，此时我们查看<code>DiscoveryEnableServer</code>源码注释可以看到：</p>
+<pre><code>/**
+* Servers that were obtained via Discovery and hence contain
+* meta data in the form of InstanceInfo
+* @author stonse
+*
+*/
+</code></pre>
+<p>该类是通过发现获取的Servers，并且包含了元数据。而这个InstanceInfo，就是各种元数据已经开放端口等。<code>InstanceInfo</code>类源码注释如下：</p>
+<pre><code>/**
+* The class that holds information required for registration with
+* &lt;tt&gt;Eureka Server&lt;/tt&gt; and to be discovered by other components.
+* &lt;p&gt;
+* &lt;code&gt;@Auto&lt;/code&gt; annotated fields are serialized as is; Other fields are
+* serialized as specified by the &lt;code&gt;@Serializer&lt;/code&gt;.
+* &lt;/p&gt;
+*
+* @author Karthik Ranganathan, Greg Kim
+*/
+</code></pre>
+<p>此处笔者不再赘述，到这里，<code>isSecure()</code>方法的逻辑已经完全解释清楚。剩下的<code>serverIntrospector(serviceId).getMetadata(server)</code>也就清楚了，到这里就获得了一个<code>RibbonServer</code>对象。</p>
+<p>接下来我们需要获取一个<code>RibbonLoadBalancerContext</code>类的属性，
+<code>RibbonLoadBalancerContext</code>类是<code>LoadBalancerContext</code>的子类，该类用于存储一些被负载均衡器使用的上下文内容和Api操作（reconstructURIWithServer就是其中之一）。即:</p>
+<pre><code>RibbonLoadBalancerContext context = this.clientFactory
+			.getLoadBalancerContext(serviceId);
+</code></pre>
+<p>最后获取一个<code>RibbonStatsRecorder</code>对服务的请求还进行了跟踪记录.</p>
+<pre><code>RibbonStatsRecorder statsRecorder = new RibbonStatsRecorder(context, server);
+</code></pre>
+<p>然后调用如下方法对服务提供端进行调用:</p>
+<pre><code>T returnVal = request.apply(ribbonServer);
+</code></pre>
+<p>返回消息后进行记录,并返回结果.</p>
+<pre><code>statsRecorder.recordStats(returnVal);
+return returnVal;
+</code></pre>
+<p>那么现在我们来分析下 <code>request.apply(ribbonServer);</code>这个方法.调用该方法的对象是<code>ClientHttpRequestExecution</code>类的对象,我们查看该类的源码:</p>
+<pre><code>/**
+* Represents the context of a client-side HTTP request execution.
+*
+* &lt;p&gt;Used to invoke the next interceptor in the interceptor chain,
+* or - if the calling interceptor is last - execute the request itself.
+*
+* @author Arjen Poutsma
+* @since 3.1
+* @see ClientHttpRequestInterceptor
+*/
+public interface ClientHttpRequestExecution {
+
+	/**
+ 	* Execute the request with the given request attributes and body,
+ 	* and return the response.
+ 	* @param request the request, containing method, URI, and headers
+ 	* @param body the body of the request to execute
+ 	* @return the response
+ 	* @throws IOException in case of I/O errors
+ 	*/
+	ClientHttpResponse execute(HttpRequest request, byte[] body) throws IOException;
+
+}
+</code></pre>
+<p>可以看到<code>ClientHttpRequestExecution</code>是一个接口。该接口用来实现客户端的http请求的执行。被用来去调用拦截器链中下一个拦截器，如果要被调用的拦截器是最后一个，那么执行请求。实现类源码如下：</p>
+<pre><code>private class InterceptingRequestExecution implements ClientHttpRequestExecution {
+
+	private final Iterator&lt;ClientHttpRequestInterceptor&gt; iterator;
+
+	public InterceptingRequestExecution() {
+		this.iterator = interceptors.iterator();
+	}
+
+	@Override
+	public ClientHttpResponse execute(HttpRequest request, final byte[] body) throws IOException {
+		if (this.iterator.hasNext()) {
+			ClientHttpRequestInterceptor nextInterceptor = this.iterator.next();
+			return nextInterceptor.intercept(request, body, this);
+		}
+		else {
+			ClientHttpRequest delegate = requestFactory.createRequest(request.getURI(), request.getMethod());
+			for (Map.Entry&lt;String, List&lt;String&gt;&gt; entry : request.getHeaders().entrySet()) {
+				List&lt;String&gt; values = entry.getValue();
+				for (String value : values) {
+					delegate.getHeaders().add(entry.getKey(), value);
+				}
+			}
+			if (body.length &gt; 0) {
+				if (delegate instanceof StreamingHttpOutputMessage) {
+					StreamingHttpOutputMessage streamingOutputMessage = (StreamingHttpOutputMessage) delegate;
+					streamingOutputMessage.setBody(new StreamingHttpOutputMessage.Body() {
+						@Override
+						public void writeTo(final OutputStream outputStream) throws IOException {
+							StreamUtils.copy(body, outputStream);
+						}
+					});
+				}
+				else {
+					StreamUtils.copy(body, delegate.getBody());
+				}
+			}
+			return delegate.execute();
+		}
+	}
+}
+</code></pre>
+<p>考察源码的<code>execute()</code>方法，首先寻找下一个拦截器，如果有下一个，则获取拦截器，并执行。否则，通过<code>ClientHttpRequestFactory</code>的<code>createRequest(request.getURI(), request.getMethod())</code>方法获取特定的<code>ClientHttpRequest</code>。然后将头信息和body信息放入到<code>ClientHttpRequest</code>，然后调用<code>execute()</code>方法进行执行请求调用。</p>
+<p>通过一番分析，我们知道了，当一个请求需要调用别的服务的方法时，首先被<code>LoadBalancerInterceptor</code>拦截器所拦截，然后调用其intercept方法。然后，获取<code>URI</code>和<code>ServiceName</code>，之后交给<code>RibbonLoadBalancerClient</code>进行处理，处理过程中，先获取负载均衡器<code>ILoadBalancer</code>，之后 通过负载均衡器获取<code>Server实例</code>，之后将<code>Server实例</code>包装成<code>RibbonServer</code>,并加载<code>RibbonBalancerContext</code>，获取<code>RibbonStatsRecorder</code>,之后调用传入的request的applyf()方法，方法参数传入包装好的<code>RibbonLoadBalancerClient</code>，该方法将继续执行拦截器链中的实例，如果没有拦截器了，将自己远程调用其它服务的方法，并返回结果。最后交由<code>RibbonStatsRecorder</code>记录下调用历史数据。</p>
+<p>那么我们知道，负载均衡器就是在<code>RibbonLoadBalancerClient</code>中的<code>execute(String serviceId,LoadBalancerRequest&lt;T&gt; request)</code>方法中的<code>getLoadBalancer(serviceId)</code>方法获得的，那么这个负载均衡器是怎么获得的呢？我们考察该方法的源码：</p>
+<pre><code>protected ILoadBalancer getLoadBalancer(String serviceId) {
+	return this.clientFactory.getLoadBalancer(serviceId);
+}
+</code></pre>
+<p>该方法显而易见，是由<code>SpringClientFactory</code>获取一个负载均衡器实例，那么<code>SpringClientFactory</code>是怎么获取的呢？</p>
+<pre><code>public ILoadBalancer getLoadBalancer(String name) {
+	return getInstance(name, ILoadBalancer.class);
+}
+</code></pre>
+<p>我们看到它获取的就是一个<code>ILoadBalancer</code>类型的实例。该类型又是什么呢？我们查看源码发现：</p>
+<pre><code>/**
+* Interface that defines the operations for a software loadbalancer. A typical
+* loadbalancer minimally need a set of servers to loadbalance for, a method to
+* mark a particular server to be out of rotation and a call that will choose a
+* server from the existing list of server.
+* 
+* @author stonse
+* 
+*/
+public interface ILoadBalancer {
+
+	/**
+ 	* Initial list of servers.
+ 	* This API also serves to add additional ones at a later time
+ 	* The same logical server (host:port) could essentially be added multiple times
+ 	* (helpful in cases where you want to give more &quot;weightage&quot; perhaps ..)
+ 	* 
+ 	* @param newServers new servers to add
+ 	*/
+	public void addServers(List&lt;Server&gt; newServers);
+
+	/**
+ 	* Choose a server from load balancer.
+ 	* 
+ 	* @param key An object that the load balancer may use to determine which server to return. null if 
+ 	*         the load balancer does not use this parameter.
+ 	* @return server chosen
+ 	*/
+	public Server chooseServer(Object key);
+
+	/**
+ 	* To be called by the clients of the load balancer to notify that a Server is down
+ 	* else, the LB will think its still Alive until the next Ping cycle - potentially
+ 	* (assuming that the LB Impl does a ping)
+ 	* 
+ 	* @param server Server to mark as down
+ 	*/
+	public void markServerDown(Server server);
+
+	/**
+ 	* @deprecated 2016-01-20 This method is deprecated in favor of the
+ 	* cleaner {@link #getReachableServers} (equivalent to availableOnly=true)
+ 	* and {@link #getAllServers} API (equivalent to availableOnly=false).
+ 	*
+ 	* Get the current list of servers.
+ 	*
+ 	* @param availableOnly if true, only live and available servers should be returned
+ 	*/
+	@Deprecated
+	public List&lt;Server&gt; getServerList(boolean availableOnly);
+
+	/**
+ 	* @return Only the servers that are up and reachable.
+ 	*/
+	public List&lt;Server&gt; getReachableServers();
+
+	/**
+ 	* @return All known servers, both reachable and unreachable.
+ 	*/
+	public List&lt;Server&gt; getAllServers();
+}
+</code></pre>
+<p>我们看到这家伙是一个接口，该接口的注释描述到<code>该接口定义了一个软件负载均衡器的操作，典型的负载均衡器最低限度地需要一组服务器来进行负载均衡,一个标记服务器不可用的方法和从已知服务器中选择一个可用的服务器的调用</code>。该接口要求实现6个方法，其中一个已经不推荐了，分别如下：</p>
+<ol>
+<li>addServers(List<Server> newServers):初始化服务器列表，这个API也可以在之后添加一个额外的服务器，相同逻辑的服务实例可以被添加多次。</li>
+<li>chooseServer(Object key):从负载均衡器中选择一个服务器。</li>
+<li>markServerDown(Server server):该方法由负载均衡器的客户端调用，标记改服务器实例已经down掉了。但是这个负载均衡器在下一个Ping周期之前已经会认为这个服务器是活着的。</li>
+<li>getServerList(boolean availableOnly):获取现在的服务器列表。</li>
+<li>getReachableServers():获取启动的并且可达的服务器列表。</li>
+<li>getAllServers(): 获取所有的已知的服务器，既包括可达的，也包括不可达的。</li>
+</ol>
+<p>其中<code>ILoadBalancer</code>接口的继承关系如下：</p>
+<p><img src="images/ILoadBalancer类图.png" alt="ILoadBalacer类图"></p>
+<p><code>BaseLoadBalancer</code>实现了基础的负载均衡，而<code>DynamicServerListLoadBalancer</code>和<code>ZoneAwareLoadBalancer</code>提供了扩展。那么我们默认使用的是哪个<code>ILoadBalancer</code>呢？</p>
+<p>我们考察<code>RibbonClientConfiguration</code>,考察其源码，发现：</p>
+<pre><code>@Bean
+@ConditionalOnMissingBean
+public ILoadBalancer ribbonLoadBalancer(IClientConfig config,
+		ServerList&lt;Server&gt; serverList, ServerListFilter&lt;Server&gt; serverListFilter,
+		IRule rule, IPing ping) {
+	ZoneAwareLoadBalancer&lt;Server&gt; balancer = LoadBalancerBuilder.newBuilder()
+			.withClientConfig(config).withRule(rule).withPing(ping)
+			.withServerListFilter(serverListFilter).withDynamicServerList(serverList)
+			.buildDynamicServerListLoadBalancer();
+	return balancer;
+}
+</code></pre>
+<p>其将<code>ZoneAwareLoadBalancer</code>放入到了Spring bean容器中。默认取到的就是这个Bean。</p>
+<p>自此，所有逻辑全部理清。</p>
+
+</body>
+</html>
