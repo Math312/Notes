@@ -4,32 +4,32 @@
 
 1. 实现AbstractAnnotationConfigDispatcherServletInitializer
 
-    //在web容器启动的时候创建对象，调用方法来初始化容器以及前端控制器
-    public class MyWebApplicationInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+		//在web容器启动的时候创建对象，调用方法来初始化容器以及前端控制器
+		public class MyWebApplicationInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
-        //获取根容器的配置类（Spring的配置文件）
-        @Override
-        protected Class<?>[] getRootConfigClasses() {
-            // TODO Auto-generated method stub
-            return new Class[] {RootConfiguration.class};
-        }
-        // 获取Web容器的配置类（Spring MVC配置文件）
-        @Override
-        protected Class<?>[] getServletConfigClasses() {
-            // TODO Auto-generated method stub
-            return new Class[] {WebConfiguration.class};
-        }
+			//获取根容器的配置类（Spring的配置文件）
+			@Override
+			protected Class<?>[] getRootConfigClasses() {
+				// TODO Auto-generated method stub
+				return new Class[] {RootConfiguration.class};
+			}
+			// 获取Web容器的配置类（Spring MVC配置文件）
+			@Override
+			protected Class<?>[] getServletConfigClasses() {
+				// TODO Auto-generated method stub
+				return new Class[] {WebConfiguration.class};
+			}
 
-        //获取DispatcherServlet的映射信息
-        // “/”拦截所有请求，包括静态资源，不包括*.jsp
-        // "/*"连*.jsp页面都拦截
-        @Override
-        protected String[] getServletMappings() {
-            // TODO Auto-generated method stub
-            return new String[] {"/"};
-        }
+			//获取DispatcherServlet的映射信息
+			// “/”拦截所有请求，包括静态资源，不包括*.jsp
+			// "/*"连*.jsp页面都拦截
+			@Override
+			protected String[] getServletMappings() {
+				// TODO Auto-generated method stub
+				return new String[] {"/"};
+			}
 
-    }
+		}
 
 根容器配置类：
 
