@@ -1,0 +1,1412 @@
+<!DOCTYPE html><html><head>
+      <title>spring-ioc</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+      <link rel="stylesheet" href="file:///C:\Users\ShaoYanli\.vscode\extensions\shd101wyy.markdown-preview-enhanced-0.3.11\node_modules\@shd101wyy\mume\dependencies\katex\katex.min.css">
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+      <style> 
+      /**
+ * prism.js Github theme based on GitHub's theme.
+ * @author Sam Clarke
+ */
+code[class*="language-"],
+pre[class*="language-"] {
+  color: #333;
+  background: none;
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.4;
+
+  -moz-tab-size: 8;
+  -o-tab-size: 8;
+  tab-size: 8;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+  padding: .8em;
+  overflow: auto;
+  /* border: 1px solid #ddd; */
+  border-radius: 3px;
+  /* background: #fff; */
+  background: #f5f5f5;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+  padding: .1em;
+  border-radius: .3em;
+  white-space: normal;
+  background: #f5f5f5;
+}
+
+.token.comment,
+.token.blockquote {
+  color: #969896;
+}
+
+.token.cdata {
+  color: #183691;
+}
+
+.token.doctype,
+.token.punctuation,
+.token.variable,
+.token.macro.property {
+  color: #333;
+}
+
+.token.operator,
+.token.important,
+.token.keyword,
+.token.rule,
+.token.builtin {
+  color: #a71d5d;
+}
+
+.token.string,
+.token.url,
+.token.regex,
+.token.attr-value {
+  color: #183691;
+}
+
+.token.property,
+.token.number,
+.token.boolean,
+.token.entity,
+.token.atrule,
+.token.constant,
+.token.symbol,
+.token.command,
+.token.code {
+  color: #0086b3;
+}
+
+.token.tag,
+.token.selector,
+.token.prolog {
+  color: #63a35c;
+}
+
+.token.function,
+.token.namespace,
+.token.pseudo-element,
+.token.class,
+.token.class-name,
+.token.pseudo-class,
+.token.id,
+.token.url-reference .token.variable,
+.token.attr-name {
+  color: #795da3;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+.token.title,
+.token.title .token.punctuation {
+  font-weight: bold;
+  color: #1d3e81;
+}
+
+.token.list {
+  color: #ed6a43;
+}
+
+.token.inserted {
+  background-color: #eaffea;
+  color: #55a532;
+}
+
+.token.deleted {
+  background-color: #ffecec;
+  color: #bd2c00;
+}
+
+.token.bold {
+  font-weight: bold;
+}
+
+.token.italic {
+  font-style: italic;
+}
+
+
+/* JSON */
+.language-json .token.property {
+  color: #183691;
+}
+
+.language-markup .token.tag .token.punctuation {
+  color: #333;
+}
+
+/* CSS */
+code.language-css,
+.language-css .token.function {
+  color: #0086b3;
+}
+
+/* YAML */
+.language-yaml .token.atrule {
+  color: #63a35c;
+}
+
+code.language-yaml {
+  color: #183691;
+}
+
+/* Ruby */
+.language-ruby .token.function {
+  color: #333;
+}
+
+/* Markdown */
+.language-markdown .token.url {
+  color: #795da3;
+}
+
+/* Makefile */
+.language-makefile .token.symbol {
+  color: #795da3;
+}
+
+.language-makefile .token.variable {
+  color: #183691;
+}
+
+.language-makefile .token.builtin {
+  color: #0086b3;
+}
+
+/* Bash */
+.language-bash .token.keyword {
+  color: #0086b3;
+}html body{font-family:"Helvetica Neue",Helvetica,"Segoe UI",Arial,freesans,sans-serif;font-size:16px;line-height:1.6;color:#333;background-color:#fff;overflow:initial;box-sizing:border-box;word-wrap:break-word}html body>:first-child{margin-top:0}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{line-height:1.2;margin-top:1em;margin-bottom:16px;color:#000}html body h1{font-size:2.25em;font-weight:300;padding-bottom:.3em}html body h2{font-size:1.75em;font-weight:400;padding-bottom:.3em}html body h3{font-size:1.5em;font-weight:500}html body h4{font-size:1.25em;font-weight:600}html body h5{font-size:1.1em;font-weight:600}html body h6{font-size:1em;font-weight:600}html body h1,html body h2,html body h3,html body h4,html body h5{font-weight:600}html body h5{font-size:1em}html body h6{color:#5c5c5c}html body strong{color:#000}html body del{color:#5c5c5c}html body a:not([href]){color:inherit;text-decoration:none}html body a{color:#08c;text-decoration:none}html body a:hover{color:#00a3f5;text-decoration:none}html body img{max-width:100%}html body>p{margin-top:0;margin-bottom:16px;word-wrap:break-word}html body>ul,html body>ol{margin-bottom:16px}html body ul,html body ol{padding-left:2em}html body ul.no-list,html body ol.no-list{padding:0;list-style-type:none}html body ul ul,html body ul ol,html body ol ol,html body ol ul{margin-top:0;margin-bottom:0}html body li{margin-bottom:0}html body li.task-list-item{list-style:none}html body li>p{margin-top:0;margin-bottom:0}html body .task-list-item-checkbox{margin:0 .2em .25em -1.8em;vertical-align:middle}html body .task-list-item-checkbox:hover{cursor:pointer}html body blockquote{margin:16px 0;font-size:inherit;padding:0 15px;color:#5c5c5c;border-left:4px solid #d6d6d6}html body blockquote>:first-child{margin-top:0}html body blockquote>:last-child{margin-bottom:0}html body hr{height:4px;margin:32px 0;background-color:#d6d6d6;border:0 none}html body table{margin:10px 0 15px 0;border-collapse:collapse;border-spacing:0;display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all}html body table th{font-weight:bold;color:#000}html body table td,html body table th{border:1px solid #d6d6d6;padding:6px 13px}html body dl{padding:0}html body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:bold}html body dl dd{padding:0 16px;margin-bottom:16px}html body code{font-family:Menlo,Monaco,Consolas,'Courier New',monospace;font-size:.85em !important;color:#000;background-color:#f0f0f0;border-radius:3px;padding:.2em 0}html body code::before,html body code::after{letter-spacing:-0.2em;content:"\00a0"}html body pre>code{padding:0;margin:0;font-size:.85em !important;word-break:normal;white-space:pre;background:transparent;border:0}html body .highlight{margin-bottom:16px}html body .highlight pre,html body pre{padding:1em;overflow:auto;font-size:.85em !important;line-height:1.45;border:#d6d6d6;border-radius:3px}html body .highlight pre{margin-bottom:0;word-break:normal}html body pre code,html body pre tt{display:inline;max-width:initial;padding:0;margin:0;overflow:initial;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}html body pre code:before,html body pre tt:before,html body pre code:after,html body pre tt:after{content:normal}html body p,html body blockquote,html body ul,html body ol,html body dl,html body pre{margin-top:0;margin-bottom:16px}html body kbd{color:#000;border:1px solid #d6d6d6;border-bottom:2px solid #c7c7c7;padding:2px 4px;background-color:#f0f0f0;border-radius:3px}@media print{html body{background-color:#fff}html body h1,html body h2,html body h3,html body h4,html body h5,html body h6{color:#000;page-break-after:avoid}html body blockquote{color:#5c5c5c}html body pre{page-break-inside:avoid}html body table{display:table}html body img{display:block;max-width:100%;max-height:100%}html body pre,html body code{word-wrap:break-word;white-space:pre}}.markdown-preview{width:100%;height:100%;box-sizing:border-box}.markdown-preview .pagebreak,.markdown-preview .newpage{page-break-before:always}.markdown-preview pre.line-numbers{position:relative;padding-left:3.8em;counter-reset:linenumber}.markdown-preview pre.line-numbers>code{position:relative}.markdown-preview pre.line-numbers .line-numbers-rows{position:absolute;pointer-events:none;top:1em;font-size:100%;left:0;width:3em;letter-spacing:-1px;border-right:1px solid #999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.markdown-preview pre.line-numbers .line-numbers-rows>span{pointer-events:none;display:block;counter-increment:linenumber}.markdown-preview pre.line-numbers .line-numbers-rows>span:before{content:counter(linenumber);color:#999;display:block;padding-right:.8em;text-align:right}.markdown-preview .mathjax-exps .MathJax_Display{text-align:center !important}.markdown-preview:not([for="preview"]) .code-chunk .btn-group{display:none}.markdown-preview:not([for="preview"]) .code-chunk .status{display:none}.markdown-preview:not([for="preview"]) .code-chunk .output-div{margin-bottom:16px}.scrollbar-style::-webkit-scrollbar{width:8px}.scrollbar-style::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}.scrollbar-style::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,0.66);border:4px solid rgba(150,150,150,0.66);background-clip:content-box}html body[for="html-export"]:not([data-presentation-mode]){position:relative;width:100%;height:100%;top:0;left:0;margin:0;padding:0;overflow:auto}html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{position:relative;top:0}@media screen and (min-width:914px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{padding:2em calc(50% - 457px)}}@media screen and (max-width:914px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for="html-export"]:not([data-presentation-mode]) .markdown-preview{font-size:14px !important;padding:1em}}@media print{html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn{display:none}}html body[for="html-export"]:not([data-presentation-mode]) #sidebar-toc-btn{position:fixed;bottom:8px;left:8px;font-size:28px;cursor:pointer;color:inherit;z-index:99;width:32px;text-align:center;opacity:.4}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] #sidebar-toc-btn{opacity:1}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc{position:fixed;top:0;left:0;width:300px;height:100%;padding:32px 0 48px 0;font-size:14px;box-shadow:0 0 4px rgba(150,150,150,0.33);box-sizing:border-box;overflow:auto;background-color:inherit}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar{width:8px}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-track{border-radius:10px;background-color:transparent}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc::-webkit-scrollbar-thumb{border-radius:5px;background-color:rgba(150,150,150,0.66);border:4px solid rgba(150,150,150,0.66);background-clip:content-box}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc a{text-decoration:none}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul{padding:0 1.6em;margin-top:.8em}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc li{margin-bottom:.8em}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .md-sidebar-toc ul{list-style-type:none}html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{left:300px;width:calc(100% -  300px);padding:2em calc(50% - 457px -  150px);margin:0;box-sizing:border-box}@media screen and (max-width:1274px){html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{padding:2em}}@media screen and (max-width:450px){html body[for="html-export"]:not([data-presentation-mode])[html-show-sidebar-toc] .markdown-preview{width:100%}}html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .markdown-preview{left:50%;transform:translateX(-50%)}html body[for="html-export"]:not([data-presentation-mode]):not([html-show-sidebar-toc]) .md-sidebar-toc{display:none}
+/* Please visit the URL below for more information: */
+/*   https://shd101wyy.github.io/markdown-preview-enhanced/#/customize-css */
+ 
+      </style>
+    </head>
+    <body for="html-export">
+      <div class="mume markdown-preview   ">
+      <h1 class="mume-header" id="spring-ioc">Spring-IOC</h1>
+
+<h2 class="mume-header" id="%E4%BE%8B%E5%AD%90">&#x4F8B;&#x5B50;</h2>
+
+<p>&#x57FA;&#x4E8E;&#x4E0B;&#x9762;&#x7684;&#x4F8B;&#x5B50;&#x5206;&#x6790;spring-ioc&#x5BB9;&#x5668;&#x521B;&#x5EFA;&#x8FC7;&#x7A0B;&#xFF1A;</p>
+<p>&#x914D;&#x7F6E;&#x7C7B;&#xFF1A;</p>
+<pre class="language-text">@Configuration
+public class TestConfiguration {
+    
+    public TestConfiguration() {
+        System.out.println(&quot;TestConfiguration is creating&quot;);
+    }
+    
+    @Bean
+    public Car car() {
+        return new Car(&quot;Big Car&quot;,10);
+    }	
+}
+</pre>
+<p>&#x6D4B;&#x8BD5;&#x7C7B;&#xFF1A;</p>
+<pre class="language-text">public class Main {
+
+    public static void main(String[] args) {
+        ApplicationContext context = new AnnotationConfigApplicationContext(TestConfiguration.class);
+        Car car = (Car) context.getBean(&quot;car&quot;);
+        String[] names = context.getBeanDefinitionNames();
+        System.out.println(context.getDisplayName());
+        System.out.println(car);
+        System.out.println(context.containsBean(&quot;car&quot;));
+        for(String str:names) {
+            System.out.println(str);
+        }
+    }
+}
+</pre>
+<p>&#x6D4B;&#x8BD5;Bean:</p>
+<pre class="language-text">public class Car {
+
+    private String name;
+    
+    private int age;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public Car() {
+        super();
+    }
+
+    public Car(String name, int age) {
+        super();
+        this.name = name;
+        this.age = age;
+    }
+
+    @Override
+    public String toString() {
+        return &quot;Car [name=&quot; + name + &quot;, age=&quot; + age + &quot;]&quot;;
+    }
+    
+}
+</pre>
+<h2 class="mume-header" id="spring-ioc%E5%AE%B9%E5%99%A8%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B%E5%88%86%E6%9E%90">spring-ioc&#x5BB9;&#x5668;&#x521B;&#x5EFA;&#x8FC7;&#x7A0B;&#x5206;&#x6790;</h2>
+
+<p>&#x67E5;&#x770B;Main&#x7C7B;&#x4E2D;&#x7684;main&#x65B9;&#x6CD5;&#xFF1A;</p>
+<pre class="language-text">public static void main(String[] args) {
+        ApplicationContext context = new AnnotationConfigApplicationContext(TestConfiguration.class);
+        Car car = (Car) context.getBean(&quot;car&quot;);
+        String[] names = context.getBeanDefinitionNames();
+        System.out.println(context.getDisplayName());
+        System.out.println(car);
+        System.out.println(context.containsBean(&quot;car&quot;));
+        for(String str:names) {
+            System.out.println(str);
+        }
+    }
+</pre>
+<p>&#x5176;&#x4E2D;&#x7B2C;&#x4E00;&#x884C;&#x4EE3;&#x7801;&#xFF1A;</p>
+<pre class="language-text">ApplicationContext context = new AnnotationConfigApplicationContext(TestConfiguration.class);
+</pre>
+<p>&#x8C03;&#x7528;&#x6784;&#x9020;&#x5668;&#xFF0C;&#x521B;&#x5EFA;AnnotationConfigApplicationContext&#x5BF9;&#x8C61;&#xFF1A;</p>
+<pre class="language-text">public AnnotationConfigApplicationContext(Class&lt;?&gt;... annotatedClasses) {
+	this();
+	register(annotatedClasses);
+	refresh();
+}
+</pre>
+<h3 class="mume-header" id="this">this()</h3>
+
+<h3 class="mume-header" id="register">register()</h3>
+
+<h3 class="mume-header" id="refresh">refresh()</h3>
+
+<p>refresh()&#x65B9;&#x6CD5;&#x5305;&#x542B;&#x5982;&#x4E0B;&#x4EE3;&#x7801;&#xFF1A;</p>
+<pre class="language-text">public void refresh() throws BeansException, IllegalStateException {
+	synchronized (this.startupShutdownMonitor) {
+		// Prepare this context for refreshing.
+		//&#x51C6;&#x5907;&#x5237;&#x65B0;&#x7684;&#x4E0A;&#x4E0B;&#x6587;&#x73AF;&#x5883;
+		prepareRefresh();
+
+		// Tell the subclass to refresh the internal bean factory.
+		//&#x521D;&#x59CB;&#x5316;BeanFactory&#xFF0C;&#x5E76;&#x8FDB;&#x884C;&#x914D;&#x7F6E;&#x6587;&#x4EF6;&#x63D0;&#x53D6;
+		ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
+
+		// Prepare the bean factory for use in this context.
+		//&#x5BF9;BeanFactory&#x8FDB;&#x884C;&#x5404;&#x79CD;&#x529F;&#x80FD;&#x7684;&#x586B;&#x5145;
+		prepareBeanFactory(beanFactory);
+
+		try {
+			// Allows post-processing of the bean factory in context subclasses.
+			// &#x5B50;&#x7C7B;&#x8986;&#x76D6;&#x65B9;&#x6CD5;&#x505A;&#x989D;&#x5916;&#x7684;&#x5904;&#x7406;
+			postProcessBeanFactory(beanFactory);
+
+			// Invoke factory processors registered as beans in the context.
+			// &#x6FC0;&#x6D3B;&#x5404;&#x79CD;BeanFactory&#x5904;&#x7406;&#x5668;
+			invokeBeanFactoryPostProcessors(beanFactory);
+
+			// Register bean processors that intercept bean creation.
+			// &#x6CE8;&#x518C;&#x62E6;&#x622A;Bean&#x521B;&#x5EFA;&#x7684;Bean&#x5904;&#x7406;&#x5668;&#xFF0C;&#x8FD9;&#x91CC;&#x53EA;&#x662F;&#x6CE8;&#x518C;&#xFF0C;&#x771F;&#x6B63;&#x7684;&#x8C03;&#x7528;&#x662F;&#x5728;getBean&#x65F6;&#x5019;
+			registerBeanPostProcessors(beanFactory);
+
+			// Initialize message source for this context.
+			// &#x4E3A;&#x4E0A;&#x4E0B;&#x6587;&#x521D;&#x59CB;&#x5316;Message&#x6E90;&#xFF0C;&#x5373;&#x4E0D;&#x540C;&#x8BED;&#x8A00;&#x7684;&#x6D88;&#x606F;&#x4F53;&#xFF0C;&#x56FD;&#x9645;&#x5316;&#x5904;&#x7406;
+			initMessageSource();
+
+			// Initialize event multicaster for this context.
+			// &#x521D;&#x59CB;&#x5316;&#x5E94;&#x7528;&#x6D88;&#x606F;&#x5E7F;&#x64AD;&#x5668;&#xFF0C;&#x5E76;&#x653E;&#x5165;&quot;applicationEventMulticaster&quot;bean&#x4E2D;
+			initApplicationEventMulticaster();
+
+			// Initialize other special beans in specific context subclasses.
+			// &#x521D;&#x59CB;&#x5316;&#x5269;&#x4E0B;&#x7684;&#x5355;&#x5B9E;&#x4F8B;
+			onRefresh();
+
+			// Check for listener beans and register them.
+			// &#x5728;&#x6240;&#x6709;&#x6CE8;&#x518C;&#x7684;bean&#x4E2D;&#x67E5;&#x627E;Listener bean&#xFF0C;&#x6CE8;&#x518C;&#x5230;&#x6D88;&#x606F;&#x5E7F;&#x64AD;&#x5668;&#x4E2D;
+			registerListeners();
+
+			// Instantiate all remaining (non-lazy-init) singletons.
+			// &#x521D;&#x59CB;&#x5316;&#x5269;&#x4E0B;&#x7684;&#x5355;&#x5B9E;&#x4F8B;&#xFF08;&#x975E;&#x60F0;&#x6027;&#x7684;&#xFF09;
+			finishBeanFactoryInitialization(beanFactory);
+
+			// Last step: publish corresponding event.
+			// &#x5B8C;&#x6210;&#x5237;&#x65B0;&#x8FC7;&#x7A0B;&#xFF0C;&#x901A;&#x77E5;&#x751F;&#x547D;&#x5468;&#x671F;&#x5904;&#x7406;&#x5668;lifecycleProcessor&#x5237;&#x65B0;&#x8FC7;&#x7A0B;&#xFF0C;&#x540C;&#x65F6;&#x53D1;&#x51FA;ContextRefreshEvent&#x901A;&#x77E5;&#x522B;&#x4EBA;
+			finishRefresh();
+		}
+
+		catch (BeansException ex) {
+			if (logger.isWarnEnabled()) {
+				logger.warn(&quot;Exception encountered during context initialization - &quot; +
+						&quot;cancelling refresh attempt: &quot; + ex);
+			}
+
+			// Destroy already created singletons to avoid dangling resources.
+			destroyBeans();
+
+			// Reset &apos;active&apos; flag.
+			cancelRefresh(ex);
+
+			// Propagate exception to caller.
+			throw ex;
+		}
+
+		finally {
+			// Reset common introspection caches in Spring&apos;s core, since we
+			// might not ever need metadata for singleton beans anymore...
+			resetCommonCaches();
+		}
+	}
+}
+</pre>
+<p>&#x8BE5;&#x65B9;&#x6CD5;&#x7684;&#x5904;&#x7406;&#x903B;&#x8F91;&#xFF1A;</p>
+<ol>
+<li>&#x521D;&#x59CB;&#x5316;&#x524D;&#x7684;&#x51C6;&#x5907;&#x5DE5;&#x4F5C;&#xFF0C;&#x4F8B;&#x5982;&#x5BF9;&#x7CFB;&#x7EDF;&#x5C5E;&#x6027;&#x6216;&#x8005;&#x73AF;&#x5883;&#x53D8;&#x91CF;&#x8FDB;&#x884C;&#x51C6;&#x5907;&#x53CA;&#x9A8C;&#x8BC1;<br>
+&#x5728;&#x67D0;&#x79CD;&#x60C5;&#x51B5;&#x4E0B;&#x9879;&#x76EE;&#x7684;&#x4F7F;&#x7528;&#x9700;&#x8981;&#x8BFB;&#x53D6;&#x67D0;&#x4E9B;&#x7CFB;&#x7EDF;&#x53D8;&#x91CF;&#xFF0C;&#x800C;&#x8FD9;&#x4E2A;&#x53D8;&#x91CF;&#x7684;&#x8BBE;&#x7F6E;&#x5F88;&#x53EF;&#x80FD;&#x4F1A;&#x5F71;&#x54CD;&#x7740;&#x7CFB;&#x7EDF;&#x7684;&#x6B63;&#x786E;&#x6027;&#xFF0C;&#x5B83;&#x53EF;&#x4EE5;&#x5728;Spring&#x542F;&#x52A8;&#x7684;&#x65F6;&#x5019;&#x63D0;&#x524D;&#x5BF9;&#x5FC5;&#x987B;&#x7684;&#x53D8;&#x91CF;&#x8FDB;&#x884C;&#x5B58;&#x5728;&#x6027;&#x9A8C;&#x8BC1;&#x3002;</li>
+<li>&#x521D;&#x59CB;&#x5316;BeanFactory&#xFF0C;&#x5E76;&#x8FDB;&#x884C;&#x914D;&#x7F6E;&#x6587;&#x4EF6;&#x7684;&#x8BFB;&#x53D6;<br>
+&#x8FD9;&#x4E00;&#x6B65;&#x9AA4;&#x4E2D;&#x5C06;&#x4F1A;&#x590D;&#x7528;BeanFactory&#x4E2D;&#x7684;&#x914D;&#x7F6E;&#x6587;&#x4EF6;&#x8BFB;&#x53D6;&#x89E3;&#x6790;&#x53CA;&#x5176;&#x4ED6;&#x529F;&#x80FD;&#xFF0C;&#x8FD9;&#x4E00;&#x6B65;&#x4E4B;&#x540E;&#xFF0C;ApplicationContext&#x5B9E;&#x9645;&#x4E0A;&#x5C31;&#x5DF2;&#x7ECF;&#x5305;&#x542B;&#x4E86;BeanFactory&#x6240;&#x63D0;&#x4F9B;&#x7684;&#x529F;&#x80FD;&#xFF0C;&#x4E5F;&#x5C31;&#x662F;&#x53EF;&#x4EE5;&#x8FDB;&#x884C;Bean&#x7684;&#x63D0;&#x53D6;&#x7B49;&#x57FA;&#x7840;&#x64CD;&#x4F5C;&#x4E86;&#x3002;</li>
+<li>&#x5BF9;BeanFactory&#x8FDB;&#x884C;&#x5404;&#x79CD;&#x529F;&#x80FD;&#x586B;&#x5145;<br>
+@Qualifier&#x548C;@Autowired&#x8FD9;&#x4E24;&#x4E2A;&#x6CE8;&#x89E3;&#x7684;&#x662F;&#x5728;&#x8FD9;&#x4E00;&#x6B65;&#x9AA4;&#x6DFB;&#x52A0;&#x7684;&#x652F;&#x6301;</li>
+<li>&#x5B50;&#x7C7B;&#x8986;&#x76D6;&#x65B9;&#x6CD5;&#x505A;&#x989D;&#x5916;&#x7684;&#x5904;&#x7406;</li>
+<li>&#x6FC0;&#x6D3B;&#x5404;&#x79CD;BeanFactory&#x5904;&#x7406;&#x5668;</li>
+<li>&#x6CE8;&#x518C;&#x62E6;&#x622A;bean&#x521B;&#x5EFA;&#x7684;bean&#x5904;&#x7406;&#x5668;&#xFF0C;&#x8FD9;&#x91CC;&#x53EA;&#x662F;&#x6CE8;&#x518C;&#xFF0C;&#x771F;&#x6B63;&#x7684;&#x8C03;&#x7528;&#x662F;&#x5728;getBean&#x7684;&#x65F6;&#x5019;&#x3002;</li>
+<li>&#x4E3A;&#x4E0A;&#x4E0B;&#x6587;&#x521D;&#x59CB;&#x5316;Message&#x6E90;&#xFF0C;&#x5373;&#x5BF9;&#x4E0D;&#x540C;&#x8BED;&#x8A00;&#x7684;&#x6D88;&#x606F;&#x4F53;&#x8FDB;&#x884C;&#x56FD;&#x9645;&#x5316;&#x5904;&#x7406;</li>
+<li>&#x521D;&#x59CB;&#x5316;&#x5E94;&#x7528;&#x6D88;&#x606F;&#x5E7F;&#x64AD;&#x5668;&#xFF0C;&#x5E76;&#x653E;&#x5165;&#x201C;applicationEventMulticaster&#x201D; bean&#x4E2D;</li>
+<li>&#x7559;&#x7ED9;&#x5B50;&#x7C7B;&#x6765;&#x521D;&#x59CB;&#x5316;&#x5176;&#x4ED6;&#x7684;bean</li>
+<li>&#x5728;&#x6240;&#x6709;&#x6CE8;&#x518C;&#x7684;bean&#x4E2D;&#x67E5;&#x627E;listener bean,&#x6CE8;&#x518C;&#x5230;&#x6D88;&#x606F;&#x5E7F;&#x64AD;&#x5668;&#x4E2D;&#x3002;</li>
+<li>&#x521D;&#x59CB;&#x5316;&#x5269;&#x4E0B;&#x7684;&#x5355;&#x5B9E;&#x4F8B;&#xFF08;&#x975E;&#x60F0;&#x6027;&#x7684;&#xFF09;</li>
+<li>&#x5B8C;&#x6210;&#x5237;&#x65B0;&#x8FC7;&#x7A0B;&#xFF0C;&#x901A;&#x77E5;&#x58F0;&#x660E;&#x5468;&#x671F;&#x5904;&#x7406;&#x5668;lifecycleProcessor&#x5237;&#x65B0;&#x8FC7;&#x7A0B;&#xFF0C;&#x540C;&#x65F6;&#x53D1;&#x51FA;ContextRefreshEvent&#x901A;&#x77E5;&#x522B;&#x4EBA;&#x3002;</li>
+</ol>
+<h4 class="mume-header" id="preparerefresh">prepareRefresh()</h4>
+
+<p>&#x65B9;&#x6CD5;&#x6CE8;&#x91CA;&#xFF1A;</p>
+<pre class="language-text">/**
+ * Prepare this context for refreshing, setting its startup date and
+ * active flag as well as performing any initialization of property sources.
+ */
+ //&#x4E3A;&#x5237;&#x65B0;&#x5BB9;&#x5668;&#x505A;&#x51C6;&#x5907;&#xFF0C;&#x8BBE;&#x7F6E;&#x5BB9;&#x5668;&#x542F;&#x52A8;&#x4E8B;&#x4EF6;&#xFF0C;&#x4EE5;&#x53CA;&#x542F;&#x52A8;&#x6807;&#x5FD7;&#x5E76;&#x4E14;&#x521D;&#x59CB;&#x5316;&#x914D;&#x7F6E;&#x6587;&#x4EF6;&#x4E2D;&#x7684;&#x5C5E;&#x6027;
+</pre>
+<p>&#x65B9;&#x6CD5;&#x6E90;&#x7801;&#x4EE5;&#x53CA;&#x903B;&#x8F91;&#xFF1A;</p>
+<pre class="language-text">protected void prepareRefresh() {
+    //&#x8BBE;&#x7F6E;&#x542F;&#x52A8;&#x65F6;&#x95F4;
+	this.startupDate = System.currentTimeMillis();
+	//&#x8BBE;&#x7F6E;active&#x6807;&#x5FD7;
+    this.closed.set(false);
+	this.active.set(true);
+
+	if (logger.isInfoEnabled()) {
+		logger.info(&quot;Refreshing &quot; + this);
+	}
+
+	// Initialize any placeholder property sources in the context environment
+    //&#x521D;&#x59CB;&#x5316;&#x914D;&#x7F6E;&#x6587;&#x4EF6;&#x4E2D;&#x7684;&#x914D;&#x7F6E;
+    //&#x8FD9;&#x662F;&#x4E00;&#x4E2A;&#x7A7A;&#x65B9;&#x6CD5;&#xFF0C;&#x7528;&#x4E8E;&#x5B50;&#x7C7B;&#x521D;&#x59CB;&#x5316;&#x914D;&#x7F6E;
+	initPropertySources();
+
+	// Validate that all properties marked as required are resolvable
+	// see ConfigurablePropertyResolver#setRequiredProperties
+	//&#x53D6;&#x51FA;&#x73AF;&#x5883;&#x53D8;&#x91CF;&#x5E76;&#x4E14;&#x9A8C;&#x8BC1;&#x5FC5;&#x8981;&#x7684;&#x5C5E;&#x6027;
+    getEnvironment().validateRequiredProperties();
+
+	// Allow for the collection of early ApplicationEvents,
+	// to be published once the multicaster is available...
+	//&#x6700;&#x540E;&#x521D;&#x59CB;&#x5316;&#x5E94;&#x7528;&#x7A0B;&#x5E8F;&#x4E8B;&#x4EF6;&#x5E8F;&#x5217;&#xFF0C;&#x7528;&#x4E8E;&#x5B58;&#x50A8;&#x5237;&#x65B0;&#x5BB9;&#x5668;&#x671F;&#x95F4;&#x53D1;&#x5E03;&#x7684;&#x4FE1;&#x606F;
+    this.earlyApplicationEvents = new LinkedHashSet&lt;&gt;();
+}
+</pre>
+<p>&#x8FD9;&#x91CC;&#x7531;&#x4E8E;initPropertySources()&#x65B9;&#x6CD5;&#x662F;&#x7A7A;&#x65B9;&#x6CD5;&#xFF0C;&#x6211;&#x4EEC;&#x4ED4;&#x7EC6;&#x5206;&#x6790;&#x4E0B;</p>
+<pre class="language-text">getEnvironment().validateRequiredProperties();
+</pre>
+<p>getEnvironment()&#x65B9;&#x6CD5;&#x6E90;&#x7801;&#x5341;&#x5206;&#x7B80;&#x5355;&#xFF0C;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre class="language-text">public ConfigurableEnvironment getEnvironment() {
+	if (this.environment == null) {
+		this.environment = createEnvironment();
+	}
+	return this.environment;
+}
+</pre>
+<p>&#x903B;&#x8F91;&#x5C31;&#x662F;&#x5982;&#x679C;this.environment&#x662F;&#x7A7A;&#x5C31;&#x521B;&#x5EFA;&#x4E00;&#x4E2A;&#xFF0C;&#x5426;&#x5219;&#x5C31;&#x76F4;&#x63A5;&#x8FD4;&#x56DE;&#x5BF9;&#x8C61;&#x3002;</p>
+<p>&#x8003;&#x5BDF;validateRequiredProperties()&#x903B;&#x8F91;&#xFF1A;</p>
+<pre class="language-text">@Override
+public void validateRequiredProperties() throws MissingRequiredPropertiesException {
+	this.propertyResolver.validateRequiredProperties();
+}
+</pre>
+<p>&#x8FD9;&#x91CC;&#x8C03;&#x7528;&#x4E86;this.propertyResolver.validateRequiredProperties()&#x3002;&#x4E0D;&#x8FC7;&#x503C;&#x5F97;&#x6CE8;&#x610F;&#x7684;&#x662F;&#x5982;&#x679C;&#x9A8C;&#x8BC1;&#x4E0D;&#x901A;&#x8FC7;&#x4F1A;&#x629B;&#x51FA;MissingRequiredPropertiesException&#x5F02;&#x5E38;&#x3002;&#x8003;&#x8651;this.propertyResolver.validateRequiredProperties()&#x7684;&#x9A8C;&#x8BC1;&#x903B;&#x8F91;&#xFF1A;</p>
+<pre class="language-text">public void validateRequiredProperties() {
+	MissingRequiredPropertiesException ex = new MissingRequiredPropertiesException();
+	for (String key : this.requiredProperties) {
+		if (this.getProperty(key) == null) {
+			ex.addMissingRequiredProperty(key);
+		}
+	}
+	if (!ex.getMissingRequiredProperties().isEmpty()) {
+		throw ex;
+	}
+}
+</pre>
+<p>&#x4F9D;&#x6B21;&#x904D;&#x5386;this.requiredProperties&#xFF0C;&#x5982;&#x679C;&#x83B7;&#x53D6;&#x4E0D;&#x5230;&#x5C5E;&#x6027;&#x5C31;&#x5C06;&#x5176;&#x6DFB;&#x52A0;&#x5230;MissingRequiredPropertiesException &#x4E2D;&#xFF0C;&#x904D;&#x5386;&#x5B8C;&#x6210;&#x540E;&#xFF0C;&#x5982;&#x679C;MissingRequiredPropertiesException &#x5305;&#x542B;&#x7F3A;&#x5C11;&#x7684;&#x5C5E;&#x6027;&#xFF0C;&#x5C31;&#x629B;&#x51FA;&#x5F02;&#x5E38;&#x3002;&#x4F46;&#x662F;&#x8FD9;&#x4E2A;&#x9A8C;&#x8BC1;&#x903B;&#x8F91;&#x6BD4;&#x8F83;&#x7B80;&#x5355;&#xFF0C;&#x53EF;&#x4EE5;&#x5BF9;&#x5176;&#x8FDB;&#x884C;&#x91CD;&#x5199;&#x3002;</p>
+<p>&#x6267;&#x884C;&#x6D41;&#x7A0B;&#x5982;&#x56FE;&#xFF1A;</p>
+<p><img src="images/prepareRefresh.png" alt=""></p>
+<h4 class="mume-header" id="configurablelistablebeanfactory-beanfactory-obtainfreshbeanfactory">ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();</h4>
+
+<p>&#x8BE5;&#x65B9;&#x6CD5;&#x4ECE;&#x5B57;&#x9762;&#x610F;&#x601D;&#x662F;&#x83B7;&#x53D6;BeanFactory&#x3002;&#x7531;&#x4E8E;ApplicationContext&#x662F;&#x5BF9;BeanFactory&#x7684;&#x529F;&#x80FD;&#x4E0A;&#x6269;&#x5C55;&#xFF0C;&#x4E0D;&#x4F46;&#x5305;&#x542B;&#x4E86;BeanFactory&#x7684;&#x5168;&#x90E8;&#x529F;&#x80FD;&#x66F4;&#x5728;&#x5176;&#x57FA;&#x7840;&#x4E0A;&#x6DFB;&#x52A0;&#x4E86;&#x5927;&#x91CF;&#x7684;&#x6269;&#x5C55;&#x5E94;&#x7528;&#xFF0C;&#x90A3;&#x4E48;obtainFreshBeanFactory&#x6B63;&#x662F;&#x5B9E;&#x73B0;BeanFactory&#x7684;&#x65B9;&#x6CD5;&#xFF0C;&#x4E5F;&#x5C31;&#x662F;&#x7ECF;&#x8FC7;&#x8FD9;&#x4E2A;&#x51FD;&#x6570;&#x540E;ApplicationContext&#x5C31;&#x5DF2;&#x7ECF;&#x62E5;&#x6709;&#x4E86;BeanFactory&#x7684;&#x5168;&#x90E8;&#x529F;&#x80FD;&#x3002;</p>
+<p>&#x65B9;&#x6CD5;&#x6CE8;&#x91CA;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre class="language-text">/**
+ * Tell the subclass to refresh the internal bean factory.
+ * @return the fresh BeanFactory instance
+ * @see #refreshBeanFactory()
+ * @see #getBeanFactory()
+ */
+ //&#x544A;&#x8BC9;&#x5B50;&#x7C7B;&#x53BB;&#x5237;&#x65B0;&#x5185;&#x90E8;bean&#x5DE5;&#x5382;
+</pre>
+<p>&#x6E90;&#x7801;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre class="language-text">protected ConfigurableListableBeanFactory obtainFreshBeanFactory() {
+    //&#x5237;&#x65B0;bean&#x5DE5;&#x5382;
+	refreshBeanFactory();
+    //&#x91CD;&#x65B0;&#x83B7;&#x53D6;bean&#x5DE5;&#x5382;
+	ConfigurableListableBeanFactory beanFactory = getBeanFactory();
+	if (logger.isDebugEnabled()) {
+		logger.debug(&quot;Bean factory for &quot; + getDisplayName() + &quot;: &quot; + beanFactory);
+	}
+    //&#x8FD4;&#x56DE;bean&#x5DE5;&#x5382;
+	return beanFactory;
+}
+</pre>
+<p>&#x8003;&#x5BDF;refreshBeanFactory()&#x65B9;&#x6CD5;&#xFF0C;&#x6CE8;&#x89E3;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre class="language-text">/**
+ * Do nothing: We hold a single internal BeanFactory and rely on callers
+ * to register beans through our public methods (or the BeanFactory&apos;s).
+ * @see #registerBeanDefinition
+ */
+ //&#x4EC0;&#x4E48;&#x90FD;&#x4E0D;&#x505A;&#xFF0C;&#x6211;&#x4EEC;&#x53EA;&#x6709;&#x4E00;&#x4E2A;&#x5185;&#x90E8;&#x7684;BeanFactory&#x5355;&#x4F8B;&#xFF0C;&#x5E76;&#x4E14;&#x4F9D;&#x8D56;&#x8C03;&#x7528;&#x8005;&#x901A;&#x8FC7;&#x6211;&#x4EEC;&#x7684;public&#x65B9;&#x6CD5;&#x8FDB;&#x884C;&#x6CE8;&#x518C;
+</pre>
+<p>&#x6E90;&#x7801;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre class="language-text">protected final void refreshBeanFactory() throws IllegalStateException {
+	if (!this.refreshed.compareAndSet(false, true)) {
+		throw new IllegalStateException(
+				&quot;GenericApplicationContext does not support multiple refresh attempts: just call &apos;refresh&apos; once&quot;);
+	}
+	this.beanFactory.setSerializationId(getId());
+}
+</pre>
+<p>&#x8FD9;&#x4E2A;&#x65B9;&#x6CD5;&#x5E76;&#x6CA1;&#x6709;&#x505A;&#x4EC0;&#x4E48;&#x4E8B;&#x60C5;&#xFF0C;&#x53EA;&#x662F;&#x5237;&#x65B0;&#x4E86;&#x4E0B;beanFactory&#x800C;&#x5DF2;</p>
+<h4 class="mume-header" id="preparebeanfactorybeanfactory">prepareBeanFactory(beanFactory);</h4>
+
+<p>&#x8FD9;&#x91CC;&#x5B9E;&#x73B0;Spring&#x5BB9;&#x5668;&#x7684;&#x529F;&#x80FD;&#x6269;&#x5C55;&#x3002;</p>
+<p>&#x65B9;&#x6CD5;&#x6CE8;&#x91CA;&#xFF1A;</p>
+<pre class="language-text">/**
+ * Configure the factory&apos;s standard context characteristics,
+ * such as the context&apos;s ClassLoader and post-processors.
+ * @param beanFactory the BeanFactory to configure
+ */
+ //&#x914D;&#x7F6E;&#x5DE5;&#x5382;&#x7684;&#x6807;&#x51C6;&#x4E0A;&#x4E0B;&#x6587;&#x4FE1;&#x606F;&#xFF0C;&#x4F8B;&#x5982;&#x4F8B;&#x5982;&#x4E0A;&#x4E0B;&#x6587;&#x7684;&#x7C7B;&#x52A0;&#x8F7D;&#x5668;&#x548C;post-processor
+</pre>
+<p>&#x6E90;&#x7801;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre class="language-text">protected void prepareBeanFactory(ConfigurableListableBeanFactory beanFactory) {
+	// Tell the internal bean factory to use the context&apos;s class loader etc.
+    //&#x8BBE;&#x7F6E;&#x7C7B;&#x52A0;&#x8F7D;&#x5668;
+	beanFactory.setBeanClassLoader(getClassLoader());
+	//&#x8BBE;&#x7F6E;SpEL&#x89E3;&#x6790;&#x5668;
+    beanFactory.setBeanExpressionResolver(new StandardBeanExpressionResolver(beanFactory.getBeanClassLoader()));
+	//&#x6DFB;&#x52A0;&#x4E86;&#x4E00;&#x4E2A;&#x9ED8;&#x8BA4;&#x7684;propertyEditor&#xFF0C;&#x8FD9;&#x4E2A;&#x4E3B;&#x8981;&#x662F;&#x5BF9;bean&#x7684;&#x5C5E;&#x6027;&#x7B49;&#x8BBE;&#x7F6E;&#x7BA1;&#x7406;&#x7684;&#x4E00;&#x4E2A;&#x5DE5;&#x5177;
+    beanFactory.addPropertyEditorRegistrar(new ResourceEditorRegistrar(this, getEnvironment()));
+
+	// Configure the bean factory with context callbacks.
+	//&#x6DFB;&#x52A0;ApplicationContextAwareProcessor
+    beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
+    //&#x8BBE;&#x7F6E;&#x4E86;&#x51E0;&#x4E2A;&#x81EA;&#x52A8;&#x88C5;&#x914D;&#x7684;&#x7279;&#x6B8A;&#x89C4;&#x5219;
+	beanFactory.ignoreDependencyInterface(EnvironmentAware.class);
+	beanFactory.ignoreDependencyInterface(EmbeddedValueResolverAware.class);
+	beanFactory.ignoreDependencyInterface(ResourceLoaderAware.class);
+	beanFactory.ignoreDependencyInterface(ApplicationEventPublisherAware.class);
+	beanFactory.ignoreDependencyInterface(MessageSourceAware.class);
+	beanFactory.ignoreDependencyInterface(ApplicationContextAware.class);
+
+	// BeanFactory interface not registered as resolvable type in a plain factory.
+	// MessageSource registered (and found for autowiring) as a bean.
+    //&#x6CE8;&#x518C;&#x4F9D;&#x8D56;
+	beanFactory.registerResolvableDependency(BeanFactory.class, beanFactory);
+	beanFactory.registerResolvableDependency(ResourceLoader.class, this);
+	beanFactory.registerResolvableDependency(ApplicationEventPublisher.class, this);
+	beanFactory.registerResolvableDependency(ApplicationContext.class, this);
+
+	// Register early post-processor for detecting inner beans as ApplicationListeners.
+    //&#x6DFB;&#x52A0;ListenerDetector
+	beanFactory.addBeanPostProcessor(new ApplicationListenerDetector(this));
+
+	// Detect a LoadTimeWeaver and prepare for weaving, if found.
+    //&#x589E;&#x52A0;&#x5BF9;AspectJ&#x7684;&#x652F;&#x6301;
+	if (beanFactory.containsBean(LOAD_TIME_WEAVER_BEAN_NAME)) {
+		beanFactory.addBeanPostProcessor(new LoadTimeWeaverAwareProcessor(beanFactory));
+		// Set a temporary ClassLoader for type matching.
+		beanFactory.setTempClassLoader(new ContextTypeMatchClassLoader(beanFactory.getBeanClassLoader()));
+	}
+	//&#x6DFB;&#x52A0;&#x9ED8;&#x8BA4;&#x7684;&#x7CFB;&#x7EDF;&#x73AF;&#x5883;
+	// Register default environment beans.
+	if (!beanFactory.containsLocalBean(ENVIRONMENT_BEAN_NAME)) {
+		beanFactory.registerSingleton(ENVIRONMENT_BEAN_NAME, getEnvironment());
+	}
+	if (!beanFactory.containsLocalBean(SYSTEM_PROPERTIES_BEAN_NAME)) {
+		beanFactory.registerSingleton(SYSTEM_PROPERTIES_BEAN_NAME, getEnvironment().getSystemProperties());
+	}
+	if (!beanFactory.containsLocalBean(SYSTEM_ENVIRONMENT_BEAN_NAME)) {
+		beanFactory.registerSingleton(SYSTEM_ENVIRONMENT_BEAN_NAME, getEnvironment().getSystemEnvironment());
+	}
+}
+</pre>
+<p>&#x4E0A;&#x9762;&#x7684;&#x51FD;&#x6570;&#x4E2D;&#x4E3B;&#x8981;&#x8FDB;&#x884C;&#x4E86;&#x51E0;&#x4E2A;&#x65B9;&#x9762;&#x7684;&#x6269;&#x5C55;&#xFF1A;</p>
+<ol>
+<li>&#x589E;&#x52A0;&#x5BF9;SPEL&#x8BED;&#x8A00;&#x7684;&#x652F;&#x6301;</li>
+<li>&#x589E;&#x52A0;&#x5BF9;&#x5C5E;&#x6027;&#x7F16;&#x8F91;&#x5668;&#x7684;&#x652F;&#x6301;</li>
+<li>&#x589E;&#x52A0;&#x5BF9;&#x4E00;&#x4E9B;&#x5185;&#x7F6E;&#x7C7B;&#xFF0C;&#x6BD4;&#x5982;EnvironmentAware&#x3001;MessageSourceAware&#x7684;&#x4FE1;&#x606F;&#x6CE8;&#x5165;&#x3002;</li>
+<li>&#x8BBE;&#x7F6E;&#x4E86;&#x4F9D;&#x8D56;&#x529F;&#x80FD;&#x53EF;&#x5FFD;&#x7565;&#x7684;&#x63A5;&#x53E3;</li>
+<li>&#x6CE8;&#x518C;&#x4E00;&#x4E9B;&#x56FA;&#x5B9A;&#x4F9D;&#x8D56;&#x7684;&#x5C5E;&#x6027;</li>
+<li>&#x6DFB;&#x52A0;AspectJ&#x7684;&#x652F;&#x6301;</li>
+<li>&#x5C06;&#x76F8;&#x5173;&#x73AF;&#x5883;&#x53D8;&#x91CF;&#x53CA;&#x5C5E;&#x6027;&#x6D4B;&#x8BD5;&#x4EE5;&#x5355;&#x4F8B;&#x6A21;&#x5F0F;&#x6CE8;&#x518C;</li>
+</ol>
+<h5 class="mume-header" id="%E5%A2%9E%E5%8A%A0spel%E8%AF%AD%E8%A8%80%E7%9A%84%E6%94%AF%E6%8C%81">&#x589E;&#x52A0;SPEL&#x8BED;&#x8A00;&#x7684;&#x652F;&#x6301;</h5>
+
+<p>&#x8FD9;&#x6BB5;&#x4EE3;&#x7801;&#x6DFB;&#x52A0;&#x4E86;&#x5BF9;SPEL&#x8BED;&#x8A00;&#x7684;&#x652F;&#x6301;&#xFF1A;</p>
+<pre class="language-text">beanFactory.setBeanExpressionResolver(new StandardBeanExpressionResolver(beanFactory.getBeanClassLoader()));
+</pre>
+<p>&#x4F46;&#x662F;&#x8FD9;&#x4E2A;&#x89E3;&#x6790;&#x5668;&#x4EC0;&#x4E48;&#x65F6;&#x5019;&#x89E3;&#x6790;&#x5462;&#xFF1F;</p>
+<p>Spring&#x5728;bean&#x8FDB;&#x884C;&#x521D;&#x59CB;&#x5316;&#x7684;&#x65F6;&#x5019;&#x4F1A;&#x6709;&#x5C5E;&#x6027;&#x586B;&#x5145;&#x7684;&#x4E00;&#x6B65;&#xFF0C;&#x800C;&#x5728;&#x8FD9;&#x4E00;&#x6B65;Spring&#x4F1A;&#x8C03;&#x7528;AbstractAutowiredCapableBeanFactory&#x7C7B;&#x7684;applyPropertyValues&#x51FD;&#x6570;&#x6765;&#x5B8C;&#x6210;&#x529F;&#x80FD;&#x3002;&#x5C31;&#x5728;&#x8FD9;&#x4E2A;&#x51FD;&#x6570;&#x4E2D;&#xFF0C;&#x4F1A;&#x901A;&#x8FC7;&#x6784;&#x9020;BeanDefinitionValueResolver&#x7C7B;&#x578B;&#x5B9E;&#x4F8B;valueResolver&#x6765;&#x8FDB;&#x884C;&#x5C5E;&#x6027;&#x503C;&#x7684;&#x89E3;&#x6790;&#x3002;&#x540C;&#x65F6;&#x4E5F;&#x662F;&#x5728;&#x8FD9;&#x4E2A;&#x6B65;&#x9AA4;&#x4E2D;&#x4E00;&#x822C;&#x901A;&#x8FC7;AbstractBeanFactory&#x4E2D;&#x7684;evaluateBeanDefinitionString&#x65B9;&#x6CD5;&#x53BB;&#x5B8C;&#x6210;SPEL&#x7684;&#x89E3;&#x6790;&#x3002;</p>
+<h5 class="mume-header" id="%E5%A2%9E%E5%8A%A0%E5%B1%9E%E6%80%A7%E6%B3%A8%E5%86%8C%E7%BC%96%E8%BE%91%E5%99%A8">&#x589E;&#x52A0;&#x5C5E;&#x6027;&#x6CE8;&#x518C;&#x7F16;&#x8F91;&#x5668;</h5>
+
+<p>&#x5F53;&#x8FDB;&#x884C;Spring DI&#x6CE8;&#x5165;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x53EF;&#x4EE5;&#x628A;&#x666E;&#x901A;&#x7684;&#x5C5E;&#x6027;&#x6CE8;&#x5165;&#x8FDB;&#x6765;&#xFF0C;&#x4F46;&#x662F;&#x5BF9;&#x4E8E;Date&#x8FD9;&#x6837;&#x7684;&#x590D;&#x6742;&#x7C7B;&#x578B;&#x5C31;&#x4E0D;&#x53EF;&#x4EE5;&#xFF0C;&#x56E0;&#x6B64;&#x5C31;&#x9700;&#x8981;&#x4F7F;&#x7528;&#x5C5E;&#x6027;&#x7F16;&#x8F91;&#x5668;&#x3002;&#x8FD9;&#x91CC;&#x6709;&#x4E24;&#x4E2A;&#x89E3;&#x51B3;&#x65B9;&#x6CD5;&#xFF1A;</p>
+<ol>
+<li>
+<p>&#x4F7F;&#x7528;&#x81EA;&#x5B9A;&#x4E49;&#x5C5E;&#x6027;&#x7F16;&#x8F91;&#x5668;<br>
+&#x4F7F;&#x7528;&#x81EA;&#x5B9A;&#x4E49;&#x5C5E;&#x6027;&#x7F16;&#x8F91;&#x5668;&#xFF0C;&#x901A;&#x8FC7;&#x7EE7;&#x627F;PropertyEditorSupport&#xFF0C;&#x91CD;&#x5199;setAsText&#x65B9;&#x6CD5;&#x3002;<br>
+&#x5728;&#x914D;&#x7F6E;&#x6587;&#x4EF6;&#x4E2D;&#x5F15;&#x5165;&#x7C7B;&#x578B;&#x4E3A;org.springframework.beans.factory.config.CustomEditorConfigurer&#x7684;bean&#xFF0C;&#x5E76;&#x5728;&#x5C5E;&#x6027;customEditors&#x4E2D;&#x52A0;&#x5165;&#x81EA;&#x5B9A;&#x4E49;&#x7684;&#x5C5E;&#x6027;&#x7F16;&#x8F91;&#x5668;&#xFF0C;&#x5176;&#x4E2D;key&#x4E3A;&#x5C5E;&#x6027;&#x7F16;&#x8F91;&#x5668;&#x6240;&#x5BF9;&#x5E94;&#x7684;bean&#x7C7B;&#x578B;&#x3002;<br>
+&#x901A;&#x8FC7;&#x8FD9;&#x6837;&#x7684;&#x914D;&#x7F6E;&#xFF0C;&#x5F53;Spring&#x5728;&#x6CE8;&#x5165;bean&#x7684;&#x5C5E;&#x6027;&#x65F6;&#x4E00;&#x65E6;&#x9047;&#x5230;&#x4E86;java.util.Date&#x7C7B;&#x578B;&#x7684;&#x5C5E;&#x6027;&#x4F1A;&#x81EA;&#x52A8;&#x8C03;&#x7528;&#x81EA;&#x5B9A;&#x4E49;&#x7684;DatePropertyEditor&#x89E3;&#x6790;&#x5668;&#x8FDB;&#x884C;&#x89E3;&#x6790;&#xFF0C;&#x5E76;&#x7528;&#x89E3;&#x6790;&#x7ED3;&#x679C;&#x4EE3;&#x66FF;&#x914D;&#x7F6E;&#x5C5E;&#x6027;&#x8FDB;&#x884C;&#x6CE8;&#x5165;&#x3002;</p>
+</li>
+<li>
+<p>&#x6CE8;&#x518C;Spring&#x81EA;&#x5E26;&#x7684;&#x5C5E;&#x6027;&#x7F16;&#x8F91;&#x5668;CustomDateEditor<br>
+&#x901A;&#x8FC7;&#x6CE8;&#x518C;Spring&#x81EA;&#x5E26;&#x7684;&#x5C5E;&#x6027;&#x7F16;&#x8F91;&#x5668;CustomDateEditor&#xFF0C;&#x5B9A;&#x4E49;&#x5C5E;&#x6027;&#x7F16;&#x8F91;&#x5668;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre class="language-text"> public class DatePropertyEditorRegistrar implements PropertyEditorRegistrar{
+ 	public void registerCustomEditors(PropertyEditorRegistry registry){
+ 		registry.registerCustomEditor(Date.class,new CustomDateEditor(new SimpleDateFormat(&quot;yyyy-MM-dd&quot;),true));
+ 	}
+ }
+</pre>
+<p>&#x7136;&#x540E;&#x901A;&#x8FC7;&#x5728;&#x914D;&#x7F6E;&#x6587;&#x4EF6;&#x4E2D;&#x5C06;&#x81EA;&#x5B9A;&#x4E49;&#x7684;DatePropertyEditorRegistrar&#x6CE8;&#x518C;&#x8FDB;&#x5165;org.springframework.beans.factory.config.CustomEditorConfigurer&#x7684;propertyEditorRegistrars&#x5C5E;&#x6027;&#x4E2D;&#xFF0C;&#x53EF;&#x4EE5;&#x5177;&#x6709;&#x540C;&#x6837;&#x7684;&#x6548;&#x679C;&#x3002;</p>
+<p>&#x4F46;&#x662F;&#x5728;refresh&#x65B9;&#x6CD5;&#x4E2D;&#xFF0C;&#x4F7F;&#x7528;&#x7684;&#x662F;</p>
+<pre class="language-text"> beanFactory.addPropertyEditorRegistrar(new ResourceEditorRegistrar(this, getEnvironment()));
+</pre>
+<p>&#x8FD9;&#x4E24;&#x8005;&#x6709;&#x4EC0;&#x4E48;&#x8054;&#x7CFB;&#x5462;&#xFF1F;&#x8003;&#x5BDF;ResourceEditorRegistrar&#x7684;&#x5185;&#x90E8;&#x5B9E;&#x73B0;&#xFF0C;&#x8FD9;&#x91CC;&#x6211;&#x4EEC;&#x4E3B;&#x8981;&#x5173;&#x5FC3;registerCustomEditors&#x65B9;&#x6CD5;&#x7684;&#x5B9E;&#x73B0;&#xFF1A;</p>
+<pre class="language-text"> public void registerCustomEditors(PropertyEditorRegistry registry) {
+ 	ResourceEditor baseEditor = new ResourceEditor(this.resourceLoader, this.propertyResolver);
+ 	doRegisterEditor(registry, Resource.class, baseEditor);
+ 	doRegisterEditor(registry, ContextResource.class, baseEditor);
+ 	doRegisterEditor(registry, InputStream.class, new InputStreamEditor(baseEditor));
+ 	doRegisterEditor(registry, InputSource.class, new InputSourceEditor(baseEditor));
+ 	doRegisterEditor(registry, File.class, new FileEditor(baseEditor));
+ 	doRegisterEditor(registry, Path.class, new PathEditor(baseEditor));
+ 	doRegisterEditor(registry, Reader.class, new ReaderEditor(baseEditor));
+ 	doRegisterEditor(registry, URL.class, new URLEditor(baseEditor));
+
+ 	ClassLoader classLoader = this.resourceLoader.getClassLoader();
+ 	doRegisterEditor(registry, URI.class, new URIEditor(classLoader));
+ 	doRegisterEditor(registry, Class.class, new ClassEditor(classLoader));
+ 	doRegisterEditor(registry, Class[].class, new ClassArrayEditor(classLoader));
+
+ 	if (this.resourceLoader instanceof ResourcePatternResolver) {
+ 		doRegisterEditor(registry, Resource[].class,
+ 				new ResourceArrayPropertyEditor((ResourcePatternResolver) this.resourceLoader, this.propertyResolver));
+ 	}
+ }
+
+ private void doRegisterEditor(PropertyEditorRegistry registry, Class&lt;?&gt; requiredType, PropertyEditor editor) {
+ 	if (registry instanceof PropertyEditorRegistrySupport) {
+ 		((PropertyEditorRegistrySupport) registry).overrideDefaultEditor(requiredType, editor);
+ 	}
+ 	else {
+ 		registry.registerCustomEditor(requiredType, editor);
+ 	}
+ }
+</pre>
+<p>&#x5728;doRegisterEditor&#x51FD;&#x6570;&#x4E2D;&#xFF0C;&#x53EF;&#x4EE5;&#x770B;&#x5230;&#x4E4B;&#x524D;&#x63D0;&#x5230;&#x7684;&#x81EA;&#x5B9A;&#x4E49;&#x5C5E;&#x6027;&#x4E2D;&#x4F7F;&#x7528;&#x7684;&#x5173;&#x952E;&#x4EE3;&#x7801;&#xFF1A;registry.registerCustomEditor(requiredType,editor)&#xFF0C;&#x56DE;&#x8FC7;&#x5934;&#x6765;&#x770B;,ResourceEditorRegistrar&#x7C7B;&#x7684;registerCustomEditors&#x65B9;&#x6CD5;&#x7684;&#x6838;&#x5FC3;&#x529F;&#x80FD;&#xFF0C;&#x5176;&#x5B9E;&#x65E0;&#x975E;&#x662F;&#x6CE8;&#x518C;&#x4E86;&#x4E00;&#x7CFB;&#x5217;&#x7684;&#x5E38;&#x7528;&#x7C7B;&#x578B;&#x7684;&#x5C5E;&#x6027;&#x7F16;&#x8F91;&#x5668;&#xFF0C;&#x4F8B;&#x5982;&#xFF0C;&#x4EE3;&#x7801;doRegisterEditor(registry,Class.class,new ClassEditor(classLoader))&#x5B9E;&#x73B0;&#x7684;&#x529F;&#x80FD;&#x5C31;&#x662F;&#x6CE8;&#x518C;Class&#x7C7B;&#x5BF9;&#x5E94;&#x7684;&#x5C5E;&#x6027;&#x7F16;&#x8F91;&#x5668;&#x3002;&#x90A3;&#x4E48;&#x6CE8;&#x518C;&#x540E;&#x4E00;&#x65E6;&#x67D0;&#x4E2A;&#x5B9E;&#x4F53;bean&#x4E2D;&#x5B58;&#x5728;&#x4E00;&#x4E9B;Class&#x7C7B;&#x578B;&#x7684;&#x5C5E;&#x6027;&#xFF0C;&#x90A3;&#x4E48;Spring&#x4F1A;&#x8C03;&#x7528;ClassEditor&#x5C06;&#x914D;&#x7F6E;&#x4E2D;&#x5B9A;&#x4E49;&#x7684;String&#x7C7B;&#x578B;&#x8F6C;&#x5316;&#x6210;Class&#x7C7B;&#x578B;&#x5E76;&#x8FDB;&#x884C;&#x8D4B;&#x503C;&#x3002;</p>
+<p>&#x7136;&#x800C;&#x6211;&#x4EEC;&#x6CA1;&#x6709;&#x770B;&#x5230;&#x786E;&#x5207;&#x7684;ResourceEditorRegistrar&#x7C7B;&#x7684;registerCustomEditors&#x65B9;&#x6CD5;&#x7684;&#x8C03;&#x7528;&#xFF0C;&#x90A3;&#x4E48;&#x8FD9;&#x4E2A;&#x65B9;&#x6CD5;&#x662F;&#x5728;&#x54EA;&#x91CC;&#x8C03;&#x7528;&#x7684;&#x5462;&#xFF1F;&#x901A;&#x8FC7;&#x67E5;&#x770B;&#x8BE5;&#x65B9;&#x6CD5;&#x7684;&#x8C03;&#x7528;&#x5C42;&#x6B21;&#x7ED3;&#x6784;&#xFF0C;&#x6211;&#x4EEC;&#x53D1;&#x73B0;&#x5728;AbstractBeanFactory&#x4E2D;&#x7684;registerCustomEditors&#x65B9;&#x6CD5;&#x4E2D;&#x88AB;&#x8C03;&#x7528;&#x8FC7;&#xFF0C;&#x7EE7;&#x7EED;&#x67E5;&#x770B;&#x8BE5;&#x65B9;&#x6CD5;&#x7684;&#x8C03;&#x7528;&#x7ED3;&#x6784;&#xFF0C;&#x6211;&#x4EEC;&#x53D1;&#x73B0;AbstractBeanFactory&#x7C7B;&#x4E2D;&#x7684;initBeanWrapper&#x65B9;&#x6CD5;&#x4E2D;&#x8C03;&#x7528;&#x4E86;&#x8BE5;&#x65B9;&#x6CD5;&#xFF0C;&#x8FD9;&#x4E2A;&#x65B9;&#x6CD5;&#x7528;&#x4E8E;&#x5C06;BeanDefinition&#x8F6C;&#x6362;&#x4E3A;BeanWrapper&#x7528;&#x4E8E;&#x5C5E;&#x6027;&#x7684;&#x586B;&#x5145;&#x3002;&#x5230;&#x6B64;&#x6211;&#x4EEC;&#x77E5;&#x9053;&#x4E86;&#x5728;bean&#x7684;&#x521D;&#x59CB;&#x5316;&#x540E;&#x4F1A;&#x8C03;&#x7528;ResourceEditorRegistrar&#x7684;registerCustomEditors&#x65B9;&#x6CD5;&#x8FDB;&#x884C;&#x6279;&#x91CF;&#x7684;&#x901A;&#x7528;&#x5C5E;&#x6027;&#x7F16;&#x8F91;&#x5668;&#x6CE8;&#x518C;&#x3002;&#x6CE8;&#x518C;&#x540E;&#xFF0C;&#x5728;&#x5C5E;&#x6027;&#x586B;&#x5145;&#x7684;&#x73AF;&#x8282;&#x4FBF;&#x53EF;&#x4EE5;&#x76F4;&#x63A5;&#x8BA9;Spring&#x4F7F;&#x7528;&#x8FD9;&#x4E9B;&#x7F16;&#x8F91;&#x5668;&#x8FDB;&#x884C;&#x5C5E;&#x6027;&#x7684;&#x89E3;&#x6790;&#x4E86;&#x3002;</p>
+<p>Spring&#x4E2D;&#x7528;&#x4E8E;&#x5C01;&#x88C5;bean&#x7684;&#x662F;BeanWrapper&#x7C7B;&#x578B;&#xFF0C;&#x800C;&#x5B83;&#x53C8;&#x95F4;&#x63A5;&#x7EE7;&#x627F;&#x4E86;PopertyEditorRegistry&#x7C7B;&#x578B;&#xFF0C;&#x4E5F;&#x5C31;&#x662F;&#x6211;&#x4EEC;&#x4E4B;&#x524D;&#x53CD;&#x590D;&#x770B;&#x5230;&#x7684;PropertyEditorRegisty registry&#xFF0C;&#x5176;&#x5B9E;&#x5927;&#x90E8;&#x5206;&#x60C5;&#x51B5;&#x4E0B;&#x90FD;&#x662F;BeanWrapper&#xFF0C;&#x5BF9;&#x4E8E;BeanWapper&#x5728;Spring&#x4E2D;&#x7684;&#x9ED8;&#x8BA4;&#x5B9E;&#x73B0;&#x662F;BeanWrapperImpl&#xFF0C;&#x800C;&#x5728;BeanWapperImpl&#x9664;&#x4E86;&#x5B9E;&#x73B0;BeanWrapper&#x63A5;&#x53E3;&#x5916;&#x8FD8;&#x7EE7;&#x627F;&#x4E86;PropertyEditorRegistrySupport&#xFF0C;&#x800C;&#x5728;PropertyEditorRegistrySupport&#x4E2D;&#x6709;&#x8FD9;&#x6837;&#x4E00;&#x4E2A;&#x65B9;&#x6CD5;&#xFF1A;</p>
+<p>private void createDefaultEditors() {<br>
+this.defaultEditors = new HashMap&lt;&gt;(64);</p>
+<pre class="language-text"> // Simple editors, without parameterization capabilities.
+ // The JDK does not contain a default editor for any of these target types.
+ this.defaultEditors.put(Charset.class, new CharsetEditor());
+ this.defaultEditors.put(Class.class, new ClassEditor());
+ this.defaultEditors.put(Class[].class, new ClassArrayEditor());
+ this.defaultEditors.put(Currency.class, new CurrencyEditor());
+ this.defaultEditors.put(File.class, new FileEditor());
+ this.defaultEditors.put(InputStream.class, new InputStreamEditor());
+ this.defaultEditors.put(InputSource.class, new InputSourceEditor());
+ this.defaultEditors.put(Locale.class, new LocaleEditor());
+ this.defaultEditors.put(Path.class, new PathEditor());
+ this.defaultEditors.put(Pattern.class, new PatternEditor());
+ this.defaultEditors.put(Properties.class, new PropertiesEditor());
+ this.defaultEditors.put(Reader.class, new ReaderEditor());
+ this.defaultEditors.put(Resource[].class, new ResourceArrayPropertyEditor());
+ this.defaultEditors.put(TimeZone.class, new TimeZoneEditor());
+ this.defaultEditors.put(URI.class, new URIEditor());
+ this.defaultEditors.put(URL.class, new URLEditor());
+ this.defaultEditors.put(UUID.class, new UUIDEditor());
+ this.defaultEditors.put(ZoneId.class, new ZoneIdEditor());
+
+ // Default instances of collection editors.
+ // Can be overridden by registering custom instances of those as custom editors.
+ this.defaultEditors.put(Collection.class, new CustomCollectionEditor(Collection.class));
+ this.defaultEditors.put(Set.class, new CustomCollectionEditor(Set.class));
+ this.defaultEditors.put(SortedSet.class, new CustomCollectionEditor(SortedSet.class));
+ this.defaultEditors.put(List.class, new CustomCollectionEditor(List.class));
+ this.defaultEditors.put(SortedMap.class, new CustomMapEditor(SortedMap.class));
+
+ // Default editors for primitive arrays.
+ this.defaultEditors.put(byte[].class, new ByteArrayPropertyEditor());
+ this.defaultEditors.put(char[].class, new CharArrayPropertyEditor());
+
+ // The JDK does not contain a default editor for char!
+ this.defaultEditors.put(char.class, new CharacterEditor(false));
+ this.defaultEditors.put(Character.class, new CharacterEditor(true));
+
+ // Spring&apos;s CustomBooleanEditor accepts more flag values than the JDK&apos;s default editor.
+ this.defaultEditors.put(boolean.class, new CustomBooleanEditor(false));
+ this.defaultEditors.put(Boolean.class, new CustomBooleanEditor(true));
+
+ // The JDK does not contain default editors for number wrapper types!
+ // Override JDK primitive number editors with our own CustomNumberEditor.
+ this.defaultEditors.put(byte.class, new CustomNumberEditor(Byte.class, false));
+ this.defaultEditors.put(Byte.class, new CustomNumberEditor(Byte.class, true));
+ this.defaultEditors.put(short.class, new CustomNumberEditor(Short.class, false));
+ this.defaultEditors.put(Short.class, new CustomNumberEditor(Short.class, true));
+ this.defaultEditors.put(int.class, new CustomNumberEditor(Integer.class, false));
+ this.defaultEditors.put(Integer.class, new CustomNumberEditor(Integer.class, true));
+ this.defaultEditors.put(long.class, new CustomNumberEditor(Long.class, false));
+ this.defaultEditors.put(Long.class, new CustomNumberEditor(Long.class, true));
+ this.defaultEditors.put(float.class, new CustomNumberEditor(Float.class, false));
+ this.defaultEditors.put(Float.class, new CustomNumberEditor(Float.class, true));
+ this.defaultEditors.put(double.class, new CustomNumberEditor(Double.class, false));
+ this.defaultEditors.put(Double.class, new CustomNumberEditor(Double.class, true));
+ this.defaultEditors.put(BigDecimal.class, new CustomNumberEditor(BigDecimal.class, true));
+ this.defaultEditors.put(BigInteger.class, new CustomNumberEditor(BigInteger.class, true));
+
+ // Only register config value editors if explicitly requested.
+ if (this.configValueEditorsActive) {
+ 	StringArrayPropertyEditor sae = new StringArrayPropertyEditor();
+ 	this.defaultEditors.put(String[].class, sae);
+ 	this.defaultEditors.put(short[].class, sae);
+ 	this.defaultEditors.put(int[].class, sae);
+ 	this.defaultEditors.put(long[].class, sae);
+ }
+</pre>
+<p>}</p>
+</li>
+</ol>
+<h5 class="mume-header" id="%E6%B7%BB%E5%8A%A0applicationcontextawareprocessor%E5%A4%84%E7%90%86%E5%99%A8">&#x6DFB;&#x52A0;ApplicationContextAwareProcessor&#x5904;&#x7406;&#x5668;</h5>
+
+<p>&#x8003;&#x5BDF;ApplicationContextAwarreProcessor&#x7C7B;&#x7684;&#x5B9E;&#x73B0;&#x6E90;&#x7801;&#xFF1A;</p>
+<pre class="language-text">class ApplicationContextAwareProcessor implements BeanPostProcessor {
+
+	private final ConfigurableApplicationContext applicationContext;
+
+	private final StringValueResolver embeddedValueResolver;
+
+
+	/**
+	* Create a new ApplicationContextAwareProcessor for the given context.
+	*/
+	public ApplicationContextAwareProcessor(ConfigurableApplicationContext applicationContext) {
+		this.applicationContext = applicationContext;
+		this.embeddedValueResolver = new EmbeddedValueResolver(applicationContext.getBeanFactory());
+	}
+
+
+	@Override
+	@Nullable
+	public Object postProcessBeforeInitialization(final Object bean, String beanName) throws BeansException {
+		AccessControlContext acc = null;
+
+		if (System.getSecurityManager() != null &amp;&amp;
+				(bean instanceof EnvironmentAware || bean instanceof EmbeddedValueResolverAware ||
+						bean instanceof ResourceLoaderAware || bean instanceof ApplicationEventPublisherAware ||
+						bean instanceof MessageSourceAware || bean instanceof ApplicationContextAware)) {
+			acc = this.applicationContext.getBeanFactory().getAccessControlContext();
+		}
+
+		if (acc != null) {
+			AccessController.doPrivileged((PrivilegedAction&lt;Object&gt;) () -&gt; {
+				invokeAwareInterfaces(bean);
+				return null;
+			}, acc);
+		}
+		else {
+			invokeAwareInterfaces(bean);
+		}
+
+		return bean;
+	}
+
+	private void invokeAwareInterfaces(Object bean) {
+		if (bean instanceof Aware) {
+			if (bean instanceof EnvironmentAware) {
+				((EnvironmentAware) bean).setEnvironment(this.applicationContext.getEnvironment());
+			}
+			if (bean instanceof EmbeddedValueResolverAware) {
+				((EmbeddedValueResolverAware) bean).setEmbeddedValueResolver(this.embeddedValueResolver);
+			}
+			if (bean instanceof ResourceLoaderAware) {
+				((ResourceLoaderAware) bean).setResourceLoader(this.applicationContext);
+			}
+			if (bean instanceof ApplicationEventPublisherAware) {
+				((ApplicationEventPublisherAware) bean).setApplicationEventPublisher(this.applicationContext);
+			}
+			if (bean instanceof MessageSourceAware) {
+				((MessageSourceAware) bean).setMessageSource(this.applicationContext);
+			}
+			if (bean instanceof ApplicationContextAware) {
+				((ApplicationContextAware) bean).setApplicationContext(this.applicationContext);
+			}
+		}
+	}
+
+	@Override
+	public Object postProcessAfterInitialization(Object bean, String beanName) {
+		return bean;
+	}
+
+}
+</pre>
+<p>BeanPostProcessor&#x7C7B;&#x578B;&#x7684;&#x7C7B;&#x6211;&#x4EEC;&#x4E3B;&#x8981;&#x8003;&#x8651;&#x5176;postProcessBeforeInitialization&#x548C;postProcessAfterInitialization&#x65B9;&#x6CD5;&#xFF0C;&#x8FD9;&#x4E24;&#x4E2A;&#x65B9;&#x6CD5;&#x5206;&#x522B;&#x5728;bean&#x521D;&#x59CB;&#x5316;&#x4E4B;&#x524D;&#x548C;&#x4E4B;&#x540E;&#x8C03;&#x7528;&#x3002;&#x7531;&#x4E8E;postProcessAfterInitialization&#x65B9;&#x6CD5;&#x76F4;&#x63A5;&#x8FD4;&#x56DE;bean&#xFF0C;&#x6CA1;&#x6709;&#x505A;&#x4EFB;&#x4F55;&#x64CD;&#x4F5C;&#xFF0C;&#x6240;&#x4EE5;&#x6211;&#x4EEC;&#x4E3B;&#x8981;&#x5173;&#x6CE8;postProcessBeforeInitialization&#x65B9;&#x6CD5;&#x3002;</p>
+<pre class="language-text">public Object postProcessBeforeInitialization(final Object bean, String beanName) throws BeansException {
+		AccessControlContext acc = null;
+
+		if (System.getSecurityManager() != null &amp;&amp;
+				(bean instanceof EnvironmentAware || bean instanceof EmbeddedValueResolverAware ||
+						bean instanceof ResourceLoaderAware || bean instanceof ApplicationEventPublisherAware ||
+						bean instanceof MessageSourceAware || bean instanceof ApplicationContextAware)) {
+			acc = this.applicationContext.getBeanFactory().getAccessControlContext();
+		}
+
+		if (acc != null) {
+			AccessController.doPrivileged((PrivilegedAction&lt;Object&gt;) () -&gt; {
+				invokeAwareInterfaces(bean);
+				return null;
+			}, acc);
+		}
+		else {
+			invokeAwareInterfaces(bean);
+		}
+
+		return bean;
+	}
+
+	private void invokeAwareInterfaces(Object bean) {
+		if (bean instanceof Aware) {
+			if (bean instanceof EnvironmentAware) {
+				((EnvironmentAware) bean).setEnvironment(this.applicationContext.getEnvironment());
+			}
+			if (bean instanceof EmbeddedValueResolverAware) {
+				((EmbeddedValueResolverAware) bean).setEmbeddedValueResolver(this.embeddedValueResolver);
+			}
+			if (bean instanceof ResourceLoaderAware) {
+				((ResourceLoaderAware) bean).setResourceLoader(this.applicationContext);
+			}
+			if (bean instanceof ApplicationEventPublisherAware) {
+				((ApplicationEventPublisherAware) bean).setApplicationEventPublisher(this.applicationContext);
+			}
+			if (bean instanceof MessageSourceAware) {
+				((MessageSourceAware) bean).setMessageSource(this.applicationContext);
+			}
+			if (bean instanceof ApplicationContextAware) {
+				((ApplicationContextAware) bean).setApplicationContext(this.applicationContext);
+			}
+		}
+	}
+</pre>
+<p>&#x67E5;&#x770B;&#x4E0A;&#x8FF0;&#x65B9;&#x6CD5;&#x6211;&#x4EEC;&#x53D1;&#x73B0;&#xFF0C;&#x8FD9;&#x4E2A;BeanPostProcessor&#x4E3B;&#x8981;&#x505A;&#x7684;&#x4EFB;&#x52A1;&#x5C31;&#x662F;&#x5728;&#x521D;&#x59CB;&#x5316;&#x524D;&#x6839;&#x636E;&#x5176;&#x5B9E;&#x73B0;&#x7684;XXXAware&#x65B9;&#x6CD5;&#x6CE8;&#x5165;&#x7279;&#x5B9A;&#x7684;&#x5C5E;&#x6027;&#x3002;&#x7531;&#x4E8E;Spring&#x521B;&#x5EFA;bean&#x65F6;&#x9ED8;&#x8BA4;&#x5904;&#x7406;&#x7684;XXXAware&#x53EA;&#x6709;&#x51E0;&#x4E2A;&#xFF0C;&#x8FD9;&#x91CC;&#x505A;&#x4E00;&#x4E2A;&#x6269;&#x5C55;&#x3002;</p>
+<h5 class="mume-header" id="%E8%AE%BE%E7%BD%AE%E5%BF%BD%E7%95%A5%E4%BE%9D%E8%B5%96">&#x8BBE;&#x7F6E;&#x5FFD;&#x7565;&#x4F9D;&#x8D56;</h5>
+
+<p>&#x5F53;Spring&#x5C06;ApplicationContextAwareProcessor&#x6CE8;&#x518C;&#x540E;&#xFF0C;&#x90A3;&#x4E48;&#x5728;invokeAwareInterfaces&#x65B9;&#x6CD5;&#x4E2D;&#x95F4;&#x63A5;&#x8C03;&#x7528;&#x7684;Aware&#x7C7B;&#x5DF2;&#x7ECF;&#x4E0D;&#x662F;&#x666E;&#x901A;&#x7684;bean&#x4E86;&#xFF0C;&#x90A3;&#x4E48;&#x5F53;&#x7136;&#x9700;&#x8981;&#x5728;Spring&#x505A;bean&#x7684;&#x4F9D;&#x8D56;&#x6CE8;&#x5165;&#x7684;&#x65F6;&#x5019;&#x5FFD;&#x7565;&#x4ED6;&#x4EEC;&#x3002;</p>
+<h4 class="mume-header" id="postprocessbeanfactory">postProcessBeanFactory()</h4>
+
+<p>&#x8BE5;&#x65B9;&#x6CD5;&#x7528;&#x4E8E;&#x5B50;&#x7C7B;&#x8986;&#x76D6;&#x8FDB;&#x884C;&#x4E00;&#x5B9A;&#x7684;&#x6269;&#x5C55;&#x3002;</p>
+<h4 class="mume-header" id="invokebeanfactorypostprocessors">invokeBeanFactoryPostProcessors()</h4>
+
+<p>&#x65B9;&#x6CD5;&#x6CE8;&#x91CA;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre class="language-text">/**
+ * Instantiate and invoke all registered BeanFactoryPostProcessor beans,
+ * respecting explicit order if given.
+ * &lt;p&gt;Must be called before singleton instantiation.
+ */
+ &#x9075;&#x5FAA;&#x7279;&#x5B9A;&#x987A;&#x5E8F;&#x5B9E;&#x4F8B;&#x5316;&#x5E76;&#x6267;&#x884C;&#x6240;&#x6709;&#x7684;&#x88AB;&#x6CE8;&#x518C;&#x7684;BeanFactoryPostProcessor&#xFF0C;&#x4E00;&#x5B9A;&#x8981;&#x5728;&#x5355;&#x4F8B;&#x5B9E;&#x4F8B;&#x5316;&#x4E4B;&#x524D;&#x8C03;&#x7528;
+</pre>
+<p>&#x65E2;&#x7136;&#x8BE5;&#x65B9;&#x6CD5;&#x7528;&#x6765;&#x5B9E;&#x4F8B;&#x5316;&#x5E76;&#x6267;&#x884C;&#x6240;&#x6709;&#x7684;BeanFactoryPostProcessor&#xFF0C;&#x90A3;&#x4E48;BeanFactoryPostProcessor&#x5230;&#x5E95;&#x662F;&#x7528;&#x6765;&#x505A;&#x4EC0;&#x4E48;&#x7684;&#x5462;&#xFF1F;</p>
+<p>BeanFactoryPostProcessor&#x548C;BeanPostProcessor&#x7C7B;&#x4F3C;&#xFF0C;&#x53EF;&#x4EE5;&#x5BF9;bean&#x7684;&#x5B9A;&#x4E49;&#x8FDB;&#x884C;&#x5904;&#x7406;&#xFF0C;&#x6211;&#x4EEC;&#x8003;&#x8651;&#x8BE5;&#x63A5;&#x53E3;&#x7684;&#x6E90;&#x7801;&#xFF1A;</p>
+<pre class="language-text">@FunctionalInterface
+public interface BeanFactoryPostProcessor {
+
+	/**
+	* Modify the application context&apos;s internal bean factory after its standard
+	* initialization. All bean definitions will have been loaded, but no beans
+	* will have been instantiated yet. This allows for overriding or adding
+	* properties even to eager-initializing beans.
+	* @param beanFactory the bean factory used by the application context
+	* @throws org.springframework.beans.BeansException in case of errors
+	*/
+	void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException;
+
+}
+</pre>
+<p>&#x6211;&#x4EEC;&#x53EF;&#x4EE5;&#x770B;&#x5230;&#x8BE5;&#x63A5;&#x53E3;&#x53EA;&#x8981;&#x6C42;&#x5B9E;&#x73B0;&#x4E00;&#x4E2A;&#x65B9;&#x6CD5;&#xFF1A;</p>
+<pre class="language-text">void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException;
+</pre>
+<p>&#x6839;&#x636E;&#x8BE5;&#x65B9;&#x6CD5;&#x7684;&#x6CE8;&#x91CA;&#x6211;&#x4EEC;&#x77E5;&#x9053;&#xFF1A;&#x8FD9;&#x4E2A;&#x65B9;&#x6CD5;&#x7528;&#x4E8E;&#x4FEE;&#x6539;Spring&#x5BB9;&#x5668;&#x7684;&#x5185;&#x90E8;BeanFactory&#xFF0C;&#x8C03;&#x7528;&#x8FD9;&#x4E2A;&#x65B9;&#x6CD5;&#x7684;&#x65F6;&#x5019;&#xFF0C;&#x6240;&#x6709;&#x7684;BeanDefinition&#x90FD;&#x5DF2;&#x7ECF;&#x88AB;&#x52A0;&#x8F7D;&#xFF0C;&#x4F46;&#x662F;&#x6CA1;&#x6709;&#x88AB;&#x5B9E;&#x4F8B;&#x5316;&#x3002;&#x8FD9;&#x5141;&#x8BB8;&#x6211;&#x4EEC;&#x53BB;&#x6DFB;&#x52A0;&#x4E00;&#x4E9B;BeanDefinition&#x6216;&#x8005;&#x4FEE;&#x6539;BeanDefinition&#x3002;</p>
+<p>&#x503C;&#x5F97;&#x6CE8;&#x610F;&#x7684;&#x662F;BeanFactoryPostProcessor&#x7684;&#x4F5C;&#x7528;&#x8303;&#x56F4;&#x662F;&#x5BB9;&#x5668;&#x7EA7;&#x7684;&#xFF0C;&#x53EA;&#x548C;&#x6240;&#x4F7F;&#x7528;&#x7684;&#x5BB9;&#x5668;&#x6709;&#x5173;&#xFF0C;&#x5982;&#x679C;&#x4F60;&#x60F3;&#x8981;&#x5207;&#x5B9E;&#x7684;&#x6539;&#x53D8;bean&#x5B9E;&#x4F8B;&#xFF0C;&#x6700;&#x597D;&#x8FD8;&#x662F;&#x7528;BeanPostProcessor&#x3002;</p>
+<p>&#x63A5;&#x4E0B;&#x6765;&#x6211;&#x4EEC;&#x7EE7;&#x7EED;&#x8BA8;&#x8BBA;invokeBeanFactoryPostProcessors&#x65B9;&#x6CD5;&#xFF0C;&#x65B9;&#x6CD5;&#x6E90;&#x7801;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre class="language-text">protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
+    //&#x8FD9;&#x91CC;&#x6267;&#x884C;&#x5B9E;&#x4F8B;&#x5316;&#x5E76;&#x6267;&#x884C;&#x6240;&#x6709;BeanFactoryPostProcessor&#x7684;&#x5B9E;&#x9645;&#x903B;&#x8F91;
+	PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory, getBeanFactoryPostProcessors());
+
+	// Detect a LoadTimeWeaver and prepare for weaving, if found in the meantime
+    //&#x68C0;&#x6D4B;LoadTimeWeaver&#x5E76;&#x51C6;&#x5907;&#x7EC7;&#x5165;&#xFF08;&#x5982;&#x679C;&#x5728;&#x6B64;&#x671F;&#x95F4;&#x627E;&#x5230;&#xFF09;
+    //&#x901A;&#x8FC7;&#x4E00;&#x4E2A;&#x88AB;@Bean&#x4FEE;&#x9970;&#x7684;ConfigurationClassPostProcessor
+	// (e.g. through an @Bean method registered by ConfigurationClassPostProcessor)
+	if (beanFactory.getTempClassLoader() == null &amp;&amp; beanFactory.containsBean(LOAD_TIME_WEAVER_BEAN_NAME)) {
+		beanFactory.addBeanPostProcessor(new LoadTimeWeaverAwareProcessor(beanFactory));
+		beanFactory.setTempClassLoader(new ContextTypeMatchClassLoader(beanFactory.getBeanClassLoader()));
+	}
+}
+</pre>
+<p>&#x6211;&#x4EEC;&#x4ED4;&#x7EC6;&#x67E5;&#x770B;&#x6267;&#x884C;&#x6240;&#x6709;BeanFactoryPostProcessor&#x7684;&#x4E3B;&#x903B;&#x8F91;&#xFF0C;&#x5373;&#xFF1A;</p>
+<pre class="language-text">PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory, getBeanFactoryPostProcessors());
+</pre>
+<p>&#x5B83;&#x5C06;&#x6267;&#x884C;&#x903B;&#x8F91;&#x4EA4;&#x7ED9;PostProcessorRegistrationDelegate&#x7C7B;&#x7684;invokeBeanFactoryPostProcessors()&#x65B9;&#x6CD5;&#xFF0C;&#x67E5;&#x770B;&#x8BE5;&#x65B9;&#x6CD5;&#x6E90;&#x7801;&#xFF1A;</p>
+<pre class="language-text">public static void invokeBeanFactoryPostProcessors(
+		ConfigurableListableBeanFactory beanFactory, List&lt;BeanFactoryPostProcessor&gt; beanFactoryPostProcessors) {
+
+	// Invoke BeanDefinitionRegistryPostProcessors first, if any.
+    //&#x7528;&#x4E8E;&#x8BB0;&#x5F55;&#x5DF2;&#x7ECF;&#x5904;&#x7406;&#x8FC7;&#x7684;bean
+	Set&lt;String&gt; processedBeans = new HashSet&lt;&gt;();
+    //&#x8FD9;&#x91CC;&#x662F;&#x5904;&#x7406;&#x5DF2;&#x7ECF;&#x5B58;&#x5728;&#x4E8E;beanFactoryPostProcessors&#x5C5E;&#x6027;&#x4E2D;&#x7684;BeanFactoryPostProcessor&#x5B9E;&#x4F8B;&#xFF08;&#x5373;&#x786C;&#x7F16;&#x7801;&#x7684;&#x540E;&#x5904;&#x7406;&#x5668;&#xFF09;&#xFF0C;
+	//&#x7531;&#x4E8E;&#x4F20;&#x5165;&#x7684;&#x53C2;&#x6570;&#x662F;&#x7531;getBeanFactoryPostProcessors()&#x53EF;&#x80FD;&#x6709;&#x4E9B;BeanFactoryPostProcessors&#x8FD8;&#x672A;&#x521D;&#x59CB;&#x5316;&#xFF0C;&#x56E0;&#x6B64;&#x8FD9;&#x91CC;&#x662F;&#x62FF;&#x4E0D;&#x5230;&#x7684;
+	if (beanFactory instanceof BeanDefinitionRegistry) {
+		BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
+		List&lt;BeanFactoryPostProcessor&gt; regularPostProcessors = new LinkedList&lt;&gt;();
+		List&lt;BeanDefinitionRegistryPostProcessor&gt; registryProcessors = new LinkedList&lt;&gt;();
+
+		for (BeanFactoryPostProcessor postProcessor : beanFactoryPostProcessors) {
+			if (postProcessor instanceof BeanDefinitionRegistryPostProcessor) {
+				BeanDefinitionRegistryPostProcessor registryProcessor =
+						(BeanDefinitionRegistryPostProcessor) postProcessor;
+				//&#x5BF9;&#x4E8E;BeanDefinitionRegistryProcessor&#x7C7B;&#x578B;&#xFF0C;&#x5728;BeanFactoryPostProcessor&#x7684;&#x57FA;&#x7840;&#x4E0A;&#x8FD8;&#x6709;&#x81EA;&#x5DF1;&#x5B9A;&#x4E49;&#x7684;&#x65B9;&#x6CD5;&#xFF0C;&#x9700;&#x8981;&#x5148;&#x8C03;&#x7528;&#x3002;
+				registryProcessor.postProcessBeanDefinitionRegistry(registry);
+				registryProcessors.add(registryProcessor);
+			}
+			else {
+				//&#x8BB0;&#x5F55;&#x5E38;&#x89C4;BeanFactoryPostProcessor
+				regularPostProcessors.add(postProcessor);
+			}
+		}
+
+		// Do not initialize FactoryBeans here: We need to leave all regular beans
+		// uninitialized to let the bean factory post-processors apply to them!
+		// Separate between BeanDefinitionRegistryPostProcessors that implement
+		// PriorityOrdered, Ordered, and the rest.
+		//&#x63A5;&#x4E0B;&#x6765;&#x662F;&#x6309;&#x7167;&#x5B9E;&#x73B0;&#x4E86;PriorityOrdered, Ordered, and the rest&#x7684;&#x987A;&#x5E8F;&#x8FDB;&#x884C;&#x5B9E;&#x4F8B;&#x5316;&#x5E76;&#x4E14;&#x8C03;&#x7528;&#x5BF9;&#x5E94;&#x63A5;&#x53E3;&#x65B9;&#x6CD5;&#x7684;&#x5DE5;&#x4F5C;&#xFF0C;&#x5BF9;&#x4E8E;&#x4E0B;&#x9762;&#x7684;BeanFactoryPostProcessor&#x4E5F;&#x4E00;&#x6837;
+
+		List&lt;BeanDefinitionRegistryPostProcessor&gt; currentRegistryProcessors = new ArrayList&lt;&gt;();
+
+		// First, invoke the BeanDefinitionRegistryPostProcessors that implement PriorityOrdered.
+		//&#x901A;&#x8FC7;&#x5BF9;beanFactory&#x7684;beanDefinitionNames&#x4E2D;&#x7684;&#x5143;&#x7D20;&#x8FDB;&#x884C;&#x904D;&#x5386;&#xFF0C;&#x83B7;&#x53D6;&#x6BCF;&#x4E2A;BeanDefinition&#xFF0C;&#x7136;&#x540E;&#x901A;&#x8FC7;BeanDefinition&#x4E0E;&#x8F93;&#x5165;&#x5C5E;&#x6027;&#x8FDB;&#x884C;&#x5BF9;&#x7167;&#xFF0C;
+		//&#x8FD9;&#x91CC;&#x4E09;&#x4E2A;&#x8F93;&#x5165;&#x7684;&#x53D8;&#x91CF;&#x5206;&#x522B;&#x4EE3;&#x8868;
+		// - Bean Class&#x7C7B;&#x578B;
+		// - &#x662F;&#x5426;&#x53EF;&#x4EE5;&#x4E0D;&#x662F;&#x5355;&#x4F8B;
+		// - &#x662F;&#x5426;allowEagerInit
+		//&#x5C06;&#x6EE1;&#x8DB3;&#x6761;&#x4EF6;&#x7684;beanDefinition&#x7684;&#x540D;&#x79F0;&#x5168;&#x90E8;&#x8FD4;&#x56DE;
+		//&#x6CE8;&#x610F;&#xFF0C;&#x5BF9;&#x4E8E;&#x88AB;@Configuration&#x6CE8;&#x89E3;&#x4FEE;&#x9970;&#x7684;&#x7C7B;&#xFF0C;&#x5176;&#x89E3;&#x6790;&#x5DE5;&#x4F5C;&#x5C31;&#x662F;&#x5728;&#x8FD9;&#x91CC;&#x901A;&#x8FC7;
+		//org.springframework.context.annotation.internalConfigurationAnnotationProcessor
+		//&#x5B8C;&#x6210;&#x7684;
+		String[] postProcessorNames =
+				beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
+		for (String ppName : postProcessorNames) {
+			if (beanFactory.isTypeMatch(ppName, PriorityOrdered.class)) {
+				currentRegistryProcessors.add(beanFactory.getBean(ppName, BeanDefinitionRegistryPostProcessor.class));
+				processedBeans.add(ppName);
+			}
+		}
+		sortPostProcessors(currentRegistryProcessors, beanFactory);
+		registryProcessors.addAll(currentRegistryProcessors);
+		invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
+		currentRegistryProcessors.clear();
+
+		// Next, invoke the BeanDefinitionRegistryPostProcessors that implement Ordered.
+		postProcessorNames = beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
+		for (String ppName : postProcessorNames) {
+			if (!processedBeans.contains(ppName) &amp;&amp; beanFactory.isTypeMatch(ppName, Ordered.class)) {
+				currentRegistryProcessors.add(beanFactory.getBean(ppName, BeanDefinitionRegistryPostProcessor.class));
+				processedBeans.add(ppName);
+			}
+		}
+		sortPostProcessors(currentRegistryProcessors, beanFactory);
+		registryProcessors.addAll(currentRegistryProcessors);
+		invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
+		currentRegistryProcessors.clear();
+
+		// Finally, invoke all other BeanDefinitionRegistryPostProcessors until no further ones appear.
+		boolean reiterate = true;
+		while (reiterate) {
+			reiterate = false;
+			postProcessorNames = beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
+			for (String ppName : postProcessorNames) {
+				if (!processedBeans.contains(ppName)) {
+					currentRegistryProcessors.add(beanFactory.getBean(ppName, BeanDefinitionRegistryPostProcessor.class));
+					processedBeans.add(ppName);
+					reiterate = true;
+				}
+			}
+			sortPostProcessors(currentRegistryProcessors, beanFactory);
+			registryProcessors.addAll(currentRegistryProcessors);
+			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
+			currentRegistryProcessors.clear();
+		}
+
+		// Now, invoke the postProcessBeanFactory callback of all processors handled so far.
+		//&#x8FD9;&#x91CC;&#x662F;&#x6309;&#x987A;&#x5E8F;&#x8C03;&#x7528;&#x6240;&#x6709;&#x7684;BeanDefinitionRegistry&#x7684;postProcessBeanFactory()&#x65B9;&#x6CD5;
+		invokeBeanFactoryPostProcessors(registryProcessors, beanFactory);
+		//&#x8FD9;&#x91CC;&#x5C31;&#x662F;&#x8C03;&#x7528;&#x539F;&#x672C;&#x5DF2;&#x7ECF;&#x5B58;&#x5728;&#x4E8E;beanFactoryPostProcessors&#x5C5E;&#x6027;&#x4E2D;&#x7684;BeanFactoryPostProcessor&#x5B9E;&#x4F8B;&#x7684;postProcessBeanFactory()&#x65B9;&#x6CD5;
+		invokeBeanFactoryPostProcessors(regularPostProcessors, beanFactory);
+	}
+
+	else {
+		// Invoke factory processors registered with the context instance.
+		invokeBeanFactoryPostProcessors(beanFactoryPostProcessors, beanFactory);
+	}
+
+	// Do not initialize FactoryBeans here: We need to leave all regular beans
+	// uninitialized to let the bean factory post-processors apply to them!
+	String[] postProcessorNames =
+			beanFactory.getBeanNamesForType(BeanFactoryPostProcessor.class, true, false);
+
+	// Separate between BeanFactoryPostProcessors that implement PriorityOrdered,
+	// Ordered, and the rest.
+	List&lt;BeanFactoryPostProcessor&gt; priorityOrderedPostProcessors = new ArrayList&lt;&gt;();
+	List&lt;String&gt; orderedPostProcessorNames = new ArrayList&lt;&gt;();
+	List&lt;String&gt; nonOrderedPostProcessorNames = new ArrayList&lt;&gt;();
+	for (String ppName : postProcessorNames) {
+		if (processedBeans.contains(ppName)) {
+			// skip - already processed in first phase above
+		}
+		else if (beanFactory.isTypeMatch(ppName, PriorityOrdered.class)) {
+			priorityOrderedPostProcessors.add(beanFactory.getBean(ppName, BeanFactoryPostProcessor.class));
+		}
+		else if (beanFactory.isTypeMatch(ppName, Ordered.class)) {
+			orderedPostProcessorNames.add(ppName);
+		}
+		else {
+			nonOrderedPostProcessorNames.add(ppName);
+		}
+	}
+
+	// First, invoke the BeanFactoryPostProcessors that implement PriorityOrdered.
+	sortPostProcessors(priorityOrderedPostProcessors, beanFactory);
+	invokeBeanFactoryPostProcessors(priorityOrderedPostProcessors, beanFactory);
+
+	// Next, invoke the BeanFactoryPostProcessors that implement Ordered.
+	List&lt;BeanFactoryPostProcessor&gt; orderedPostProcessors = new ArrayList&lt;&gt;();
+	for (String postProcessorName : orderedPostProcessorNames) {
+		orderedPostProcessors.add(beanFactory.getBean(postProcessorName, BeanFactoryPostProcessor.class));
+	}
+	sortPostProcessors(orderedPostProcessors, beanFactory);
+	invokeBeanFactoryPostProcessors(orderedPostProcessors, beanFactory);
+
+	// Finally, invoke all other BeanFactoryPostProcessors.
+	List&lt;BeanFactoryPostProcessor&gt; nonOrderedPostProcessors = new ArrayList&lt;&gt;();
+	for (String postProcessorName : nonOrderedPostProcessorNames) {
+		nonOrderedPostProcessors.add(beanFactory.getBean(postProcessorName, BeanFactoryPostProcessor.class));
+	}
+	invokeBeanFactoryPostProcessors(nonOrderedPostProcessors, beanFactory);
+
+	// Clear cached merged bean definitions since the post-processors might have
+	// modified the original metadata, e.g. replacing placeholders in values...
+	beanFactory.clearMetadataCache();
+}
+</pre>
+<h3 class="mume-header" id="registerbeanpostprocessorsbeanfactory">registerBeanPostProcessors(beanFactory);</h3>
+
+<p>&#x8BE5;&#x65B9;&#x6CD5;&#x987E;&#x540D;&#x601D;&#x4E49;&#x5C31;&#x662F;&#x7528;&#x6765;&#x6CE8;&#x518C;&#x5E76;&#x5B9E;&#x4F8B;&#x5316;BeanPostProcessor&#xFF0C;&#x8003;&#x8651;&#x65B9;&#x6CD5;&#x6E90;&#x7801;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre class="language-text">protected void registerBeanPostProcessors(ConfigurableListableBeanFactory beanFactory) {
+	PostProcessorRegistrationDelegate.registerBeanPostProcessors(beanFactory, this);
+}
+</pre>
+<p>&#x8FD9;&#x91CC;&#x548C;&#x4E0A;&#x4E2A;&#x51FD;&#x6570;&#x4E00;&#x6837;&#x4E5F;&#x4EA4;&#x7ED9;&#x4E86;&#x4E00;&#x4E2A;Delegate&#x4EE3;&#x7406;&#x5B9E;&#x73B0;&#xFF0C;&#x8003;&#x5BDF;&#x8BE5;&#x5177;&#x4F53;&#x5B9E;&#x73B0;&#x65B9;&#x6CD5;&#xFF1A;</p>
+<pre class="language-text">public static void registerBeanPostProcessors(
+		ConfigurableListableBeanFactory beanFactory, AbstractApplicationContext applicationContext) {
+	//&#x83B7;&#x53D6;&#x6240;&#x6709;&#x7684;BeanPostProcessor&#x7C7B;&#x578B;bean&#x540D;&#x79F0;
+	String[] postProcessorNames = beanFactory.getBeanNamesForType(BeanPostProcessor.class, true, false);
+
+	// Register BeanPostProcessorChecker that logs an info message when
+	// a bean is created during BeanPostProcessor instantiation, i.e. when
+	// a bean is not eligible for getting processed by all 
+	//&#x7531;&#x4E8E;&#x8FD9;&#x91CC;&#x8981;&#x6DFB;&#x52A0;&#x4E00;&#x4E2A;BeanPostProcessor&#xFF0C;&#x6240;&#x4EE5;&#x8FD9;&#x91CC;&#x8981;&#x5BF9;&#x5904;&#x7406;&#x7684;&#x6570;&#x503C;+1
+	BeanPostProcessors.
+	int beanProcessorTargetCount = beanFactory.getBeanPostProcessorCount() + 1 + postProcessorNames.length;
+	beanFactory.addBeanPostProcessor(new BeanPostProcessorChecker(beanFactory, beanProcessorTargetCount));
+
+	// Separate between BeanPostProcessors that implement PriorityOrdered,
+	// Ordered, and the rest.
+	//&#x62C6;&#x5206;&#x6240;&#x6709;&#x7684;BeanPostProcessor&#x4E3A;3&#x7C7B;&#xFF0C;&#x5206;&#x522B;&#x4E3A;&#xFF1A;
+	//- &#x5B9E;&#x73B0;&#x4E86;PriorityOrdered&#x63A5;&#x53E3;&#x7684;
+	//- &#x5B9E;&#x73B0;&#x4E86;Ordered&#x63A5;&#x53E3;&#x7684;
+	//- &#x4E24;&#x8005;&#x90FD;&#x6CA1;&#x5B9E;&#x73B0;&#x7684;
+	//&#x5E76;&#x6309;&#x7167;&#x4E0A;&#x8FF0;&#x987A;&#x5E8F;&#x5BF9;&#x4ED6;&#x4EEC;&#x8FDB;&#x884C;&#x521B;&#x5EFA;&#x5B9E;&#x4F8B;&#x3002;
+	List&lt;BeanPostProcessor&gt; priorityOrderedPostProcessors = new ArrayList&lt;&gt;();
+	List&lt;BeanPostProcessor&gt; internalPostProcessors = new ArrayList&lt;&gt;();
+	List&lt;String&gt; orderedPostProcessorNames = new ArrayList&lt;&gt;();
+	List&lt;String&gt; nonOrderedPostProcessorNames = new ArrayList&lt;&gt;();
+	for (String ppName : postProcessorNames) {
+		if (beanFactory.isTypeMatch(ppName, PriorityOrdered.class)) {
+			BeanPostProcessor pp = beanFactory.getBean(ppName, BeanPostProcessor.class);
+			priorityOrderedPostProcessors.add(pp);
+			if (pp instanceof MergedBeanDefinitionPostProcessor) {
+				internalPostProcessors.add(pp);
+			}
+		}
+		else if (beanFactory.isTypeMatch(ppName, Ordered.class)) {
+			orderedPostProcessorNames.add(ppName);
+		}
+		else {
+			nonOrderedPostProcessorNames.add(ppName);
+		}
+	}
+
+	// First, register the BeanPostProcessors that implement PriorityOrdered.
+	sortPostProcessors(priorityOrderedPostProcessors, beanFactory);
+	registerBeanPostProcessors(beanFactory, priorityOrderedPostProcessors);
+
+	// Next, register the BeanPostProcessors that implement Ordered.
+	List&lt;BeanPostProcessor&gt; orderedPostProcessors = new ArrayList&lt;&gt;();
+	for (String ppName : orderedPostProcessorNames) {
+		BeanPostProcessor pp = beanFactory.getBean(ppName, BeanPostProcessor.class);
+		orderedPostProcessors.add(pp);
+		if (pp instanceof MergedBeanDefinitionPostProcessor) {
+			internalPostProcessors.add(pp);
+		}
+	}
+	sortPostProcessors(orderedPostProcessors, beanFactory);
+	registerBeanPostProcessors(beanFactory, orderedPostProcessors);
+
+	// Now, register all regular BeanPostProcessors.
+	List&lt;BeanPostProcessor&gt; nonOrderedPostProcessors = new ArrayList&lt;&gt;();
+	for (String ppName : nonOrderedPostProcessorNames) {
+		BeanPostProcessor pp = beanFactory.getBean(ppName, BeanPostProcessor.class);
+		nonOrderedPostProcessors.add(pp);
+		if (pp instanceof MergedBeanDefinitionPostProcessor) {
+			internalPostProcessors.add(pp);
+		}
+	}
+	registerBeanPostProcessors(beanFactory, nonOrderedPostProcessors);
+
+	// Finally, re-register all internal BeanPostProcessors.
+	sortPostProcessors(internalPostProcessors, beanFactory);
+	registerBeanPostProcessors(beanFactory, internalPostProcessors);
+
+	// Re-register post-processor for detecting inner beans as ApplicationListeners,
+	// moving it to the end of the processor chain (for picking up proxies etc).
+	beanFactory.addBeanPostProcessor(new ApplicationListenerDetector(applicationContext));
+}
+</pre>
+<h3 class="mume-header" id="initmessagesource">initMessageSource()</h3>
+
+<p>Spring&#x7528;&#x6765;&#x5904;&#x7406;&#x56FD;&#x9645;&#x5316;&#x7684;&#x3002;</p>
+<p>&#x65B9;&#x6CD5;&#x6CE8;&#x91CA;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre class="language-text">/**
+ * Initialize the MessageSource.
+ * Use parent&apos;s if none defined in this context.
+ */
+ //&#x521D;&#x59CB;&#x5316;&#x4E00;&#x4E2A;MessageSource
+ //&#x5982;&#x679C;&#x4E0A;&#x4E0B;&#x6587;&#x4E2D;&#x6CA1;&#x5B9A;&#x4E49;&#x7684;&#x8BDD;&#x5C31;&#x7528;&#x7236;&#x7C7B;&#x7684;
+</pre>
+<p>&#x6E90;&#x7801;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre class="language-text">protected void initMessageSource() {
+	//&#x83B7;&#x53D6;BeanFactory
+	ConfigurableListableBeanFactory beanFactory = getBeanFactory();
+	//&#x5224;&#x65AD;&#x662F;&#x5426;&#x6709;id&#x4E3A;messageSource&#x7684;bean
+	if (beanFactory.containsLocalBean(MESSAGE_SOURCE_BEAN_NAME)) {
+		this.messageSource = beanFactory.getBean(MESSAGE_SOURCE_BEAN_NAME, MessageSource.class);
+		// Make MessageSource aware of parent MessageSource.
+		if (this.parent != null &amp;&amp; this.messageSource instanceof HierarchicalMessageSource) {
+			HierarchicalMessageSource hms = (HierarchicalMessageSource) this.messageSource;
+			if (hms.getParentMessageSource() == null) {
+				// Only set parent context as parent MessageSource if no parent MessageSource
+				// registered already.
+				hms.setParentMessageSource(getInternalParentMessageSource());
+			}
+		}
+		if (logger.isDebugEnabled()) {
+			logger.debug(&quot;Using MessageSource [&quot; + this.messageSource + &quot;]&quot;);
+		}
+	}
+	else {
+		// Use empty MessageSource to be able to accept getMessage calls.
+		// &#x521B;&#x5EFA;&#x65B0;&#x7684;MessageSouce&#xFF0C;&#x5E76;&#x8BBE;&#x7F6E;ParentMessageSource
+		DelegatingMessageSource dms = new DelegatingMessageSource();
+		dms.setParentMessageSource(getInternalParentMessageSource());
+		this.messageSource = dms;
+		beanFactory.registerSingleton(MESSAGE_SOURCE_BEAN_NAME, this.messageSource);
+		if (logger.isDebugEnabled()) {
+			logger.debug(&quot;Unable to locate MessageSource with name &apos;&quot; + MESSAGE_SOURCE_BEAN_NAME +
+					&quot;&apos;: using default [&quot; + this.messageSource + &quot;]&quot;);
+		}
+	}
+}
+</pre>
+<h3 class="mume-header" id="initapplicationeventmulticaster">initApplicationEventMulticaster()</h3>
+
+<p>&#x65B9;&#x6CD5;&#x6CE8;&#x91CA;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre class="language-text">/**
+ * Initialize the ApplicationEventMulticaster.
+ * Uses SimpleApplicationEventMulticaster if none defined in the context.
+ * @see org.springframework.context.event.SimpleApplicationEventMulticaster
+ */
+ //&#x8FD9;&#x4E2A;&#x65B9;&#x6CD5;&#x7528;&#x6765;&#x521D;&#x59CB;&#x5316;&#x4E00;&#x4E2A;ApplicationEventMulticaster
+ //&#x5982;&#x679C;&#x4E0A;&#x4E0B;&#x6587;&#x4E2D;&#x6CA1;&#x6709;&#x7684;&#x8BDD;&#x5C31;&#x521B;&#x5EFA;&#x4E00;&#x4E2A;SimpleApplicationEventMulticaster
+ //ApplicationEventMulticaster&#x662F;&#x7528;&#x6765;&#x5B8C;&#x6210;Sprin
+ g Context&#x4E0A;&#x4E0B;&#x6587;Event&#x76D1;&#x542C;&#x7684;&#x5177;&#x4F53;&#x8BF7;&#x67E5;&#x770B;[](The Usage Of Spring-IOC.md)
+</pre>
+<p>&#x6E90;&#x7801;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre class="language-text">protected void initApplicationEventMulticaster() {
+	//&#x83B7;&#x53D6;BeanFactory
+	ConfigurableListableBeanFactory beanFactory = getBeanFactory();
+	//&#x5982;&#x679C;beanFactory&#x5305;&#x542B;applicationEventMulticaster&#x540D;&#x5B57;&#x7684;bean&#x5C31;&#x83B7;&#x53D6;
+	if (beanFactory.containsLocalBean(APPLICATION_EVENT_MULTICASTER_BEAN_NAME)) {
+		this.applicationEventMulticaster =
+				beanFactory.getBean(APPLICATION_EVENT_MULTICASTER_BEAN_NAME, ApplicationEventMulticaster.class);
+		if (logger.isDebugEnabled()) {
+			logger.debug(&quot;Using ApplicationEventMulticaster [&quot; + this.applicationEventMulticaster + &quot;]&quot;);
+		}
+	}
+	else {
+		//&#x5426;&#x5219;&#x521B;&#x5EFA;&#x4E00;&#x4E2A;SimpleApplicationEventMulticaster&#x5BF9;&#x8C61;&#x5E76;&#x8D4B;&#x503C;
+		this.applicationEventMulticaster = new SimpleApplicationEventMulticaster(beanFactory);
+		beanFactory.registerSingleton(APPLICATION_EVENT_MULTICASTER_BEAN_NAME, this.applicationEventMulticaster);
+		if (logger.isDebugEnabled()) {
+			logger.debug(&quot;Unable to locate ApplicationEventMulticaster with name &apos;&quot; +
+					APPLICATION_EVENT_MULTICASTER_BEAN_NAME +
+					&quot;&apos;: using default [&quot; + this.applicationEventMulticaster + &quot;]&quot;);
+		}
+	}
+}
+</pre>
+<h3 class="mume-header" id="onrefresh">onRefresh()</h3>
+
+<p>&#x65B9;&#x6CD5;&#x6CE8;&#x91CA;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre class="language-text">/**
+ * Template method which can be overridden to add context-specific refresh work.
+ * Called on initialization of special beans, before instantiation of singletons.
+ * &lt;p&gt;This implementation is empty.
+ * @throws BeansException in case of errors
+ * @see #refresh()
+ */
+ //&#x8FD9;&#x662F;&#x4E00;&#x4E2A;&#x6A21;&#x677F;&#x65B9;&#x6CD5;&#xFF0C;&#x53EF;&#x4EE5;&#x7528;&#x6765;&#x5B8C;&#x6210;&#x7279;&#x5B9A;&#x7684;&#x4E0A;&#x4E0B;&#x6587;&#x5237;&#x65B0;&#x5DE5;&#x4F5C;
+ //&#x5B83;&#x7528;&#x4E8E;&#x5B9E;&#x4F8B;&#x5316;&#x7279;&#x5B9A;&#x7684;bean&#xFF0C;&#x4F1A;&#x5728;&#x5355;&#x4F8B;bean&#x5B9E;&#x4F8B;&#x5316;&#x4E4B;&#x524D;&#x8C03;&#x7528;&#xFF0C;&#x9ED8;&#x8BA4;&#x4E3A;&#x7A7A;
+</pre>
+<p>&#x6E90;&#x7801;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre class="language-text">protected void onRefresh() throws BeansException {
+	// For subclasses: do nothing by default.
+}
+</pre>
+<h3 class="mume-header" id="registerlisteners">registerListeners()</h3>
+
+<p>&#x65B9;&#x6CD5;&#x6CE8;&#x91CA;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre class="language-text">/**
+ * Add beans that implement ApplicationListener as listeners.
+ * Doesn&apos;t affect other listeners, which can be added without being beans.
+ */
+ //&#x6DFB;&#x52A0;&#x5B9E;&#x73B0;&#x4E86;ApplicationListener&#x63A5;&#x53E3;&#x7684;&#x7C7B;&#x4F5C;&#x4E3A;&#x76D1;&#x542C;&#x5668;bean
+ //&#x5982;&#x679C;&#x4E0D;&#x662F;bean&#x5C06;&#x4E0D;&#x80FD;&#x88AB;&#x6DFB;&#x52A0;&#xFF0C;&#x76D1;&#x542C;&#x5668;&#x4E4B;&#x95F4;&#x4E0D;&#x4F1A;&#x76F8;&#x4E92;&#x5F71;&#x54CD;
+</pre>
+<p>&#x6E90;&#x7801;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre class="language-text">protected void registerListeners() {
+	//&#x6CE8;&#x518C;&#x6307;&#x5B9A;&#x76D1;&#x542C;&#x5668;&#xFF0C;&#x8FD9;&#x4E9B;&#x76D1;&#x542C;&#x5668;&#x662F;&#x5728;applicationListeners&#x5C5E;&#x6027;&#x4E2D;&#x6307;&#x5B9A;&#x7684;&#xFF0C;&#x5C06;&#x5176;&#x6DFB;&#x52A0;&#x5230;ApplicationEventMulticaster&#x4E2D;
+	// Register statically specified listeners first.
+	for (ApplicationListener&lt;?&gt; listener : getApplicationListeners()) {
+		getApplicationEventMulticaster().addApplicationListener(listener);
+	}
+
+	// Do not initialize FactoryBeans here: We need to leave all regular beans
+	// uninitialized to let post-processors apply to them!
+	//&#x83B7;&#x53D6;beanDefinition&#x4E2D;&#x5B58;&#x5728;&#x7684;bean&#xFF0C;&#x7136;&#x540E;&#x5C06;&#x5176;&#x6DFB;&#x52A0;&#x5230;ApplicationEventMulticaster&#x4E2D;
+	String[] listenerBeanNames = getBeanNamesForType(ApplicationListener.class, true, false);
+	for (String listenerBeanName : listenerBeanNames) {
+		getApplicationEventMulticaster().addApplicationListenerBean(listenerBeanName);
+	}
+
+	// Publish early application events now that we finally have a multicaster...
+	// &#x7B2C;&#x4E00;&#x6B65;&#x4E2D;&#x8BBE;&#x7F6E;&#x7684;earlyApplicationEvents&#x7684;&#x5904;&#x7406;
+	Set&lt;ApplicationEvent&gt; earlyEventsToProcess = this.earlyApplicationEvents;
+	this.earlyApplicationEvents = null;
+	if (earlyEventsToProcess != null) {
+		for (ApplicationEvent earlyEvent : earlyEventsToProcess) {
+			getApplicationEventMulticaster().multicastEvent(earlyEvent);
+		}
+	}
+}
+</pre>
+<h3 class="mume-header" id="finishbeanfactoryinitialization">finishBeanFactoryInitialization()</h3>
+
+<p>&#x65B9;&#x6CD5;&#x6CE8;&#x91CA;&#xFF1A;</p>
+<pre class="language-text">/**
+ * Finish the initialization of this context&apos;s bean factory,
+ * initializing all remaining singleton beans.
+ */
+ //&#x901A;&#x8FC7;&#x4E0A;&#x4E0B;&#x6587;&#x4E2D;&#x7684;bean&#x5DE5;&#x5382;&#x5B8C;&#x6210;&#x6240;&#x6709;&#x5269;&#x4E0B;&#x7684;&#x5355;&#x4F8B;&#x7684;&#x5B9E;&#x4F8B;&#x5316;
+</pre>
+<p>&#x65B9;&#x6CD5;&#x6E90;&#x7801;&#xFF1A;</p>
+<pre class="language-text">protected void finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory) {
+	// Initialize conversion service for this context.
+	if (beanFactory.containsBean(CONVERSION_SERVICE_BEAN_NAME) &amp;&amp;
+			beanFactory.isTypeMatch(CONVERSION_SERVICE_BEAN_NAME, ConversionService.class)) {
+		beanFactory.setConversionService(
+				beanFactory.getBean(CONVERSION_SERVICE_BEAN_NAME, ConversionService.class));
+	}
+
+	// Register a default embedded value resolver if no bean post-processor
+	// (such as a PropertyPlaceholderConfigurer bean) registered any before:
+	// at this point, primarily for resolution in annotation attribute values.
+	if (!beanFactory.hasEmbeddedValueResolver()) {
+		beanFactory.addEmbeddedValueResolver(strVal -&gt; getEnvironment().resolvePlaceholders(strVal));
+	}
+
+	// Initialize LoadTimeWeaverAware beans early to allow for registering their transformers early.
+	String[] weaverAwareNames = beanFactory.getBeanNamesForType(LoadTimeWeaverAware.class, false, false);
+	for (String weaverAwareName : weaverAwareNames) {
+		getBean(weaverAwareName);
+	}
+
+	// Stop using the temporary ClassLoader for type matching.
+	beanFactory.setTempClassLoader(null);
+
+	// Allow for caching all bean definition metadata, not expecting further changes.
+	//&#x51BB;&#x7ED3;&#x914D;&#x7F6E;&#xFF0C;&#x907F;&#x514D;&#x914D;&#x7F6E;&#x53D1;&#x751F;&#x53D8;&#x5316;
+	beanFactory.freezeConfiguration();
+
+	// Instantiate all remaining (non-lazy-init) singletons.
+	//&#x771F;&#x6B63;&#x7684;&#x5B9E;&#x4F8B;&#x5316;&#x5269;&#x4E0B;bean&#x7684;&#x903B;&#x8F91;
+	beanFactory.preInstantiateSingletons();
+}
+</pre>
+<p>&#x8FD9;&#x4E2A;&#x65B9;&#x6CD5;&#x4E2D;&#x6709;&#x5982;&#x4E0B;&#x51E0;&#x884C;&#x4EE3;&#x7801;&#xFF1A;</p>
+<pre class="language-text">	if (beanFactory.containsBean(CONVERSION_SERVICE_BEAN_NAME) &amp;&amp;
+			beanFactory.isTypeMatch(CONVERSION_SERVICE_BEAN_NAME, ConversionService.class)) {
+		beanFactory.setConversionService(
+				beanFactory.getBean(CONVERSION_SERVICE_BEAN_NAME, ConversionService.class));
+	}
+</pre>
+<p>&#x8FD9;&#x4E2A;&#x65B9;&#x6CD5;&#x9996;&#x5148;&#x53BB;&#x5BFB;&#x627E;&#x540D;&#x4E3A;conversionService&#x7684;bean&#xFF0C;&#x9996;&#x5148;&#x8003;&#x8651;&#x8BE5;bean&#x7684;&#x4F5C;&#x7528;&#xFF1A;</p>
+<p>&#x4E4B;&#x524D;&#x6211;&#x4EEC;&#x63D0;&#x5230;&#x8FC7;&#x81EA;&#x5B9A;&#x4E49;&#x7C7B;&#x578B;&#x8F6C;&#x6362;&#x5668;&#x5B9E;&#x73B0;String&#x8F6C;&#x6362;&#x4E3A;Date&#x7684;&#x683C;&#x5F0F;&#xFF0C;&#x9664;&#x4E86;&#x8FD9;&#x79CD;&#x65B9;&#x5F0F;&#x8FD8;&#x6709;&#x4E00;&#x79CD;&#x65B9;&#x5F0F;&#x5C31;&#x662F;&#x4F7F;&#x7528;Converter&#x3002;&#x800C;ConversionService&#x4E2D;&#x5C31;&#x5B58;&#x50A8;&#x4E86;&#x591A;&#x4E2A;Converter&#x5BF9;&#x8C61;&#x7528;&#x6765;&#x8FDB;&#x884C;&#x8F6C;&#x6362;&#x3002;&#x800C;&#x8FD9;&#x91CC;&#x7528;&#x6765;&#x521D;&#x59CB;&#x5316;&#x914D;&#x7F6E;&#x3002;</p>
+<h3 class="mume-header" id="finishrefresh">finishRefresh()</h3>
+
+<p>&#x5728;Spring&#x4E2D;&#x63D0;&#x4F9B;&#x4E86;Lifecycle&#x63A5;&#x53E3;&#xFF0C;Lifecycle&#x4E2D;&#x5305;&#x542B;&#x4E86;start/stop&#x65B9;&#x6CD5;&#xFF0C;&#x5B9E;&#x73B0;&#x6B64;&#x63A5;&#x53E3;&#x540E;Spring&#x4F1A;&#x4FDD;&#x8BC1;&#x5728;&#x542F;&#x52A8;&#x7684;&#x65F6;&#x5019;&#x8C03;&#x7528;&#x5176;start&#x65B9;&#x6CD5;&#x5F00;&#x59CB;&#x751F;&#x547D;&#x5468;&#x671F;&#xFF0C;&#x5E76;&#x5728;Spring&#x5173;&#x95ED;&#x7684;&#x65F6;&#x5019;&#x8C03;&#x7528;stop&#x65B9;&#x6CD5;&#x6765;&#x7ED3;&#x675F;&#x751F;&#x547D;&#x5468;&#x671F;&#xFF0C;&#x901A;&#x5E38;&#x7528;&#x6765;&#x914D;&#x7F6E;&#x540E;&#x53F0;&#x7A0B;&#x5E8F;&#xFF0C;&#x5728;&#x542F;&#x52A8;&#x540E;&#x4E00;&#x76F4;&#x8FDB;&#x884C;&#xFF0C;ApplicationContext&#x7684;&#x521D;&#x59CB;&#x5316;&#x6700;&#x540E;&#x6B63;&#x662F;&#x4FDD;&#x8BC1;&#x4E86;&#x8FD9;&#x4E00;&#x529F;&#x80FD;&#x7684;&#x5B9E;&#x73B0;&#x3002;</p>
+<p>&#x65B9;&#x6CD5;&#x6CE8;&#x91CA;&#xFF1A;</p>
+<pre class="language-text">/**
+ * Finish the refresh of this context, invoking the LifecycleProcessor&apos;s
+ * onRefresh() method and publishing the
+ * {@link org.springframework.context.event.ContextRefreshedEvent}.
+ */
+ //&#x5B8C;&#x6210;&#x5BB9;&#x5668;&#x5237;&#x65B0;&#xFF0C;&#x6267;&#x884C;LifecycleProcessor&#x7684;onRefresh()&#x65B9;&#x6CD5;&#xFF0C;&#x5E76;&#x4E14;&#x53D1;&#x5E03;ContextRefreshedEvent&#x4E8B;&#x4EF6;
+</pre>
+<p>&#x65B9;&#x6CD5;&#x6E90;&#x7801;&#xFF1A;</p>
+<pre class="language-text">protected void finishRefresh() {
+	// Clear context-level resource caches (such as ASM metadata from scanning).
+	clearResourceCaches();
+
+	// Initialize lifecycle processor for this context.
+	initLifecycleProcessor();
+
+	// Propagate refresh to lifecycle processor first.
+	getLifecycleProcessor().onRefresh();
+
+	// Publish the final event.
+	publishEvent(new ContextRefreshedEvent(this));
+
+	// Participate in LiveBeansView MBean, if active.
+	LiveBeansView.registerApplicationContext(this);
+}
+</pre>
+<p>&#x5F53;ApplicationContext&#x542F;&#x52A8;&#x6216;&#x505C;&#x6B62;&#x65F6;&#xFF0C;&#x5B83;&#x4F1A;&#x901A;&#x8FC7;LifecycleProcessor&#x6765;&#x4E0E;&#x6240;&#x6709;&#x58F0;&#x660E;&#x7684;bean&#x7684;&#x5468;&#x671F;&#x505A;&#x72B6;&#x6001;&#x66F4;&#x65B0;&#xFF0C;&#x800C;&#x5728;LifecycleProcessor&#x7684;&#x4F7F;&#x7528;&#x524D;&#x9996;&#x5148;&#x9700;&#x8981;&#x521D;&#x59CB;&#x5316;&#x3002;</p>
+<p>&#x8FD9;&#x4E2A;&#x51FD;&#x6570;&#x7684;&#x6CE8;&#x89E3;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre class="language-text">&#x5B9E;&#x4F8B;&#x5316;LifecycleProcessor&#xFF0C;
+&#x5982;&#x679C;&#x4E0A;&#x4E0B;&#x6587;&#x4E2D;&#x6CA1;&#x6709;&#x5B9A;&#x4E49;&#x5C31;&#x4F7F;&#x7528;DefaultLifecycleProcessor
+</pre>
+<p>&#x6E90;&#x7801;&#x5982;&#x4E0B;&#xFF1A;</p>
+<pre class="language-text">protected void initLifecycleProcessor() {
+	ConfigurableListableBeanFactory beanFactory = getBeanFactory();
+	if (beanFactory.containsLocalBean(LIFECYCLE_PROCESSOR_BEAN_NAME)) {
+		this.lifecycleProcessor =
+				beanFactory.getBean(LIFECYCLE_PROCESSOR_BEAN_NAME, LifecycleProcessor.class);
+		if (logger.isDebugEnabled()) {
+			logger.debug(&quot;Using LifecycleProcessor [&quot; + this.lifecycleProcessor + &quot;]&quot;);
+		}
+	}
+	else {
+		DefaultLifecycleProcessor defaultProcessor = new DefaultLifecycleProcessor();
+		defaultProcessor.setBeanFactory(beanFactory);
+		this.lifecycleProcessor = defaultProcessor;
+		beanFactory.registerSingleton(LIFECYCLE_PROCESSOR_BEAN_NAME, this.lifecycleProcessor);
+		if (logger.isDebugEnabled()) {
+			logger.debug(&quot;Unable to locate LifecycleProcessor with name &apos;&quot; +
+					LIFECYCLE_PROCESSOR_BEAN_NAME +
+					&quot;&apos;: using default [&quot; + this.lifecycleProcessor + &quot;]&quot;);
+		}
+	}
+}
+</pre>
+
+      </div>
+      
+      
+    
+    
+    
+    
+    
+    
+    
+    
+  
+    </body></html>
