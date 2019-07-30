@@ -432,7 +432,7 @@ dictEntry *dictNext(dictIterator *iter)
     }
     return NULL;
 }
-
+/* 释放迭代器空间 */
 void dictReleaseIterator(dictIterator *iter)
 {
     _dictFree(iter);
@@ -440,13 +440,15 @@ void dictReleaseIterator(dictIterator *iter)
 
 /* Return a random entry from the hash table. Useful to
  * implement randomized algorithms */
+ /* 返回随机一个Entry */
 dictEntry *dictGetRandomKey(dict *ht)
 {
     dictEntry *he;
     unsigned int h;
     int listlen, listele;
-
+    /* 如果hash表长度为0，则返回NULL */
     if (ht->used == 0) return NULL;
+    /* 获取一个非空的Entry */
     do {
         h = random() & ht->sizemask;
         he = ht->table[h];
@@ -456,13 +458,16 @@ dictEntry *dictGetRandomKey(dict *ht)
      * list and we need to get a random element from the list.
      * The only sane way to do so is to count the element and
      * select a random index. */
+     /* 由于拿到的是链表，获取链表长度 */
     listlen = 0;
     while(he) {
         he = he->next;
         listlen++;
     }
+    /* 生成随机数 */
     listele = random() % listlen;
     he = ht->table[h];
+    /* 获取对应节点值 */
     while(listele--) he = he->next;
     return he;
 }
@@ -470,10 +475,12 @@ dictEntry *dictGetRandomKey(dict *ht)
 /* ------------------------- private functions ------------------------------ */
 
 /* Expand the hash table if needed */
+/* 哈希表扩容 */
 static int _dictExpandIfNeeded(dict *ht)
 {
     /* If the hash table is empty expand it to the intial size,
      * if the table is "full" dobule its size. */
+    /* 如果是空表扩展到初始大小，否则以二倍扩展 */
     if (ht->size == 0)
         return dictExpand(ht, DICT_HT_INITIAL_SIZE);
     if (ht->used == ht->size)
@@ -482,6 +489,7 @@ static int _dictExpandIfNeeded(dict *ht)
 }
 
 /* Our hash table capability is a power of two */
+/* 获取距离大于等于size的最小2的幂 */
 static unsigned long _dictNextPower(unsigned long size)
 {
     unsigned long i = DICT_HT_INITIAL_SIZE;
@@ -497,12 +505,14 @@ static unsigned long _dictNextPower(unsigned long size)
 /* Returns the index of a free slot that can be populated with
  * an hash entry for the given 'key'.
  * If the key already exists, -1 is returned. */
+ /* 根据给定的key，返回该key在hash表中的index，如果key已经存在则返回-1 */
 static int _dictKeyIndex(dict *ht, const void *key)
 {
     unsigned int h;
     dictEntry *he;
 
     /* Expand the hashtable if needed */
+    /* 如果需要扩展则返回-1 */
     if (_dictExpandIfNeeded(ht) == DICT_ERR)
         return -1;
     /* Compute the key hash value */
@@ -516,12 +526,13 @@ static int _dictKeyIndex(dict *ht, const void *key)
     }
     return h;
 }
-
+/* 清空哈希表 */
 void dictEmpty(dict *ht) {
     _dictClear(ht);
 }
 
 #define DICT_STATS_VECTLEN 50
+/* 打印哈希表状态 */
 void dictPrintStats(dict *ht) {
     unsigned long i, slots = 0, chainlen, maxchainlen = 0;
     unsigned long totchainlen = 0;
@@ -567,12 +578,12 @@ void dictPrintStats(dict *ht) {
 }
 
 /* ----------------------- StringCopy Hash Table Type ------------------------*/
-
+/* 生成哈希函数 */
 static unsigned int _dictStringCopyHTHashFunction(const void *key)
 {
     return dictGenHashFunction(key, strlen(key));
 }
-
+/* key拷贝 */
 static void *_dictStringCopyHTKeyDup(void *privdata, const void *key)
 {
     int len = strlen(key);
@@ -584,6 +595,7 @@ static void *_dictStringCopyHTKeyDup(void *privdata, const void *key)
     return copy;
 }
 
+/* value拷贝 */
 static void *_dictStringKeyValCopyHTValDup(void *privdata, const void *val)
 {
     int len = strlen(val);
@@ -595,6 +607,7 @@ static void *_dictStringKeyValCopyHTValDup(void *privdata, const void *val)
     return copy;
 }
 
+/* key比较 */
 static int _dictStringCopyHTKeyCompare(void *privdata, const void *key1,
         const void *key2)
 {
@@ -603,6 +616,7 @@ static int _dictStringCopyHTKeyCompare(void *privdata, const void *key1,
     return strcmp(key1, key2) == 0;
 }
 
+/* key析构 */
 static void _dictStringCopyHTKeyDestructor(void *privdata, void *key)
 {
     DICT_NOTUSED(privdata);
@@ -610,6 +624,7 @@ static void _dictStringCopyHTKeyDestructor(void *privdata, void *key)
     _dictFree((void*)key); /* ATTENTION: const cast */
 }
 
+/* value析构 */
 static void _dictStringKeyValCopyHTValDestructor(void *privdata, void *val)
 {
     DICT_NOTUSED(privdata);
