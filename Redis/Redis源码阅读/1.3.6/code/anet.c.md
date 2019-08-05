@@ -2,6 +2,8 @@
 
 关于fcntl函数相关的知识查看如下[链接](https://www.cnblogs.com/zxc2man/p/7649240.html);
 
+关于setsocketopt函数的相关只是请查看如下[链接](https://blog.csdn.net/small_qch/article/details/8495637)[链接](https://blog.csdn.net/liujiayu2/article/details/47126967)
+
 ```c
 /* anet.c -- Basic TCP socket stuff made a bit less boring
  *
@@ -72,6 +74,7 @@ int anetNonBlock(char *err, int fd)
         anetSetError(err, "fcntl(F_GETFL): %s\n", strerror(errno));
         return ANET_ERR;
     }
+    /* 将fd设置为非阻塞的 */
     if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) == -1) {
         anetSetError(err, "fcntl(F_SETFL,O_NONBLOCK): %s\n", strerror(errno));
         return ANET_ERR;
@@ -79,6 +82,13 @@ int anetNonBlock(char *err, int fd)
     return ANET_OK;
 }
 
+/* 设置TCP为无延迟 */
+/* TCP_NODELAY选项禁止Nagle算法。Nagle算法通过将未确认的数据存入缓冲区直到
+蓄足一个包一起发送的方法，来减少主机发送的零碎小数据包的数目。但对于某些应用
+来说，这种算法将降低系统性能。所以TCP_NODELAY可用来将此算法关闭。应用程序编
+写者只有在确切了解它的效果并确实需要的情况下，才设置TCP_NODELAY选项，因为设
+置后对网络性能有明显的负面影响。TCP_NODELAY是唯一使用IPPROTO_TCP层的选项，
+其他所有选项都使用SOL_SOCKET层。 */
 int anetTcpNoDelay(char *err, int fd)
 {
     int yes = 1;
@@ -90,6 +100,7 @@ int anetTcpNoDelay(char *err, int fd)
     return ANET_OK;
 }
 
+/* 设置发送缓冲区 */
 int anetSetSendBuffer(char *err, int fd, int buffsize)
 {
     if (setsockopt(fd, SOL_SOCKET, SO_SNDBUF, &buffsize, sizeof(buffsize)) == -1)
@@ -100,6 +111,7 @@ int anetSetSendBuffer(char *err, int fd, int buffsize)
     return ANET_OK;
 }
 
+/* 设置TCP长连接 */
 int anetTcpKeepAlive(char *err, int fd)
 {
     int yes = 1;
@@ -109,7 +121,7 @@ int anetTcpKeepAlive(char *err, int fd)
     }
     return ANET_OK;
 }
-
+/* IP解析成host ,inet_aton函数详见https://baike.baidu.com/item/inet_aton*/
 int anetResolve(char *err, char *host, char *ipbuf)
 {
     struct sockaddr_in sa;
@@ -131,6 +143,7 @@ int anetResolve(char *err, char *host, char *ipbuf)
 
 #define ANET_CONNECT_NONE 0
 #define ANET_CONNECT_NONBLOCK 1
+/*socket函数详解  https://blog.csdn.net/xc_tsao/article/details/44123331*/
 static int anetTcpGenericConnect(char *err, char *addr, int port, int flags)
 {
     int s, on = 1;
