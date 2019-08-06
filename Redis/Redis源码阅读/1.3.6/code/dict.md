@@ -30,6 +30,7 @@ typedef struct dict {
     /* Hash表类型信息（方法信息） */
     dictType *type;
     unsigned long size;
+    /* 哈希表的掩码 */
     unsigned long sizemask;
     unsigned long used;
     void *privdata;
@@ -367,7 +368,7 @@ static int dictGenericDelete(dict *ht, const void *key, int nofree)
 }
 ```
 
-删除节点的逻辑相对简单，仅仅是找到节点并且删除，并未考虑到缩容的情况。而之前所说的dictDelete函数和dictDeleteNoFree函数，两者只有标志位不同，该标志位如果是1，则不释放空间，如果是0，则释放空间。虽然C语言要求尽量释放掉使用的空间，但是仍然可以选择不释放，带来的好处是可以提高释放空间的效率。频繁的释放空间对于单线程的Redis消耗很大。
+删除节点的逻辑相对简单，仅仅是找到节点并且删除，并未考虑到缩容的情况。而之前所说的dictDelete函数和dictDeleteNoFree函数，两者只有标志位不同，该标志位如果是1，则不释放空间，如果是0，则释放空间。虽然C语言要求尽量释放掉使用的空间，但是仍然可以选择不释放，带来的好处是可以提高效率，如果一个Entry失效了就释放其空间，那么新增一个Entry就又需要再申请，频繁的释放空间对于单线程的Redis消耗很大。
 
 Redis的内存回收策略主要体现在两个方面：
 - 删除到达过期时间的键对象 
@@ -380,3 +381,27 @@ Redis的内存回收策略主要体现在两个方面：
 惰性删除：当客户端读取键时，如果键带有过期时间并且已经过期，那么会执行删除操作并且查询命令返回空。这种机制是为了节约CPU成本，不需要单独维护一个TTL链表来处理过期的键。但是这种删除机制会导致内存不能及时得到释放，所以将结合下面的定时任务删除机制一起使用。
 
 定时任务删除：Redis内部维护一个定时任务，用于随机获取一些带有过期属性的键，并将其中过期的键删除。来删除一些过期的冷数据。
+
+## 2.3 查找节点
+
+对于哈希表中数据的查找，操作方式与基本的哈希表查找相同，仅仅是先算出hashKey，然后通过hashKey获取到链表，再对链表进行遍历。代码如下：
+
+```c
+/* 查找节点 */
+dictEntry *dictFind(dict *ht, const void *key)
+{
+    dictEntry *he;
+    unsigned int h;
+
+    if (ht->size == 0) return NULL;
+    h = dictHashKey(ht, key) & ht->sizemask;
+    he = ht->table[h];
+    /* 遍历链表进行查找 */
+    while(he) {
+        if (dictCompareHashKeys(ht, key, he->key))
+            return he;
+        he = he->next;
+    }
+    return NULL;
+}
+```
