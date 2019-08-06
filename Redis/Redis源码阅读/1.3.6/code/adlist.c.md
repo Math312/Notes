@@ -41,6 +41,7 @@
  * by the user before to call AlFreeList().
  *
  * On error, NULL is returned. Otherwise the pointer to the new list. */
+/* 创建空列表 */
 list *listCreate(void)
 {
     struct list *list;
@@ -58,6 +59,7 @@ list *listCreate(void)
 /* Free the whole list.
  *
  * This function can't fail. */
+ /* 释放整个列表的空间 */
 void listRelease(list *list)
 {
     unsigned int len;
@@ -80,6 +82,7 @@ void listRelease(list *list)
  * On error, NULL is returned and no operation is performed (i.e. the
  * list remains unaltered).
  * On success the 'list' pointer you pass to the function is returned. */
+ /* 在列表头添加一个节点 */
 list *listAddNodeHead(list *list, void *value)
 {
     listNode *node;
@@ -106,6 +109,7 @@ list *listAddNodeHead(list *list, void *value)
  * On error, NULL is returned and no operation is performed (i.e. the
  * list remains unaltered).
  * On success the 'list' pointer you pass to the function is returned. */
+ /* 在列表尾添加一个节点 */
 list *listAddNodeTail(list *list, void *value)
 {
     listNode *node;
@@ -130,6 +134,7 @@ list *listAddNodeTail(list *list, void *value)
  * It's up to the caller to free the private value of the node.
  *
  * This function can't fail. */
+ /* 移除指定节点 */
 void listDelNode(list *list, listNode *node)
 {
     if (node->prev)
@@ -149,6 +154,7 @@ void listDelNode(list *list, listNode *node)
  * call to listNext() will return the next element of the list.
  *
  * This function can't fail. */
+ /* 返回双向链表迭代器 */
 listIter *listGetIterator(list *list, int direction)
 {
     listIter *iter;
@@ -163,6 +169,7 @@ listIter *listGetIterator(list *list, int direction)
 }
 
 /* Release the iterator memory */
+/* 释放迭代器 */
 void listReleaseIterator(listIter *iter) {
     zfree(iter);
 }
@@ -213,6 +220,7 @@ listNode *listNext(listIter *iter)
  * the original node is used as value of the copied node.
  *
  * The original list both on success or error is never modified. */
+ /* 复制整个list */
 list *listDup(list *orig)
 {
     list *copy;
@@ -256,6 +264,7 @@ list *listDup(list *orig)
  * On success the first matching node pointer is returned
  * (search starts from head). If no matching node exists
  * NULL is returned. */
+ /* 根据给定的key搜索 ，从头向尾搜索*/
 listNode *listSearchKey(list *list, void *key)
 {
     listIter *iter;
