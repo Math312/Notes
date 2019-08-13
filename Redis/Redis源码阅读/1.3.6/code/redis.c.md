@@ -773,6 +773,7 @@ static void dictRedisObjectDestructor(void *privdata, void *val)
     decrRefCount(val);
 }
 
+/* Redis 的 Key比较，由于Key都是SDS，因此采用SDS比较方法 */
 static int dictObjKeyCompare(void *privdata, const void *key1,
         const void *key2)
 {
@@ -780,11 +781,13 @@ static int dictObjKeyCompare(void *privdata, const void *key1,
     return sdsDictKeyCompare(privdata,o1->ptr,o2->ptr);
 }
 
+/* 哈希表key哈希 */
 static unsigned int dictObjHash(const void *key) {
     const robj *o = key;
     return dictGenHashFunction(o->ptr, sdslen((sds)o->ptr));
 }
 
+/* 哈希表编码key比较 */
 static int dictEncObjKeyCompare(void *privdata, const void *key1,
         const void *key2)
 {
@@ -794,7 +797,7 @@ static int dictEncObjKeyCompare(void *privdata, const void *key1,
     if (o1->encoding == REDIS_ENCODING_INT &&
         o2->encoding == REDIS_ENCODING_INT &&
         o1->ptr == o2->ptr) return 1;
-
+    /* 获取一个编码对象的解码版本 */
     o1 = getDecodedObject(o1);
     o2 = getDecodedObject(o2);
     cmp = sdsDictKeyCompare(privdata,o1->ptr,o2->ptr);
@@ -827,6 +830,7 @@ static unsigned int dictEncObjHash(const void *key) {
 }
 
 /* Sets type and expires */
+/* Set的类型 */
 static dictType setDictType = {
     dictEncObjHash,            /* hash function */
     NULL,                      /* key dup */
@@ -837,6 +841,7 @@ static dictType setDictType = {
 };
 
 /* Sorted sets hash (note: a skiplist is used in addition to the hash table) */
+/* zset类型 */
 static dictType zsetDictType = {
     dictEncObjHash,            /* hash function */
     NULL,                      /* key dup */
@@ -847,6 +852,7 @@ static dictType zsetDictType = {
 };
 
 /* Db->dict */
+/* 数据库->哈希表 */
 static dictType dbDictType = {
     dictObjHash,                /* hash function */
     NULL,                       /* key dup */
@@ -867,6 +873,7 @@ static dictType keyptrDictType = {
 };
 
 /* Hash type hash table (note that small hashes are represented with zimpaps) */
+/* 哈希类型的哈希表（注意小的哈希表使用zimpaps表示） */
 static dictType hashDictType = {
     dictEncObjHash,             /* hash function */
     NULL,                       /* key dup */
@@ -887,4 +894,21 @@ static dictType keylistDictType = {
     dictRedisObjectDestructor,  /* key destructor */
     dictListDestructor          /* val destructor */
 };
+```
+
+```c
+/* ========================= Random utility functions ======================= */
+
+/* Redis generally does not try to recover from out of memory conditions
+ * when allocating objects or strings, it is not clear if it will be possible
+ * to report this condition to the client since the networking layer itself
+ * is based on heap allocation for send buffers, so we simply abort.
+ * At least the code will be simpler to read... */
+ /* 当分配对象或者字符串空间时，如果出现内存空间不足的情况，不会尝试进行恢复，因为网络层的发送缓存是基于堆分配的，因此我们放弃了报告，至少代码将会更易读。 */
+static void oom(const char *msg) {
+    redisLog(REDIS_WARNING, "%s: Out of memory\n",msg);
+    sleep(1);
+    abort();
+}
+
 ```
