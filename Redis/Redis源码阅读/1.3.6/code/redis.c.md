@@ -912,3 +912,494 @@ static void oom(const char *msg) {
 }
 
 ```
+
+接下来查看Redis 的启动函数，即main函数：
+
+
+```c
+int main(int argc, char **argv) {
+    time_t start;
+    /* 初始化服务配置 */
+    initServerConfig();
+    if (argc == 2) {
+        /* 如果指定了配置，则重置配置，将指定配置加载到其中 */
+        resetServerSaveParams();
+        loadServerConfig(argv[1]);
+    } else if (argc > 2) {
+        /* 参数过多 */
+        fprintf(stderr,"Usage: ./redis-server [/path/to/redis.conf]\n");
+        exit(1);
+    } else {
+        redisLog(REDIS_WARNING,"Warning: no config file specified, using the default config. In order to specify a config file use 'redis-server /path/to/redis.conf'");
+    }
+    /*设置守护进程方式运行 */
+    if (server.daemonize) daemonize();
+    initServer();
+    redisLog(REDIS_NOTICE,"Server started, Redis version " REDIS_VERSION);
+#ifdef __linux__
+/*
+    该文件指定了内核针对内存分配的策略，其值可以是0、1、2。
+    0，表示内核将检查是否有足够的可用内存供应用进程使用；如果有足够的可用内存，内存申请允许；否则，内存申请失败，并把错误返回给应用进程。
+    1，表示内核允许分配所有的物理内存，而不管当前的内存状态如何。
+    2，表示内核允许分配超过所有物理内存和交换空间总和的内存（参照overcommit_ratio）。
+ */
+    linuxOvercommitMemoryWarning();
+#endif
+    /* 服务器启动时间 */
+    start = time(NULL);
+    if (server.appendonly) {
+        if (loadAppendOnlyFile(server.appendfilename) == REDIS_OK)
+            redisLog(REDIS_NOTICE,"DB loaded from append only file: %ld seconds",time(NULL)-start);
+    } else {
+        /* 加载数据 */
+        if (rdbLoad(server.dbfilename) == REDIS_OK)
+            redisLog(REDIS_NOTICE,"DB loaded from disk: %ld seconds",time(NULL)-start);
+    }
+    redisLog(REDIS_NOTICE,"The server is now ready to accept connections on port %d", server.port);
+    /* 启动主程序 */
+    aeSetBeforeSleepProc(server.el,beforeSleep);
+    aeMain(server.el);
+    aeDeleteEventLoop(server.el);
+    return 0;
+}
+
+```
+
+Redis的服务端启动过程如下：
+
+1.  初始化服务配置
+2.  如果配置了配置文件，则加载配置文件配置
+3.  判断守护进程方式配置
+4.  初始化Server基本配置
+5.  如果是linux系统，则检测内存分配策略
+6.  判断appendonly参数，并进行检测
+7.  开启多路复用处理问题
+
+
+ 初始化服务配置。由于Redis的配置并不是每一个都可以在配置文件中读取的，因此，需要初始化服务配置，防止部分配置未被初始化。
+
+```c
+    /* 初始化Redis数据结构基本状态 */
+    static void initServerConfig() {
+        /*Redis默认数据库个数为16 */
+        server.dbnum = REDIS_DEFAULT_DBNUM;
+        /*Redis的服务端端口号是6379 */
+        server.port = REDIS_SERVERPORT;
+        /*Redis的日志级别默认为Verbose */
+        /* 
+        ##指定日志记录级别，Redis总共支持四个级别：debug、verbose、notice、warning，默认为verbose
+        ## debug （大量信息，对开发/测试有用）
+        ## verbose （很多精简的有用信息，但是不像debug等级那么多）
+        ## notice （适量的信息，基本上是你生产环境中需要的）
+        ## warning （只有很重要/严重的信息会记录下来）*/
+        server.verbosity = REDIS_VERBOSE;
+        /*Redis的最大空闲时间 */
+        server.maxidletime = REDIS_MAXIDLETIME;
+        server.saveparams = NULL;
+        /*Log存储文件 */
+        server.logfile = NULL; /* NULL = log on standard output */
+        /*绑定地址 */
+        server.bindaddr = NULL;
+        server.glueoutputbuf = 1;
+        server.daemonize = 0;
+        server.appendonly = 0;
+        server.appendfsync = APPENDFSYNC_ALWAYS;
+        /*最后一次的同步时间 */
+        server.lastfsync = time(NULL);
+        server.appendfd = -1;
+        server.appendseldb = -1; /* Make sure the first time will not match */
+        /*pid文件 */
+        server.pidfile = "/var/run/redis.pid";
+        /*持久化RDB文件 */
+        server.dbfilename = "dump.rdb";
+        server.appendfilename = "appendonly.aof";
+        server.requirepass = NULL;
+        server.shareobjects = 0;
+        server.rdbcompression = 1;
+        server.sharingpoolsize = 1024;
+        server.maxclients = 0;
+        server.blpop_blocked_clients = 0;
+        server.maxmemory = 0;
+        server.vm_enabled = 0;
+        server.vm_swap_file = zstrdup("/tmp/redis-%p.vm");
+        server.vm_page_size = 256;          /* 256 bytes per page */
+        server.vm_pages = 1024*1024*100;    /* 104 millions of pages */
+        server.vm_max_memory = 1024LL*1024*1024*1; /* 1 GB of RAM */
+        server.vm_max_threads = 4;
+        server.vm_blocked_clients = 0;
+        server.hash_max_zipmap_entries = REDIS_HASH_MAX_ZIPMAP_ENTRIES;
+        server.hash_max_zipmap_value = REDIS_HASH_MAX_ZIPMAP_VALUE;
+        /*重置服务器存储参数 */
+        resetServerSaveParams();
+
+        appendServerSaveParams(60*60,1);  /* save after 1 hour and 1 change */
+        appendServerSaveParams(300,100);  /* save after 5 minutes and 100 changes */
+        appendServerSaveParams(60,10000); /* save after 1 minute and 10000 changes */
+        /* Replication related */
+        /* 复制相关 */
+        server.isslave = 0;
+        server.masterauth = NULL;
+        server.masterhost = NULL;
+        server.masterport = 6379;
+        server.master = NULL;
+        server.replstate = REDIS_REPL_NONE;
+
+        /* Double constants initialization */
+        R_Zero = 0.0;
+        R_PosInf = 1.0/R_Zero;
+        R_NegInf = -1.0/R_Zero;
+        R_Nan = R_Zero/R_Zero;
+    }
+```
+
+重置saveparams记录：
+
+```c
+static void resetServerSaveParams() {
+    /*重置服务器存储参数 */
+    zfree(server.saveparams);
+    server.saveparams = NULL;
+    server.saveparamslen = 0;
+}
+```
+加载配置文件配置：
+
+```c
+/* I agree, this is a very rudimental way to load a configuration...
+   will improve later if the config gets more complex */
+   /*加载服务端配置 */
+static void loadServerConfig(char *filename) {
+    FILE *fp;
+    /*配置文件放入内存的区域 */
+    /*REDIS_CONFIGLINE_MAX+1 最后一行判断结尾 */
+    char buf[REDIS_CONFIGLINE_MAX+1], *err = NULL;
+    int linenum = 0;
+    sds line = NULL;
+
+    if (filename[0] == '-' && filename[1] == '\0')
+        /*如果输入参数是-，那么就从标准输入流读取参数 */
+        fp = stdin;
+    else {
+        /*否则直接打开文件 */
+        if ((fp = fopen(filename,"r")) == NULL) {
+            redisLog(REDIS_WARNING,"Fatal error, can't open config file");
+            exit(1);
+        }
+    }
+
+    while(fgets(buf,REDIS_CONFIGLINE_MAX+1,fp) != NULL) {
+        sds *argv;
+        int argc, j;
+
+        linenum++;
+        line = sdsnew(buf);
+        line = sdstrim(line," \t\r\n");
+
+        /* Skip comments and blank lines*/
+        /* 判断是否是注释 */
+        if (line[0] == '#' || line[0] == '\0') {
+            sdsfree(line);
+            continue;
+        }
+
+        /* Split into arguments */
+        /*拆分参数 */
+        argv = sdssplitlen(line,sdslen(line)," ",1,&argc);
+        /*字符串全部转为小写 */
+        sdstolower(argv[0]);
+
+        /* Execute config directives */
+        /* 配置Redis */
+        if (!strcasecmp(argv[0],"timeout") && argc == 2) {
+            /*配置timeout属性到maxidletime */
+            server.maxidletime = atoi(argv[1]);
+            if (server.maxidletime < 0) {
+                err = "Invalid timeout value"; goto loaderr;
+            }
+        } else if (!strcasecmp(argv[0],"port") && argc == 2) {
+            /*配置端口 */
+            server.port = atoi(argv[1]);
+            if (server.port < 1 || server.port > 65535) {
+                /*配置出错跳到loaderr */
+                err = "Invalid port"; goto loaderr;
+            }
+        } else if (!strcasecmp(argv[0],"bind") && argc == 2) {
+            /*配置绑定addr */
+            server.bindaddr = zstrdup(argv[1]);
+        } else if (!strcasecmp(argv[0],"save") && argc == 3) {
+            /*save参数表示如果XXX秒内XX个key发生变化则重写rdb文件 */
+            int seconds = atoi(argv[1]);
+            int changes = atoi(argv[2]);
+            if (seconds < 1 || changes < 0) {
+                err = "Invalid save parameters"; goto loaderr;
+            }
+            appendServerSaveParams(seconds,changes);
+        } else if (!strcasecmp(argv[0],"dir") && argc == 2) {
+            /*更改进程的工作目录 */
+            if (chdir(argv[1]) == -1) {
+                redisLog(REDIS_WARNING,"Can't chdir to '%s': %s",
+                    argv[1], strerror(errno));
+                exit(1);
+            }
+        } else if (!strcasecmp(argv[0],"loglevel") && argc == 2) {
+            /*更改log等级 */
+            if (!strcasecmp(argv[1],"debug")) server.verbosity = REDIS_DEBUG;
+            else if (!strcasecmp(argv[1],"verbose")) server.verbosity = REDIS_VERBOSE;
+            else if (!strcasecmp(argv[1],"notice")) server.verbosity = REDIS_NOTICE;
+            else if (!strcasecmp(argv[1],"warning")) server.verbosity = REDIS_WARNING;
+            else {
+                err = "Invalid log level. Must be one of debug, notice, warning";
+                goto loaderr;
+            }
+        } else if (!strcasecmp(argv[0],"logfile") && argc == 2) {
+            /*配置log文件 */
+            FILE *logfp;
+            /*如果logFile配置为stdout，则直接设置 */
+            server.logfile = zstrdup(argv[1]);
+            if (!strcasecmp(server.logfile,"stdout")) {
+                zfree(server.logfile);
+                server.logfile = NULL;
+            }
+            if (server.logfile) {
+                /* Test if we are able to open the file. The server will not
+                 * be able to abort just for this problem later... */
+                /*否则尝试打开文件，进行测试 */
+                logfp = fopen(server.logfile,"a");
+                if (logfp == NULL) {
+                    err = sdscatprintf(sdsempty(),
+                        "Can't open the log file: %s", strerror(errno));
+                    goto loaderr;
+                }
+                fclose(logfp);
+            }
+        } else if (!strcasecmp(argv[0],"databases") && argc == 2) {
+            /*如果是数据库的数据库的话，则获取存储的数据库索引 */
+            server.dbnum = atoi(argv[1]);
+            if (server.dbnum < 1) {
+                err = "Invalid number of databases"; goto loaderr;
+            }
+        } else if (!strcasecmp(argv[0],"maxclients") && argc == 2) {
+            /*客户端最大链接数 */
+            server.maxclients = atoi(argv[1]);
+        } else if (!strcasecmp(argv[0],"maxmemory") && argc == 2) {
+            /*最大内存数 */
+            server.maxmemory = strtoll(argv[1], NULL, 10);
+        } else if (!strcasecmp(argv[0],"slaveof") && argc == 3) {
+            /*主从配置 */
+            server.masterhost = sdsnew(argv[1]);
+            server.masterport = atoi(argv[2]);
+            server.replstate = REDIS_REPL_CONNECT;
+        } else if (!strcasecmp(argv[0],"masterauth") && argc == 2) {
+            /*主节点验证信息 */
+        	server.masterauth = zstrdup(argv[1]);
+        } else if (!strcasecmp(argv[0],"glueoutputbuf") && argc == 2) {
+            /*是否将较小的输出打包为一个包发送 */
+            if ((server.glueoutputbuf = yesnotoi(argv[1])) == -1) {
+                err = "argument must be 'yes' or 'no'"; goto loaderr;
+            }
+        } else if (!strcasecmp(argv[0],"shareobjects") && argc == 2) {
+            if ((server.shareobjects = yesnotoi(argv[1])) == -1) {
+                err = "argument must be 'yes' or 'no'"; goto loaderr;
+            }
+        } else if (!strcasecmp(argv[0],"rdbcompression") && argc == 2) {
+            /*指定存储至本地数据库时是否压缩数据，默认为yes，Redis采用LZF压缩，如果为了节省CPU时间，可以关闭该选项，但会导致数据库文件变的巨大 */
+            if ((server.rdbcompression = yesnotoi(argv[1])) == -1) {
+                err = "argument must be 'yes' or 'no'"; goto loaderr;
+            }
+        } else if (!strcasecmp(argv[0],"shareobjectspoolsize") && argc == 2) {
+            server.sharingpoolsize = atoi(argv[1]);
+            if (server.sharingpoolsize < 1) {
+                err = "invalid object sharing pool size"; goto loaderr;
+            }
+        } else if (!strcasecmp(argv[0],"daemonize") && argc == 2) {
+            /*Redis是否按照守护进程的方式运行 */
+            if ((server.daemonize = yesnotoi(argv[1])) == -1) {
+                err = "argument must be 'yes' or 'no'"; goto loaderr;
+            }
+        } else if (!strcasecmp(argv[0],"appendonly") && argc == 2) {
+            /*是否在每次更新操作后都进行日志记录 */
+            if ((server.appendonly = yesnotoi(argv[1])) == -1) {
+                err = "argument must be 'yes' or 'no'"; goto loaderr;
+            }
+        } else if (!strcasecmp(argv[0],"appendfsync") && argc == 2) {
+            /*
+            指定更新日志条件，共有3个可选值： 
+            no：表示等操作系统进行数据缓存同步到磁盘（快） 
+            always：表示每次更新操作后手动调用fsync()将数据写到磁盘（慢，安全） 
+            everysec：表示每秒同步一次（折衷，默认值）
+             */
+            if (!strcasecmp(argv[1],"no")) {
+                server.appendfsync = APPENDFSYNC_NO;
+            } else if (!strcasecmp(argv[1],"always")) {
+                server.appendfsync = APPENDFSYNC_ALWAYS;
+            } else if (!strcasecmp(argv[1],"everysec")) {
+                server.appendfsync = APPENDFSYNC_EVERYSEC;
+            } else {
+                err = "argument must be 'no', 'always' or 'everysec'";
+                goto loaderr;
+            }
+        } else if (!strcasecmp(argv[0],"requirepass") && argc == 2) {
+            /*设置Redis的连接密码 */
+            server.requirepass = zstrdup(argv[1]);
+        } else if (!strcasecmp(argv[0],"pidfile") && argc == 2) {
+            /* 当Redis以守护进程方式运行时，Redis默认会把pid写入/var/run/redis.pid文件，可以通过pidfile指定 */
+            server.pidfile = zstrdup(argv[1]);
+        } else if (!strcasecmp(argv[0],"dbfilename") && argc == 2) {
+            /*指定redis的rdb文件名字 */
+            server.dbfilename = zstrdup(argv[1]);
+        } else if (!strcasecmp(argv[0],"vm-enabled") && argc == 2) {
+            /*指定是否启动虚拟内存 */
+            if ((server.vm_enabled = yesnotoi(argv[1])) == -1) {
+                err = "argument must be 'yes' or 'no'"; goto loaderr;
+            }
+        } else if (!strcasecmp(argv[0],"vm-swap-file") && argc == 2) {
+            /*虚拟内存交换区文件 */
+            zfree(server.vm_swap_file);
+            server.vm_swap_file = zstrdup(argv[1]);
+        } else if (!strcasecmp(argv[0],"vm-max-memory") && argc == 2) {
+            /*交换区的最大内存 */
+            server.vm_max_memory = strtoll(argv[1], NULL, 10);
+        } else if (!strcasecmp(argv[0],"vm-page-size") && argc == 2) {
+            /*交换区的页大小 */
+            server.vm_page_size = strtoll(argv[1], NULL, 10);
+        } else if (!strcasecmp(argv[0],"vm-pages") && argc == 2) {
+            /*交换区中页的数量 */
+            server.vm_pages = strtoll(argv[1], NULL, 10);
+        } else if (!strcasecmp(argv[0],"vm-max-threads") && argc == 2) {
+            /*设置访问swap文件的线程数,最好不要超过机器的核数,如果设置为0,
+            那么所有对swap文件的操作都是串行的，可能会造成比较长时间的延迟。默认值为4 */
+            server.vm_max_threads = strtoll(argv[1], NULL, 10);
+        } else if (!strcasecmp(argv[0],"hash-max-zipmap-entries") && argc == 2){
+            /*指定在超过一定的数量或者最大的元素超过某一临界值时，采用一种特殊的哈希算法*/
+            server.hash_max_zipmap_entries = strtol(argv[1], NULL, 10);
+        } else if (!strcasecmp(argv[0],"hash-max-zipmap-value") && argc == 2){
+            server.hash_max_zipmap_value = strtol(argv[1], NULL, 10);
+        } else if (!strcasecmp(argv[0],"vm-max-threads") && argc == 2) {
+            server.vm_max_threads = strtoll(argv[1], NULL, 10);
+        } else {
+            err = "Bad directive or wrong number of arguments"; goto loaderr;
+        }
+        for (j = 0; j < argc; j++)
+            sdsfree(argv[j]);
+        zfree(argv);
+        sdsfree(line);
+    }
+    if (fp != stdin) fclose(fp);
+    return;
+
+loaderr:
+    /*异常处理 */
+    fprintf(stderr, "\n*** FATAL CONFIG FILE ERROR ***\n");
+    fprintf(stderr, "Reading the configuration file, at line %d\n", linenum);
+    fprintf(stderr, ">>> '%s'\n", line);
+    fprintf(stderr, "%s\n", err);
+    exit(1);
+}
+```
+
+判断是否按照守护进程运行，如果是，则处理：
+
+```c
+static void daemonize(void) {
+    int fd;
+    FILE *fp;
+    /* 无法fork，退出 */
+    if (fork() != 0) exit(0); /* parent exits */
+    setsid(); /* create a new session */
+
+    /* Every output goes to /dev/null. If Redis is daemonized but
+     * the 'logfile' is set to 'stdout' in the configuration file
+     * it will not log at all. */
+    if ((fd = open("/dev/null", O_RDWR, 0)) != -1) {
+        dup2(fd, STDIN_FILENO);
+        dup2(fd, STDOUT_FILENO);
+        dup2(fd, STDERR_FILENO);
+        if (fd > STDERR_FILENO) close(fd);
+    }
+    /* Try to write the pid file */
+    // 尝试写入到pidFile
+    fp = fopen(server.pidfile,"w");
+    if (fp) {
+        fprintf(fp,"%d\n",getpid());
+        fclose(fp);
+    }
+}
+```
+
+初始化服务端数据结构：
+
+```c
+static void initServer() {
+    int j;
+
+    signal(SIGHUP, SIG_IGN);
+    signal(SIGPIPE, SIG_IGN);
+    setupSigSegvAction();
+    /*初始化devnull */
+    server.devnull = fopen("/dev/null","w");
+    if (server.devnull == NULL) {
+        redisLog(REDIS_WARNING, "Can't open /dev/null: %s", server.neterr);
+        exit(1);
+    }
+    /*初始化客户端链表 */
+    server.clients = listCreate();
+    /*初始化从节点端链表 */
+    server.slaves = listCreate();
+    /*初始化监听器节点链表 */
+    server.monitors = listCreate();
+    /*初始化保存需要释放的对象的链表 */
+    server.objfreelist = listCreate();
+    createSharedObjects();
+    /*创建EventLoop */
+    server.el = aeCreateEventLoop();
+    /*为Redis分配数据库空间 */
+    server.db = zmalloc(sizeof(redisDb)*server.dbnum);
+    server.sharingpool = dictCreate(&setDictType,NULL);
+    /*创建用于监听TCP连接的FD */
+    server.fd = anetTcpServer(server.neterr, server.port, server.bindaddr);
+    if (server.fd == -1) {
+        redisLog(REDIS_WARNING, "Opening TCP port: %s", server.neterr);
+        exit(1);
+    }
+    /*初始化各个数据库 */
+    for (j = 0; j < server.dbnum; j++) {
+        /*数据库中的哈希数据表 */
+        server.db[j].dict = dictCreate(&dbDictType,NULL);
+        /*数据库中的过期时间记录哈希表 */
+        server.db[j].expires = dictCreate(&keyptrDictType,NULL);
+        /*数据库中的阻塞表 */
+        server.db[j].blockingkeys = dictCreate(&keylistDictType,NULL);
+        /*如果开启了VM则需要使用io_keys */
+        if (server.vm_enabled)
+            server.db[j].io_keys = dictCreate(&keylistDictType,NULL);
+        server.db[j].id = j;
+    }
+    server.cronloops = 0;
+    /*bgsave子进程 */
+    server.bgsavechildpid = -1;
+    /*bgwrite子进程 */
+    server.bgrewritechildpid = -1;
+    /*bgwrite buffer */
+    server.bgrewritebuf = sdsempty();
+    server.lastsave = time(NULL);
+    server.dirty = 0;
+    server.stat_numcommands = 0;
+    server.stat_numconnections = 0;
+    server.stat_starttime = time(NULL);
+    server.unixtime = time(NULL);
+    aeCreateTimeEvent(server.el, 1, serverCron, NULL, NULL);
+    if (aeCreateFileEvent(server.el, server.fd, AE_READABLE,
+        acceptHandler, NULL) == AE_ERR) oom("creating file event");
+
+    if (server.appendonly) {
+        server.appendfd = open(server.appendfilename,O_WRONLY|O_APPEND|O_CREAT,0644);
+        if (server.appendfd == -1) {
+            redisLog(REDIS_WARNING, "Can't open the append-only file: %s",
+                strerror(errno));
+            exit(1);
+        }
+    }
+
+    if (server.vm_enabled) vmInit();
+}
+```
