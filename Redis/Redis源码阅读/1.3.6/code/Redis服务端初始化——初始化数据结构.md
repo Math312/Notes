@@ -1,4 +1,4 @@
-# Redis服务端初始化——初始数据加载部分
+# Redis服务端初始化——初始化数据结构
 
 Redis服务端代码主要放在redis.c文件中。主要负责服务端业务逻辑实现，由上到下分为头文件引用、宏定义、数据结构、函数声明、全局变量、业务实现，几部分组成。本文主要讨论Redis服务端的初始化过程。
 
@@ -300,6 +300,7 @@ static int serverCron(struct aeEventLoop *eventLoop, long long id, void *clientD
         closeTimedoutClients();
 
     /* Check if a background saving or AOF rewrite in progress terminated */
+    /* 检查正在进行后台保存或AOF重写是否已终止 */
     if (server.bgsavechildpid != -1 || server.bgrewritechildpid != -1) {
         int statloc;
         pid_t pid;
@@ -315,6 +316,7 @@ static int serverCron(struct aeEventLoop *eventLoop, long long id, void *clientD
     } else {
         /* If there is not a background saving in progress check if
          * we have to save now */
+         /* 如果现在没有bgsave正在执行，检测是否需要bgsave */
          time_t now = time(NULL);
          for (j = 0; j < server.saveparamslen; j++) {
             struct saveparam *sp = server.saveparams+j;
@@ -323,6 +325,7 @@ static int serverCron(struct aeEventLoop *eventLoop, long long id, void *clientD
                 now-server.lastsave > sp->seconds) {
                 redisLog(REDIS_NOTICE,"%d changes in %d seconds. Saving...",
                     sp->changes, sp->seconds);
+                /* 执行bgsave */
                 rdbSaveBackground(server.dbfilename);
                 break;
             }
@@ -337,7 +340,7 @@ static int serverCron(struct aeEventLoop *eventLoop, long long id, void *clientD
      处理流程：
 		轮询所有的数据库，查看expires数组中是否具有超时的key，如果超时的key大于等于REDIS_EXPIRELOOKUPS_PER_CRON，
 		则处理REDIS_EXPIRELOOKUPS_PER_CRON个key，否则处理所有的key。
-		如果回收了超过25个key，则重复上述过程。
+		如果回收了超过1/4，则重复上述过程。
      * */
     // 为了保证程序的流畅运行，处理expire时，不处理完全
     // todo  为什么要判断expired > REDIS_EXPIRELOOKUPS_PER_CRON/4
@@ -348,16 +351,18 @@ static int serverCron(struct aeEventLoop *eventLoop, long long id, void *clientD
         /* Continue to expire if at the end of the cycle more than 25%
          * of the keys were expired. */
         do {
+            /* 获取数据库中过期的key-value */
             long num = dictSize(db->expires);
             time_t now = time(NULL);
 
             expired = 0;
+            /* 每次最大过期的key数量 */
             if (num > REDIS_EXPIRELOOKUPS_PER_CRON)
                 num = REDIS_EXPIRELOOKUPS_PER_CRON;
             while (num--) {
                 dictEntry *de;
                 time_t t;
-
+            /* 清除过期key */
              if ((de = dictGetRandomKey(db->expires)) == NULL) break;
                 t = (time_t) dictGetEntryVal(de);
                 if (now > t) {
@@ -365,6 +370,7 @@ static int serverCron(struct aeEventLoop *eventLoop, long long id, void *clientD
                     expired++;
                 }
             }
+            /*清除过期key到达总数的1/4的情况下，重复清除操作*/
         } while (expired > REDIS_EXPIRELOOKUPS_PER_CRON/4);
     }
 
@@ -395,8 +401,10 @@ static int serverCron(struct aeEventLoop *eventLoop, long long id, void *clientD
     }
 
     /* Check if we should connect to a MASTER */
+    /* 检测是否需要连接到主服务器 */
     if (server.replstate == REDIS_REPL_CONNECT) {
         redisLog(REDIS_NOTICE,"Connecting to MASTER...");
+        /* 主从同步 */
         if (syncWithMaster() == REDIS_OK) {
             redisLog(REDIS_NOTICE,"MASTER <-> SLAVE sync succeeded");
         }
@@ -404,3 +412,49 @@ static int serverCron(struct aeEventLoop *eventLoop, long long id, void *clientD
     return 1000;
 }
 ```
+
+Redis Server的主业务循环:
+
+1. 更新unixtime时间，用于缓存时间，因为调用函数查询与从内存中查询相比性能差距过大。
+2. 显示数据库信息。
+3. 如果正在执行bgsave则不进行resize操作，否则尝试resize
+4. 打印客户端连接信息。
+5. 检测客户端超时情况，关闭超时客户端
+6. 处理bgsave和bgwrite
+7. 处理过期的key-value
+8. 处理主从同步问题
+
+这一部分具体逻辑将会在下一篇文章进行分析。
+
+## 检测Linux的内存分配策略
+
+由于Redis需要动态进行内存分配，需要考虑Linux的内存分配策略，具体查询代码如下：
+
+```c
+void linuxOvercommitMemoryWarning(void) {
+    /*考察Linux内存分配策略 */
+    if (linuxOvercommitMemoryValue() == 0) {
+        redisLog(REDIS_WARNING,"WARNING overcommit_memory is set to 0! Background save may fail under low condition memory. To fix this issue add 'vm.overcommit_memory = 1' to /etc/sysctl.conf and then reboot or run the command 'sysctl vm.overcommit_memory=1' for this to take effect.");
+    }
+}
+
+#ifdef __linux__
+int linuxOvercommitMemoryValue(void) {
+    FILE *fp = fopen("/proc/sys/vm/overcommit_memory","r");
+    char buf[64];
+
+    if (!fp) return -1;
+    if (fgets(buf,64,fp) == NULL) {
+        fclose(fp);
+        return -1;
+    }
+    fclose(fp);
+
+    return atoi(buf);
+}
+```
+
+主要逻辑就是考察`/proc/sys/vm/overcommit_memory`文件，该文件指定了内核针对内存分配的策略，其值可以是0、1、2。
+- 0，表示内核将检查是否有足够的可用内存供应用进程使用；如果有足够的可用内存，内存申请允许；否则，内存申请失败，并把错误返回给应用进程。
+- 1，表示内核允许分配所有的物理内存，而不管当前的内存状态如何。
+- 2，表示内核允许分配超过所有物理内存和交换空间总和的内存（参照overcommit_ratio）。
