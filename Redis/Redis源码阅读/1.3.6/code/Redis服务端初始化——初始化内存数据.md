@@ -263,7 +263,12 @@ static int rdbLoad(char *filename) {
         redisLog(REDIS_WARNING,"Wrong signature trying to load DB from file");
         return REDIS_ERR;
     }
-    /* redis版本号 */
+    /* redis版本号 */StringBuilder sb = new StringBuilder();
+        byte readByte;
+        do {
+            readByte = in.readByte();
+            sb.append(readByte);
+        }while (readByte != '\n');
     rdbver = atoi(buf+5);
     if (rdbver != 1) {
         fclose(fp);
@@ -317,7 +322,7 @@ static int rdbLoad(char *filename) {
             exit(1);
         }
         /* Set the expire time if needed */
-        /*设置超时时间 */
+        /*设置超时时间 */要出
         if (expiretime != -1) {
             setExpire(db,keyobj,expiretime);
             /* Delete this key if already expired */
