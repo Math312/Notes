@@ -58,7 +58,7 @@
 #define REDIS_ENCODING_ZIPMAP 2 /* Encoded as zipmap */
 #define REDIS_ENCODING_HT 3     /* Encoded as an hash table */
 
-static char* strencoding[] = {
+static char* strencoding[] = {git@github.com:antirez/redis.git
     "raw", "int", "zipmap", "hashtable"
 };
 
