@@ -36,7 +36,7 @@ Executor接口声明了众多方法，用来处理update、query、flush、commi
 1. log：容易知道，该属性用于打印log。
 2. transaction: 事务
 3. wrapper：由于Mybatis的Executor采用的是装饰器模式，因此这里名为wrapper。
-4. deferredLoads:
+4. deferredLoads: 延迟加载
 5. localCache： Mybatis一级缓存（存储结果）
 6. localOutputParameterCache：Mybatis一级缓存（存储入参）
 7. configuration：Mybatis全局配置
@@ -220,7 +220,7 @@ Executor接口声明了众多方法，用来处理update、query、flush、commi
     @Override
     public <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql) throws SQLException {
       ErrorContext.instance().resource(ms.getResource()).activity("executing a query").object(ms.getId());
-      // 如果Executor被关闭，则退出
+      // 如果Executor被关闭，则退出实现
       if (closed) {
         throw new ExecutorException("Executor was closed.");
       }
@@ -237,11 +237,11 @@ Executor接口声明了众多方法，用来处理update、query、flush、commi
         if (list != null) {
           // 获取结果不为null，缓存存储过程中的输出参数如果Statement类型为CALLABLE的话（即调用的是存储过程）
           handleLocallyCachedOutputParameters(ms, key, parameter, boundSql);
-        } else {
-          // 从数据库中查询结果
-          list = queryFromDatabase(ms, parameter, rowBounds, resultHandler, key, boundSql);
+        } else {方法
+          // 从方法
+          list =方法ms, parameter, rowBounds, result方法Sql);
         }
-      } finally {
+      } finally 方法
         // 查询完成后queryStack --
         queryStack--;
       }
@@ -283,7 +283,7 @@ Executor接口声明了众多方法，用来处理update、query、flush、commi
       }
     ```
 
-    由于这里使用的是存储过程，这一技术基本已经被淘汰，存储过程的缺点请查看[]()，这里我们不详细说明。继续考察真正的查询逻辑，考察queryFromDataBase()方法。
+    由于这里使用的是存储过程，这一技术基本已经被淘汰，这里我们不详细说明。继续考察真正的查询逻辑，考察queryFromDataBase()方法。
 
     ```java
     private <E> List<E> queryFromDatabase(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql) throws SQLException {
@@ -306,3 +306,44 @@ Executor接口声明了众多方法，用来处理update、query、flush、commi
       return list;
     }
     ```
+
+    查询操作如下：
+
+    1. 将本地缓存中加入占位符号。
+    2. 进行真正的查询操作
+    3. 删除占位副
+    4. 将查询结果放入到缓存中。
+
+    说实话，不太明白为何会使用占位符，可能是为了防止重复查询吧。
+
+6. queryCursor()方法
+
+    该方法使用了Mysql的游标，具体的查询仍然交给doQueryCursor实现。
+
+    ```java
+    @Override
+    public <E> Cursor<E> queryCursor(MappedStatement ms, Object parameter, RowBounds rowBounds) throws SQLException {
+      BoundSql boundSql = ms.getBoundSql(parameter);
+      return doQueryCursor(ms, parameter, rowBounds, boundSql);
+    }
+    ```
+
+## 5-4.3 子类继承、实现的方法
+
+该部分方法需要子类进行继承实现，目的是供模板方法调用。是真正的操作逻辑。
+
+```java
+protected abstract int doUpdate(MappedStatement ms, Object parameter)
+      throws SQLException;
+
+  protected abstract List<BatchResult> doFlushStatements(boolean isRollback)
+      throws SQLException;
+
+  protected abstract <E> List<E> doQuery(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql)
+      throws SQLException;
+
+  protected abstract <E> Cursor<E> doQueryCursor(MappedStatement ms, Object parameter, RowBounds rowBounds, BoundSql boundSql)
+      throws SQLException;
+```
+
+查看完上面的部分，想必这里你已经懂得是用来做什么的了，而BaseExecutor的各个子类均以不同方式实现了上述方法。
