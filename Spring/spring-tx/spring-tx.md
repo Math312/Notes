@@ -11,83 +11,88 @@
 
 mysql创建一个test数据库，其中只有一张User表，表结构如下：
 
-id|name
----|---
-Integer|varchar(64)
+| id      | name        |
+| ------- | ----------- |
+| Integer | varchar(64) |
 
 DAO(Data access object)类如下：
 
-    @Repository
-    public class UserDao {
+```java
+@Repository
+public class UserDao {
 
-        @Autowired
-        private JdbcTemplate jdbcTemplate;
-        
-        public void insert() {
-            String sql = "INSERT INTO user(name) values(?)";
-            String username = UUID.randomUUID().toString().substring(0, 5);
-            jdbcTemplate.update(sql,username);
-        }
-        
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    public void insert() {
+        String sql = "INSERT INTO user(name) values(?)";
+        String username = UUID.randomUUID().toString().substring(0, 5);
+        jdbcTemplate.update(sql,username);
     }
+
+}
+```
 
 Service类如下：
 
-    @Service
-    @Transactional
-    public class UserService {
+```java
+@Service
+@Transactional
+public class UserService {
+    @Autowired
+    private UserDao userdao;
 
-        @Autowired
-        private UserDao userdao;
-        
-        public void insertUser() {
-            userdao.insert();
-            System.out.println("userdao.insert()执行完成");
-            int i = 10/0;
-        }
-        
+    public void insertUser() {
+        userdao.insert();
+        System.out.println("userdao.insert()执行完成");
+        int i = 10/0;
     }
+
+}
+```
 
 配置类：
 
-    @ComponentScan
-    @EnableTransactionManagement
-    @Configuration
-    public class TxConfig {
-
-        @Bean
-        public DataSource dataSource() throws PropertyVetoException {
-            ComboPooledDataSource dataSource = new ComboPooledDataSource();
-            dataSource.setUser("root");
-            dataSource.setPassword("fanyan521");
-            dataSource.setDriverClass("com.mysql.jdbc.Driver");
-            dataSource.setJdbcUrl("jdbc:mysql://localhost:3306/test");
-            return dataSource;
-        }
-        
-        @Bean
-        public JdbcTemplate jdbcTemplate(DataSource dataSource) {
-            return new JdbcTemplate(dataSource);
-        }
-        
-        @Bean
-        public PlatformTransactionManager transactionManager(DataSource dataSource) {
-            return new DataSourceTransactionManager(dataSource);
-        }
+```java
+@ComponentScan
+@EnableTransactionManagement
+@Configuration
+public class TxConfig {
+    @Bean
+    public DataSource dataSource() throws PropertyVetoException {
+        ComboPooledDataSource dataSource = new ComboPooledDataSourc();
+        dataSource.setUser("root");
+        dataSource.setPassword("fanyan521");
+        dataSource.setDriverClass("com.mysql.jdbc.Driver");
+        dataSource.setJdbcUrl("jdbc:mysql://localhost:3306/test");
+        return dataSource;
     }
+
+    @Bean
+    public JdbcTemplate jdbcTemplate(DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
+    }
+
+    @Bean
+    public PlatformTransactionManager transactionManager(DataSourcedataSource) {
+        return new DataSourceTransactionManager(dataSource);
+    }
+}
+```
 
 测试类：
 
-    public class Main {
-
-        public static void main(String[] args) {
-            AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(TxConfig.class);
-            UserService userService = context.getBean(UserService.class);
-            userService.insertUser();
-            context.close();
-        }
-        
+```java
+public class Main {
+    public static void main(String[] args) {
+        AnnotationConfigApplicationContext context = newAnnotationConfigApplicationContext(TxConfig.class);
+        UserService userService = context.getBean(UserService.class;
+        userService.insertUser();
+        context.close();
     }
+
+}
+```
 
 ## 原理分析
 
@@ -95,66 +100,70 @@ Service类如下：
 
 @EnableTransactionManagement注解源码如下：
 
-    @Target(ElementType.TYPE)
-    @Retention(RetentionPolicy.RUNTIME)
-    @Documented
-    @Import(TransactionManagementConfigurationSelector.class)
-    public @interface EnableTransactionManagement {
-        //使用cglib创建代理还是Java动态代理
-        boolean proxyTargetClass() default false;
-        AdviceMode mode() default AdviceMode.PROXY;
-        int order() default Ordered.LOWEST_PRECEDENCE;
-    }
+```java
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Import(TransactionManagementConfigurationSelector.class)
+public @interface EnableTransactionManagement {
+    //使用cglib创建代理还是Java动态代理
+    boolean proxyTargetClass() default false;
+    AdviceMode mode() default AdviceMode.PROXY;
+    int order() default Ordered.LOWEST_PRECEDENCE;
+}
+```
 
 `EnableTransactionManagement`注解使用了Import注解向spring-ioc容器中注册了`TransactionManagementConfigurationSelector`接口中标注的类型的bean。
 
-    public class TransactionManagementConfigurationSelector extends AdviceModeImportSelector<EnableTransactionManagement> {
-
-        /**
-        * {@inheritDoc}
-        * @return {@link ProxyTransactionManagementConfiguration} or
-        * {@code AspectJTransactionManagementConfiguration} for {@code PROXY} and
-        * {@code ASPECTJ} values of {@link EnableTransactionManagement#mode()}, respectively
-        */
-        @Override
-        protected String[] selectImports(AdviceMode adviceMode) {
-            switch (adviceMode) {
-                //根据EnableTransactionManagement注解中的mode属性注册bean
-                //注意默认情况下是PROXY
-                case PROXY:
-                    return new String[] {AutoProxyRegistrar.class.getName(), ProxyTransactionManagementConfiguration.class.getName()};
-                case ASPECTJ:
-                    return new String[] {TransactionManagementConfigUtils.TRANSACTION_ASPECT_CONFIGURATION_CLASS_NAME};
-                default:
-                    return null;
-            }
+```java
+public class TransactionManagementConfigurationSelector extendsAdviceModeImportSelector<EnableTransactionManagement> {
+    /**
+    * {@inheritDoc}
+    * @return {@link ProxyTransactionManagementConfiguration} or
+    * {@code AspectJTransactionManagementConfiguration} for {@codePROXY} and
+    * {@code ASPECTJ} values of {@linkEnableTransactionManagement#mode()}, respectively
+    */
+    @Override
+    protected String[] selectImports(AdviceMode adviceMode) {
+        switch (adviceMode) {
+            //根据EnableTransactionManagement注解中的mode属性注册bean
+            //注意默认情况下是PROXY
+            case PROXY:
+                return new String[]{AutoProxyRegistrar.class.getName(),ProxyTransactionManagementConfiguration.classgetName()};
+            case ASPECTJ:
+                return new String[]{TransactionManagementConfigUtilsTRANSACTION_ASPECT_CONFIGURATION_CLASS_NAME};
+            default:
+                return null;
         }
-
     }
+}
+```
 
 `TransactionManagementConfigurationSelector`类继承了`AdviceModeImportSelector`，而`AdviceModeImportSelector`实现了`ImportSelector`接口，考察AdviceModeImportSelector源码：
 
-    @Override
-	public final String[] selectImports(AnnotationMetadata importingClassMetadata) {
-        //获取注解中的属性
-        //调用子类的selectImports(AdviceMode adviceMode)方法进行选择创建哪些bean
-		Class<?> annType = GenericTypeResolver.resolveTypeArgument(getClass(), AdviceModeImportSelector.class);
-		Assert.state(annType != null, "Unresolvable type argument for AdviceModeImportSelector");
+```java
+@Override
+public final String[] selectImports(AnnotationMetadata importingClassMetadata) {
+	//获取注解中的属性
+	//调用子类的selectImports(AdviceMode adviceMode)方法进行选择创建哪bean
+	Class<?> annType = GenericTypeResolver.resolveTypeArgument(getClass(), AdviceModeImportSelector.class);
+	Assert.state(annType != null, "Unresolvable type argument for AdviceModeImportSelector");
 
-		AnnotationAttributes attributes = AnnotationConfigUtils.attributesFor(importingClassMetadata, annType);
-		if (attributes == null) {
-			throw new IllegalArgumentException(String.format(
-				"@%s is not present on importing class '%s' as expected",
-				annType.getSimpleName(), importingClassMetadata.getClassName()));
-		}
-
-		AdviceMode adviceMode = attributes.getEnum(this.getAdviceModeAttributeName());
-		String[] imports = selectImports(adviceMode);
-		if (imports == null) {
-			throw new IllegalArgumentException(String.format("Unknown AdviceMode: '%s'", adviceMode));
-		}
-		return imports;
+	AnnotationAttributes attributes = AnnotationConfigUtils.attributesFor(importingClassMetadata, annType);
+	if (attributes == null) {
+		throw new IllegalArgumentException(String.format(
+			"@%s is not present on importing class '%s' as expected",
+			annType.getSimpleName(), importingClassMetadata.getClassName()));
 	}
+
+	AdviceMode adviceMode = attributes.getEnum(this.getAdviceModeAttributeName());
+	String[] imports = selectImports(adviceMode);
+	if (imports == null) {
+		throw new IllegalArgumentException(String.format("Unknown AdviceMode: '%s'", adviceMode));
+	}
+	return imports;
+}
+```
 
 现在我们知道@EnableTransactionManagement注解为我们创建了两个bean，类型分别为：
 
@@ -165,7 +174,8 @@ Service类如下：
 
 ### AutoProxyRegistrar
 
-    public class AutoProxyRegistrar implements ImportBeanDefinitionRegistrar {
+```java
+	public class AutoProxyRegistrar implements ImportBeanDefinitionRegistrar {
 
         private final Log logger = LogFactory.getLog(getClass());
 
@@ -225,12 +235,14 @@ Service类如下：
         }
 
     }
+```
 
 接下来考察AopUtils类的`registerAutoProxyCreatorIfNecessary(BeanDefinitionRegistry registry)`方法和`forceAutoProxyCreatorToUseClassProxying(BeanDefinitionRegistry registry)`方法。
 
 首先查看`registerAutoProxyCreatorIfNecessary(BeanDefinitionRegistry registry)`方法:
 
-    @Nullable
+```java
+	@Nullable
 	public static BeanDefinition registerAutoProxyCreatorIfNecessary(BeanDefinitionRegistry registry) {
 		return registerAutoProxyCreatorIfNecessary(registry, null);
 	}
@@ -241,14 +253,16 @@ Service类如下：
 
 		return registerOrEscalateApcAsRequired(InfrastructureAdvisorAutoProxyCreator.class, registry, source);
 	}
+```
 
 这里的代码注册了一个`InfrastructureAdvisorAutoProxyCreator`，不管怎样都是一个`通知自动代理创建器`，根据spring-aop的源码分析，我们知道spring-aop的`AnnotationAspectJAutoProxyCreator`也是在这里创建的。我们接下来再讨论`InfrastructureAdvisorAutoProxyCreator`类的细节。
 
 
 ### ProxyTransactionManagementConfiguration
 
-    @Configuration
-    public class ProxyTransactionManagementConfiguration extends AbstractTransactionManagementConfiguration {
+```java
+	@Configuration
+    	public class ProxyTransactionManagementConfiguration extends AbstractTransactionManagementConfiguration {
         
         //创建BeanFactoryTransactionAttributeSourceAdvisor
         //反正是个通知器
@@ -296,6 +310,7 @@ Service类如下：
         }
 
     }
+```
 
 ### InfrastructureAdvisorAutoProxyCreator
 
@@ -453,8 +468,10 @@ AnnotationAwareAspectJAutoProxyCreator
 
 这里和spring-aop逻辑相同，就是为指定bean添加通知器创建代理，具体逻辑在wrapIfNecessary()方法中。由于这个方法是AbstractAutoProxyCreator类型的，所以和AnnotationAwareAspectJAutoProxyCreator是一样的，查看方法：
 
-    protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) {
-        //判断beanName是否是空的并且是否这个beanName的bean已经被处理过，如果被处理过，那么就返回这个bean
+```java
+	protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) {
+        	//判断beanName是否是空的并且是否这个beanName的bean已经被处理过，如果被处理过，那么就返回这个bean
+		// 这里为bean做了一道缓存，避免重复代理
 		if (StringUtils.hasLength(beanName) && this.targetSourcedBeans.contains(beanName)) {
 			return bean;
 		}
@@ -484,6 +501,7 @@ AnnotationAwareAspectJAutoProxyCreator
 		this.advisedBeans.put(cacheKey, Boolean.FALSE);
 		return bean;
 	}
+```
 
 注意这里有两个函数比较重要，分别是：
 
