@@ -1,0 +1,168 @@
+# EnableTransactionManagement注解
+
+在使用Spring-tx时，我们需要4个配置，分别如下：
+
+1. 配置数据源
+2. 配置事务管理器，默认可以配置DataSourceTransactionManager
+3. 在配置类上添加@EnableTransactionManagement注解
+4. 在事务类或者事务方法上添加@Transactional注解
+
+由于第2项和第4项在源码开始部分不太明显，所以我们优先分析第3项:EnableTransactionManagement注解。这里首先查看一下该注解的注释：
+
+```java
+/**
+ * Enables Spring's annotation-driven transaction management capability.
+ * 该注解用于Spring的基于注解事务的配置
+ * {@code @EnableTransactionManagement} is responsible for registering the necessary Spring
+ * components that power annotation-driven transaction management, such as the
+ * TransactionInterceptor and the proxy- or AspectJ-based advice that weave the
+ * interceptor into the call stack when {@code Repository}'s {@code @Transactional}
+ * methods are invoked.
+ *
+ * @EnableTransactionManagement注解是负责用于注册基于注解的Spring事务的基本Bean，例如事务拦截器喝基于代理或者基于AspectJ的通知。
+ * 该通知用于在Dao层的被@Transactional修饰的方法调用时将其织入。
+ *
+ * <p>For those that wish to establish a more direct relationship between
+ * {@code @EnableTransactionManagement} and the exact transaction manager bean to be used,
+ * the {@link TransactionManagementConfigurer} callback interface may be implemented -
+ * notice the {@code implements} clause and the {@code @Override}-annotated method below:
+ *
+ * 对于那些希望在@EnableTransactionManagement和要使用的确切事务管理器bean之间建立更直接关系的用户，
+ * 可以实现TransactionManagementConfigurer回调接口-请注意下面的Implements子句和
+ * @ Override-annotated方法：
+ *
+ * <pre class="code">
+ * &#064;Configuration
+ * &#064;EnableTransactionManagement
+ * public class AppConfig implements TransactionManagementConfigurer {
+ *
+ *     &#064;Bean
+ *     public FooRepository fooRepository() {
+ *         // configure and return a class having &#064;Transactional methods
+ *         return new JdbcFooRepository(dataSource());
+ *     }
+ *
+ *     &#064;Bean
+ *     public DataSource dataSource() {
+ *         // configure and return the necessary JDBC DataSource
+ *     }
+ *
+ *     &#064;Bean
+ *     public PlatformTransactionManager txManager() {
+ *         return new DataSourceTransactionManager(dataSource());
+ *     }
+ *
+ *     &#064;Override
+ *     public PlatformTransactionManager annotationDrivenTransactionManager() {
+ *         return txManager();
+ *     }
+ * }</pre>
+ *
+ * This approach may be desirable simply because it is more explicit, or it may be
+ * necessary in order to distinguish between two {@code PlatformTransactionManager} beans
+ * present in the same container.  
+ * 仅仅因为它更明确，可能会希望使用此方法，或者可能需要此方法来区分存在于同一容器中的两个PlatformTransactionManager bean。
+ *
+ * As the name suggests, the
+ * {@code annotationDrivenTransactionManager()} will be the one used for processing
+ * {@code @Transactional} methods. See {@link TransactionManagementConfigurer} Javadoc
+ * for further details.
+ *
+ * <p>The {@link #mode} attribute controls how advice is applied: If the mode is
+ * {@link AdviceMode#PROXY} (the default), then the other attributes control the behavior
+ * of the proxying. Please note that proxy mode allows for interception of calls through
+ * the proxy only; local calls within the same class cannot get intercepted that way.
+ *
+ * <p>Note that if the {@linkplain #mode} is set to {@link AdviceMode#ASPECTJ}, then the
+ * value of the {@link #proxyTargetClass} attribute will be ignored.
+ * 注意，如果模式是AdviceMode.ASPECTJ，那么proxyTargetClass属性将会被忽视
+ *
+ * Note also that in
+ * this case the {@code spring-aspects} module JAR must be present on the classpath, with
+ * compile-time weaving or load-time weaving applying the aspect to the affected classes.
+ * There is no proxy involved in such a scenario; local calls will be intercepted as well.
+ * 还要注意，在这种情况下，spring-aspects模块JAR必须存在于类路径中，并使用编译时编织或加载时编织将方面应用于受影响的类。
+ * 在这种情况下不涉及任何代理； 本地调用也会被拦截。
+ *
+ * @author Chris Beams
+ * @author Juergen Hoeller
+ * @since 3.1
+ * @see TransactionManagementConfigurer
+ * @see TransactionManagementConfigurationSelector
+ * @see ProxyTransactionManagementConfiguration
+ * @see org.springframework.transaction.aspectj.AspectJTransactionManagementConfiguration
+ */
+```
+
+上注释中基于xml配置文件的部分被我主观删除了，如果需要可以自行在源码中阅读，但是通过注释我们知道该注解用于注册Spring-tx最基本的Bean配置，如果想使用自定义配置可以自己实现 `TransactionManagementConfigurer` 接口。
+
+考察注解中的基本属性：
+
+1. proxyTargetClass
+2. mode
+3. order
+
+首先考察第一个，proxyTargetClass:
+
+```java
+/**
+ * Indicate whether subclass-based (CGLIB) proxies are to be created ({@code true}) as
+ * opposed to standard Java interface-based proxies ({@code false}).
+ * 指示是否要创建基于子类的代理（CGLIB）（true），而不是标准基于Java接口的代理（false）。
+ * The default is {@code false}.
+ * 默认是false。
+ * <strong>Applicable only if {@link #mode()} is set to
+ * {@link AdviceMode#PROXY}</strong>.
+ * 该配置只有在mode属性被配置成PROXY时才有效
+ * <p>Note that setting this attribute to {@code true} will affect <em>all</em>
+ * Spring-managed beans requiring proxying, not just those marked with
+ * {@code @Transactional}.
+ * 注意该配置属性会影响到所有基于代理的Spring管理的Bean，而不是仅仅影响被@Transactional标记的bean。
+ * For example, other beans marked with Spring's
+ * {@code @Async} annotation will be upgraded to subclass proxying at the same
+ * time. This approach has no negative impact in practice unless one is explicitly
+ * expecting one type of proxy vs another, e.g. in tests.
+ */
+boolean proxyTargetClass() default false;
+```
+
+继续考察第二个属性：
+
+```java
+/**
+ * Indicate how transactional advice should be applied.
+ * 指出事务通知应该怎样被应用。
+ * <p><b>The default is {@link AdviceMode#PROXY}.</b>
+ * 默认情况下是AdviceMode.PROXY。
+ * Please note that proxy mode allows for interception of calls through the proxy
+ * only.
+ * 注意代理模式的配置只适用于通过代理的调用。本地调用不会被拦截。
+ * Local calls within the same class cannot get intercepted that way; an
+ * {@link Transactional} annotation on such a method within a local call will be
+ * ignored since Spring's interceptor does not even kick in for such a runtime
+ * scenario. For a more advanced mode of interception, consider switching this to
+ * {@link AdviceMode#ASPECTJ}.
+ * 对于更高级的拦截，请考虑使用AdviceMode.ASPECTJ
+ */
+AdviceMode mode() default AdviceMode.PROXY;
+```
+
+最后考察第三个属性：
+
+```java
+/**
+ * Indicate the ordering of the execution of the transaction advisor
+ * when multiple advices are applied at a specific joinpoint.
+ * 指定在指定的切点具有多个通知织入时，事务通知器的执行顺序，默认是最后执行。
+ * <p>The default is {@link Ordered#LOWEST_PRECEDENCE}.
+ */
+int order() default Ordered.LOWEST_PRECEDENCE;
+```
+
+上述的属性只是一些基本的配置，方便开发时做出合理调整，真正的源码分析从修饰该注解的注解开始：
+
+```java
+@Import(TransactionManagementConfigurationSelector.class)
+```
+
+我们知道使用`@Import`注解会使`Spring容器根据Import注解中的内容进行适当的bean创建`，也正是这样，创建了Spring-tx需要的基本bean。下一节详细考察`TransactionManagementConfigurationSelector`。

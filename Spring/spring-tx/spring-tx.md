@@ -144,24 +144,24 @@ public class TransactionManagementConfigurationSelector extendsAdviceModeImportS
 ```java
 @Override
 public final String[] selectImports(AnnotationMetadata importingClassMetadata) {
-	//获取注解中的属性
-	//调用子类的selectImports(AdviceMode adviceMode)方法进行选择创建哪bean
-	Class<?> annType = GenericTypeResolver.resolveTypeArgument(getClass(), AdviceModeImportSelector.class);
-	Assert.state(annType != null, "Unresolvable type argument for AdviceModeImportSelector");
+    //获取注解中的属性
+    //调用子类的selectImports(AdviceMode adviceMode)方法进行选择创建哪bean
+    Class<?> annType = GenericTypeResolver.resolveTypeArgument(getClass(), AdviceModeImportSelector.class);
+    Assert.state(annType != null, "Unresolvable type argument for AdviceModeImportSelector");
 
-	AnnotationAttributes attributes = AnnotationConfigUtils.attributesFor(importingClassMetadata, annType);
-	if (attributes == null) {
-		throw new IllegalArgumentException(String.format(
-			"@%s is not present on importing class '%s' as expected",
-			annType.getSimpleName(), importingClassMetadata.getClassName()));
-	}
+    AnnotationAttributes attributes = AnnotationConfigUtils.attributesFor(importingClassMetadata, annType);
+    if (attributes == null) {
+        throw new IllegalArgumentException(String.format(
+            "@%s is not present on importing class '%s' as expected",
+            annType.getSimpleName(), importingClassMetadata.getClassName()));
+    }
 
-	AdviceMode adviceMode = attributes.getEnum(this.getAdviceModeAttributeName());
-	String[] imports = selectImports(adviceMode);
-	if (imports == null) {
-		throw new IllegalArgumentException(String.format("Unknown AdviceMode: '%s'", adviceMode));
-	}
-	return imports;
+    AdviceMode adviceMode = attributes.getEnum(this.getAdviceModeAttributeName());
+    String[] imports = selectImports(adviceMode);
+    if (imports == null) {
+        throw new IllegalArgumentException(String.format("Unknown AdviceMode: '%s'", adviceMode));
+    }
+    return imports;
 }
 ```
 
