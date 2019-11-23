@@ -127,27 +127,35 @@ protected Object getCacheKey(Method method, @Nullable Class<?> targetClass) {
 
 ```java
 public TransactionAttribute getTransactionAttribute(Method method, @Nullable Class<?> targetClass) {
+    // 如果方法是Object的默认方法则返回null;
     if (method.getDeclaringClass() == Object.class) {
         return null;
     }
 
     // First, see if we have a cached value.
+    // 首先获取CacheKey
     Object cacheKey = getCacheKey(method, targetClass);
+    // 根据cacheKey从缓存中获取对应的属性
     TransactionAttribute cached = this.attributeCache.get(cacheKey);
+    // 如果缓存存在
     if (cached != null) {
         // Value will either be canonical value indicating there is no transaction attribute,
         // or an actual transaction attribute.
+        // 如果缓存中是NULL_TRANSACTION_ATTRIBUTE，那么返回null
         if (cached == NULL_TRANSACTION_ATTRIBUTE) {
             return null;
         }
+        // 否则返回缓存中的值
         else {
             return cached;
         }
     }
     else {
         // We need to work it out.
+        // 获取真正的事务属性
         TransactionAttribute txAttr = computeTransactionAttribute(method, targetClass);
         // Put it in the cache.
+        // 将查询到的数据推送到缓存
         if (txAttr == null) {
             this.attributeCache.put(cacheKey, NULL_TRANSACTION_ATTRIBUTE);
         }
