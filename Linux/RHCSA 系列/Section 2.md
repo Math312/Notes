@@ -59,5 +59,3 @@ tar解压、压缩文件命令
 -gzip or -gunzip|z|使用gzip压缩归档
 -bzip2|j|使用bzip2|压缩归档
 -xz|J|使用xz压缩归档
-
-
