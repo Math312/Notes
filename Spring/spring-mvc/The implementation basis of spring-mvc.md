@@ -16,7 +16,7 @@ PS：servlet 3.0标准需要tomcat 7 版本及以上的支持的，属于JSR 315
 使用该方法注册Servlet,Listener,Filter的方法如下：
 
     @HandlesTypes(value= {HttpServlet.class})
-public class MyServletContainerInitializer implements ServletContainerInitializer{
+    public class MyServletContainerInitializer implements ServletContainerInitializer{
 
 	/**
 	 * 
