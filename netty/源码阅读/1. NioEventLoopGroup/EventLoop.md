@@ -580,5 +580,492 @@ return true;
 
 `afterRunningAllTasks()`该方法负责执行`tailTasks`中保存的所有任务。
 
-### NIOEventLoop
+### NioEventLoop
+
+NioEventLoop负责为`SingleThreadEventLoop`提供Java的NIO支持，将两者整合起来。我们知道`SingleThreadEventLoop`已经为`EventLoop`提供了所有接口的默认实现，仅仅缺少一个事件轮询处理过程，这个过程由`SingleThreadEventLoop`的`run()`方法处理。Nio拥有自己的`Selector`，`NioEventLoop`提供了使用`Selector`处理`SingleThreadEventLoop`中任务的方法。
+
+首先查看`NioEventLoop`中相对比较重要的属性：
+
+```java
+public final class NioEventLoop extends SingleThreadEventLoop {
+
+    Selector selector;
+    private SelectedSelectionKeySet selectedKeys;
+    private final SelectorProvider provider;
+    private static final int MIN_PREMATURE_SELECTOR_RETURNS = 3;
+    private static final int SELECTOR_AUTO_REBUILD_THRESHOLD;
+}
+```
+
+在Java中Selector一般都是由SelectorProvider创建的，在jdk中SelectorProvider默认情况下有2种：
+
+1. EPollSelectorProvider
+2. PollSelectorProvider
+
+linux下默认使用`EPollSelectorProvider`，windows下默认使用`PollSelectorProvider`。无论使用怎样的操作系统，最后都是通过`SelectorProvider`创建一个对应的`Selector`，并通过这个`Selector`来完成功能。但是jdk实现的`EPollSelector`有[bug](http://bugs.sun.com/view_bug.do?bug_id=6427854)，这个bug会在下面进行详细讨论，netty使用`SELECTOR_AUTO_REBUILD_THRESHOLD`变量来处理这个bug，而`MIN_PREMATURE_SELECTOR_RETURNS`是`SELECTOR_AUTO_REBUILD_THRESHOLD`的最小值，默认值是512。
+
+接下来我们会按照使用一个EventLoop的流程来分析`NioEventLoop`的源码，具体分析逻辑如下：
+
+1. 构造器构造NioEventLoop
+2. 注册Channel到EventLoop中
+3. 使用EventLoop处理事件
+4. 关闭EventLoop
+
+首先分析NioEventLoop的构造器：
+
+```java
+    static {
+        String key = "sun.nio.ch.bugLevel";
+        try {
+            String buglevel = SystemPropertyUtil.get(key);
+            if (buglevel == null) {
+                System.setProperty(key, "");
+            }
+        } catch (SecurityException e) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("Unable to get/set System Property: {}", key, e);
+            }
+        }
+        // 从环境变量`io.netty.selectorAutoRebuildThreshold`中获取selectorAutoRebuildThreshold的值，默认值是512
+        int selectorAutoRebuildThreshold = SystemPropertyUtil.getInt("io.netty.selectorAutoRebuildThreshold", 512);
+        // 如果获取到的值小于3，则将其设置为0
+        if (selectorAutoRebuildThreshold < MIN_PREMATURE_SELECTOR_RETURNS) {
+            selectorAutoRebuildThreshold = 0;
+        }
+        // 将selectorAutoRebuildThreshold赋值给SELECTOR_AUTO_REBUILD_THRESHOLD
+        SELECTOR_AUTO_REBUILD_THRESHOLD = selectorAutoRebuildThreshold;
+
+        if (logger.isDebugEnabled()) {
+            logger.debug("-Dio.netty.noKeySetOptimization: {}", DISABLE_KEYSET_OPTIMIZATION);
+            logger.debug("-Dio.netty.selectorAutoRebuildThreshold: {}", SELECTOR_AUTO_REBUILD_THRESHOLD);
+        }
+    }
+
+    NioEventLoop(NioEventLoopGroup parent, Executor executor, SelectorProvider selectorProvider) {
+        super(parent, executor, false);
+        if (selectorProvider == null) {
+            throw new NullPointerException("selectorProvider");
+        }
+        provider = selectorProvider;
+        selector = openSelector();
+    }
+
+    private Selector openSelector() {
+        final Selector selector;
+        try {
+            // 根据操作系统，创建对应的Selector
+            selector = provider.openSelector();
+        } catch (IOException e) {
+            throw new ChannelException("failed to open a new selector", e);
+        }
+
+        if (DISABLE_KEYSET_OPTIMIZATION) {
+            return selector;
+        }
+
+        try {
+            SelectedSelectionKeySet selectedKeySet = new SelectedSelectionKeySet();
+
+            Class<?> selectorImplClass =
+                    Class.forName("sun.nio.ch.SelectorImpl", false, PlatformDependent.getSystemClassLoader());
+
+            // Ensure the current selector implementation is what we can instrument.
+            if (!selectorImplClass.isAssignableFrom(selector.getClass())) {
+                return selector;
+            }
+            // 将selectedKeys属性与Selector的selectedKeys和publicSelectedKeys关联起来
+            Field selectedKeysField = selectorImplClass.getDeclaredField("selectedKeys");
+            Field publicSelectedKeysField = selectorImplClass.getDeclaredField("publicSelectedKeys");
+
+            selectedKeysField.setAccessible(true);
+            publicSelectedKeysField.setAccessible(true);
+
+            selectedKeysField.set(selector, selectedKeySet);
+            publicSelectedKeysField.set(selector, selectedKeySet);
+
+            selectedKeys = selectedKeySet;
+            logger.trace("Instrumented an optimized java.util.Set into: {}", selector);
+        } catch (Throwable t) {
+            selectedKeys = null;
+            logger.trace("Failed to instrument an optimized java.util.Set into: {}", selector, t);
+        }
+        return selector;
+    }
+```
+
+可以看到，`NioEventLoop`的初始化过程如下：
+
+1. 初始化SELECTOR_AUTO_REBUILD_THRESHOLD属性值
+2. 创建系统对应的Selector，并将其赋值给selector，将selector的`selectedKeys`和`publicSelectedKeys`映射到`NioEventLoop`的`selectedKeys`属性上。
+
+初始化`NioEventLoop`之后其实就可以使用了，但是，此时`NioEventLoop`还没有监听任何一个`Channel`，因此需要将`Channel`先注册到`NioEventLoop`中，注册代码如下：
+
+```java
+    public void register(final SelectableChannel ch, final int interestOps, final NioTask<?> task) {
+        if (ch == null) {
+            throw new NullPointerException("ch");
+        }
+        if (interestOps == 0) {
+            throw new IllegalArgumentException("interestOps must be non-zero.");
+        }
+        if ((interestOps & ~ch.validOps()) != 0) {
+            throw new IllegalArgumentException(
+                    "invalid interestOps: " + interestOps + "(validOps: " + ch.validOps() + ')');
+        }
+        if (task == null) {
+            throw new NullPointerException("task");
+        }
+
+        if (isShutdown()) {
+            throw new IllegalStateException("event loop shut down");
+        }
+
+        try {
+            ch.register(selector, interestOps, task);
+        } catch (Exception e) {
+            throw new EventLoopException("failed to register a channel", e);
+        }
+    }
+```
+
+该方法也很简单，就是将`SelectableChannel`注册到`NioEventLoop`的`selector`中。
+
+Channel和事件注册到了`NioEventLoop`中就可以开始处理`NioEventLoop`中的任务了。处理任务是通过`NioEventLoop`的`run()`方法：
+
+```java
+    protected void run() {
+        // 获取wakenUp状态，然后将其设置为false
+        boolean oldWakenUp = wakenUp.getAndSet(false);
+        try {
+            // 如果任务队列里面有任务，则调用非阻塞的selectNow()
+            if (hasTasks()) {
+                selectNow();
+            } else {
+                // 否则调用阻塞的select(boolean)
+                select(oldWakenUp);
+                if (wakenUp.get()) {
+                    selector.wakeup();
+                }
+            }
+
+            cancelledKeys = 0;
+            needsToSelectAgain = false;
+            // 设置IO占用比
+            final int ioRatio = this.ioRatio;
+            // 根据IO占用比执行队列中的任务
+            // 注意，事件都是检测到就处理的，不管IO占用比
+            if (ioRatio == 100) {
+                processSelectedKeys();
+                runAllTasks();
+            } else {
+                final long ioStartTime = System.nanoTime();
+
+                processSelectedKeys();
+
+                final long ioTime = System.nanoTime() - ioStartTime;
+                runAllTasks(ioTime * (100 - ioRatio) / ioRatio);
+            }
+            // NioEventLoop被关闭了，则进行关闭处理
+            if (isShuttingDown()) {
+                closeAll();
+                if (confirmShutdown()) {
+                    cleanupAndTerminate(true);
+                    return;
+                }
+            }
+        } catch (Throwable t) {
+            logger.warn("Unexpected exception in the selector loop.", t);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                // Ignore.
+            }
+        }
+        // 再次执行run方法
+        scheduleExecution();
+    }
+```
+
+其实`NioEventLoop`的大致流程如下：
+
+1. 设置wakenUp为false，方便唤醒
+2. 如果wakenUp在修改之前是true，那么调用非阻塞的`selectNow()`，否则调用`select(bool)`
+3. 通过`select*`方法监听出事件后，先处理所有的`SelectionKey`，然后根据IO占比处理任务队列和定时队列中的任务。
+4. 如果`NioEventLoop`被`shutdown()`了，则对`NioEventLoop`进行清理操作，清理完毕后返回
+5. 如果上面没有成功返回，那么将该方法（`run`）放入线程池，再跑一次。
+
+首先让我们先分析一下`wakenUp`这个变量，在介绍`SingleThreadEventExecutor`时，我们提到过`wakeUp`这个方法，并且提到了他的用处。当某些情况下，我们可能希望EventLoop从阻塞中停下来，例如，如果EventLoop中添加了一个新的任务，我们希望它从阻塞中唤醒，然后去处理当前所有任务，以便新任务在下一次循环中能及时得到处理。在`SingleThreadEventExecutor`的`execute(Runnable)`中执行了`wakeup(bool)`方法。而`NioEventLoop`覆盖了这个方法：
+
+```java
+    protected void wakeup(boolean inEventLoop) {
+        if (!inEventLoop && wakenUp.compareAndSet(false, true)) {
+            selector.wakeup();
+        }
+    }
+```
+
+了解了`wakenUp`属性的用法之后，先让我们看一下`selectNow()`方法的实现：
+
+```java
+    void selectNow() throws IOException {
+        try {
+            selector.selectNow();
+        } finally {
+            // restore wakup state if needed
+            if (wakenUp.get()) {
+                selector.wakeup();
+            }
+        }
+    }
+```
+
+`selectNow()`方法调用了非阻塞的`selector.selectNow()`方法，再调用完成之后处理了一下唤醒操作。除了非阻塞的`selectNow()`外，`NioEventLoop`提供了阻塞的`select(boolean oldWakenUp)`，源码如下：
+
+```java
+    private void select(boolean oldWakenUp) throws IOException {
+        Selector selector = this.selector;
+        try {
+            // 进行了阻塞select的次数
+            int selectCnt = 0;
+            // 当前系统时间
+            long currentTimeNanos = System.nanoTime();
+            // 获取定时队列中队列头的任务的执行时间距离当前有多远
+            long selectDeadLineNanos = currentTimeNanos + delayNanos(currentTimeNanos);
+            for (;;) {
+                // 如果已经超时了5ms或者以上，那么立刻调用selectNow()，并跳出循环，不再进行轮询
+                long timeoutMillis = (selectDeadLineNanos - currentTimeNanos + 500000L) / 1000000L;
+                if (timeoutMillis <= 0) {
+                    if (selectCnt == 0) {
+                        selector.selectNow();
+                        selectCnt = 1;
+                    }
+                    break;
+                }
+                // 进行阻塞的select操作
+                int selectedKeys = selector.select(timeoutMillis);
+                selectCnt ++;
+                // 如果被唤醒，有事件处理，有任务处理，有定时任务处理，或者上个循环中把wakenUp设置为true
+                // 上面五个条件满足一个就跳出循环
+                if (selectedKeys != 0 || oldWakenUp || wakenUp.get() || hasTasks() || hasScheduledTasks()) {
+                    // - Selected something,
+                    // - waken up by user, or
+                    // - the task queue has a pending task.
+                    // - a scheduled task is ready for processing
+                    break;
+                }
+                if (Thread.interrupted()) {
+                    // Thread was interrupted so reset selected keys and break so we not run into a busy loop.
+                    // As this is most likely a bug in the handler of the user or it's client library we will
+                    // also log it.
+                    //
+                    // See https://github.com/netty/netty/issues/2426
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Selector.select() returned prematurely because " +
+                                "Thread.currentThread().interrupt() was called. Use " +
+                                "NioEventLoop.shutdownGracefully() to shutdown the NioEventLoop.");
+                    }
+                    selectCnt = 1;
+                    break;
+                }
+                // 下面的代码负责处理EPoll在JDK中空轮询的bug
+                // selectCnt属性用于记录非正常select的次数
+                // 获取当前时间
+                long time = System.nanoTime();
+                // 如果当前时间与select开始的时间的时间间隔大于timeoutMillis说明执行的select是正常的select操作
+                // 这时候将selectCnt=1
+                if (time - TimeUnit.MILLISECONDS.toNanos(timeoutMillis) >= currentTimeNanos) {
+                    // timeoutMillis elapsed without anything selected.
+                    selectCnt = 1;
+                // 如果非正常select超过了SELECTOR_AUTO_REBUILD_THRESHOLD 就rebuild Selectror
+                } else if (SELECTOR_AUTO_REBUILD_THRESHOLD > 0 &&
+                        selectCnt >= SELECTOR_AUTO_REBUILD_THRESHOLD) {
+                    // The selector returned prematurely many times in a row.
+                    // Rebuild the selector to work around the problem.
+                    logger.warn(
+                            "Selector.select() returned prematurely {} times in a row; rebuilding selector.",
+                            selectCnt);
+                    // 重建selector，拷贝selectionKeys到新的selector
+                    rebuildSelector();
+                    selector = this.selector;
+
+                    // Select again to populate selectedKeys.
+                    selector.selectNow();
+                    selectCnt = 1;
+                    break;
+                }
+
+                currentTimeNanos = time;
+            }
+
+            if (selectCnt > MIN_PREMATURE_SELECTOR_RETURNS) {
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Selector.select() returned prematurely {} times in a row.", selectCnt - 1);
+                }
+            }
+        } catch (CancelledKeyException e) {
+            if (logger.isDebugEnabled()) {
+                logger.debug(CancelledKeyException.class.getSimpleName() + " raised by a Selector - JDK bug?", e);
+            }
+            // Harmless exception - log anyway
+        }
+    }
+```
+
+这里提到了Jdk中EPoll的空轮询bug，这里我们介绍一下这个bug，对于Java来说，根据EPoll的规则，只有监听的Channel发生了感兴趣的事件`select(timeout)`才会从阻塞中中断，表示监听到了要处理的事件，Java提供的SelectionKey可以监听如下四个事件：
+
+1. OP_READ = 1 << 0;
+2. OP_WRITE = 1 << 2;
+3. OP_CONNECT = 1 << 3;
+4. OP_ACCEPT = 1 << 4;
+
+在linux 2.6中，多路复用API在监听了某个socket的fd后，如果这个socket连接突然中断了，那么多路复用API会返回`POLLUP`或者`POLLERR`事件。如果JDK的Selector使用者向Selector中注册了一个Channel，这个Channel感兴趣的事件是0（即不属于上面4个事件的任意一个），那么由于操作系统的`eventset`发生变化，因此`select`方法会被唤醒，但是，监听到的事件Channel又不关心，因此，就会导致表示`select`方法的返回值为0。
+
+JDK给出的解决方案就是重建一个Selector。详情可以查看[JDK-6403933](https://bugs.java.com/bugdatabase/view_bug.do?bug_id=6403933)。
+
+监听到事件后就可以开始处理具体的事件以及任务队列中的任务了，处理监听到的事件和任务队列中任务的代码如下：
+
+```java
+            final int ioRatio = this.ioRatio;
+            if (ioRatio == 100) {
+                processSelectedKeys();
+                runAllTasks();
+            } else {
+                final long ioStartTime = System.nanoTime();
+
+                processSelectedKeys();
+
+                final long ioTime = System.nanoTime() - ioStartTime;
+                runAllTasks(ioTime * (100 - ioRatio) / ioRatio);
+            }
+```
+
+`NioEventLoop`属性中的`ioRatio`就是用于控制一个循环中的io任务的执行时间占比的，循环中的io操作主要就是`select`操作以及处理`selectionKeys`的操作，如果`ioRatio`为10，那么执行io任务的时间占比就是10%，但是，如果`ioRatio`是100的话，就不对IO任务和非IO任务的执行时间进行限制。
+
+具体的`SelectedKeys`的处理过程仅仅是调用对应Channel的unsafe中的方法，或者执行对应的NioTask：
+
+```java
+            if (a instanceof AbstractNioChannel) {
+                processSelectedKey(k, (AbstractNioChannel) a);
+            } else {
+                @SuppressWarnings("unchecked")
+                NioTask<SelectableChannel> task = (NioTask<SelectableChannel>) a;
+                processSelectedKey(k, task);
+            }
+
+    private static void processSelectedKey(SelectionKey k, AbstractNioChannel ch) {
+        final AbstractNioChannel.NioUnsafe unsafe = ch.unsafe();
+        if (!k.isValid()) {
+            unsafe.close(unsafe.voidPromise());
+            return;
+        }
+
+        try {
+            int readyOps = k.readyOps();
+            if ((readyOps & (SelectionKey.OP_READ | SelectionKey.OP_ACCEPT)) != 0 || readyOps == 0) {
+                unsafe.read();
+                if (!ch.isOpen()) {
+                    // Connection already closed - no need to handle write.
+                    return;
+                }
+            }
+            if ((readyOps & SelectionKey.OP_WRITE) != 0) {
+                // Call forceFlush which will also take care of clear the OP_WRITE once there is nothing left to write
+                ch.unsafe().forceFlush();
+            }
+            if ((readyOps & SelectionKey.OP_CONNECT) != 0) {
+                // remove OP_CONNECT as otherwise Selector.select(..) will always return without blocking
+                // See https://github.com/netty/netty/issues/924
+                int ops = k.interestOps();
+                ops &= ~SelectionKey.OP_CONNECT;
+                k.interestOps(ops);
+
+                unsafe.finishConnect();
+            }
+        } catch (CancelledKeyException ignored) {
+            unsafe.close(unsafe.voidPromise());
+        }
+    }
+
+    private static void processSelectedKey(SelectionKey k, NioTask<SelectableChannel> task) {
+        int state = 0;
+        try {
+            task.channelReady(k.channel(), k);
+            state = 1;
+        } catch (Exception e) {
+            k.cancel();
+            invokeChannelUnregistered(task, k, e);
+            state = 2;
+        } finally {
+            switch (state) {
+            case 0:
+                k.cancel();
+                invokeChannelUnregistered(task, k, null);
+                break;
+            case 1:
+                if (!k.isValid()) { // Cancelled by channelReady()
+                    invokeChannelUnregistered(task, k, null);
+                }
+                break;
+            }
+        }
+    }
+```
+
+所以要了解具体的逻辑，还需要分析NioTask和Channel，然而这些与本部分讨论的问题关系不大，因此不过多分析。
+
+最后当`NioEventLoop` 被`shutdown`时，需要对`NioEventLoop`中的资源进行清理，清理方法如下：
+
+```java
+            if (isShuttingDown()) {
+                closeAll();
+                // 父类方法
+                if (confirmShutdown()) {
+                    // 父类方法
+                    cleanupAndTerminate(true);
+                    return;
+                }
+            }
+```
+
+清理资源其实一共就三类：
+
+1. taskQueue
+2. scheduleQueue
+3. selector中注册的channel
+
+前两者都可以通过`SingleThreadEventExecutor`提供的方法进行清理，而`Selector`相关的资源则需要`NioEventLoop`处理，处理方法就是`closeAll()`方法：
+
+```java
+    private void closeAll() {
+        selectAgain();
+        Set<SelectionKey> keys = selector.keys();
+        Collection<AbstractNioChannel> channels = new ArrayList<AbstractNioChannel>(keys.size());
+        for (SelectionKey k: keys) {
+            Object a = k.attachment();
+            if (a instanceof AbstractNioChannel) {
+                channels.add((AbstractNioChannel) a);
+            } else {
+                k.cancel();
+                @SuppressWarnings("unchecked")
+                NioTask<SelectableChannel> task = (NioTask<SelectableChannel>) a;
+                invokeChannelUnregistered(task, k, null);
+            }
+        }
+
+        for (AbstractNioChannel ch: channels) {
+            ch.unsafe().close(ch.unsafe().voidPromise());
+        }
+    }
+
+    private void selectAgain() {
+        needsToSelectAgain = false;
+        try {
+            selector.selectNow();
+        } catch (Throwable t) {
+            logger.warn("Failed to update SelectionKeys.", t);
+        }
+    }
+```
+
+其实`closeAll()`仅仅关闭了所有的`channel`，并执行了对应的`Unregister`逻辑。
 
