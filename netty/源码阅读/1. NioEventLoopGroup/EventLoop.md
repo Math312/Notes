@@ -1068,4 +1068,3 @@ JDK给出的解决方案就是重建一个Selector。详情可以查看[JDK-6403
 ```
 
 其实`closeAll()`仅仅关闭了所有的`channel`，并执行了对应的`Unregister`逻辑。
-
