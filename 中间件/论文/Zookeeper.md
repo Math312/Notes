@@ -175,4 +175,42 @@ Unlock
 1 delete(n)
 ```
 
+需要竞争锁的节点都在l节点下创建一个前缀是lock的临时顺序节点，然后尝试获取l节点下的所有子节点。如果当前客户端创建的节点正好是l子节点列表下最小的，那么该客户端就获取到了锁，否则，监听当前获取锁的节点，等待监听事件发生，锁被释放时，客户端会得到通知，继续尝试获取l节点下所有子节点。而客户端释放锁，仅仅是删除l节点下对应的子节点罢了。
 
+这种方式，通过使用临时节点来处理客户端宕机。这样，当客户端宕机时，临时节点会自动删除，就不会参加锁竞争了。
+
+总之，这种方式实现的锁有如下优势：
+
+1. 减少锁竞争，每次获取锁时，永远只有一个客户端会被真正的唤醒，而不会导致多客户端同时竞争锁，因此没有所谓的集群效应。（其实也是公平锁的优点）
+2. 不需要通过轮训实现锁，而且没有超时限制，如果你需要，其实也可以实现。
+3. 因为我们使用ZK实现的锁，而且存储了各个客户端获取锁的状态，因此可以通过ZK的状态来排查锁相关的问题。
+
+
+Read/Write Lock。为了实现读写锁，我们需要简单的修改一下刚才的锁程序，并且将读锁和写锁分开处理。
+
+```
+Write Lock
+1 n=create(l+"/write-",EPHEMERAL|SEQUENTAL)
+2 C=getChildren(l,false)
+3 if n is lowest znode in c,exit
+4 p = znode in c ordered just before n
+5 if exists(p, true) wait for watch event
+6 goto 2
+
+Read Lock
+1 n = create(l + “/read-”, EPHEMERAL|SEQUENTIAL)
+2 C = getChildren(l, false)
+3 if no write znodes lower than n in C, exit
+4 p = write znode in C ordered just before n
+5 if exists(p, true) wait for event
+6 goto 3
+```
+
+这里，我们将刚才的锁程序做了一个简单的修改，写锁的程序只是简单的换了个名字。读锁的处理逻辑变动相对比较大，这里简单描述一下。因为读锁其实就是共享锁，我们查看第3-4行处理逻辑：
+
+```
+3 如果C中，没有比n更小的节点，证明获取到了读锁
+4 如果不满足3的条件，那么写入节点，并开始监听获取到写锁的节点。
+```
+
+但是，读写锁会带来之前说的集群效应，也就是锁竞争问题，只要多个读锁和一个写锁在同时等待一个写锁的释放，那么当锁释放时，锁竞争就会出现。
