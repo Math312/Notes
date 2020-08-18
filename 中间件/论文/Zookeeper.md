@@ -214,3 +214,11 @@ Read Lock
 ```
 
 但是，读写锁会带来之前说的集群效应，也就是锁竞争问题，只要多个读锁和一个写锁在同时等待一个写锁的释放，那么当锁释放时，锁竞争就会出现。
+
+Double Barrier。Double Barrier使得各个客户端的同时操作得到速度限制。当大量使用Double Barrier的线程处理他们自身的操作时，会先通知Barrier，当Barrier允许他们操作时，才可以操作。当操作完成之后会通知Barrier解除限制，总之，这种使用方法很像信号量的使用。使用Zookeeper完成该功能时，我们需要使用一个Barrier节点b。客户端p如果要进入Barrier时，就需要注册本身进入到节点b中，即在节点b下创建临时子节点，当退出Barrier时，则将节点删除。如果Barrier中存在的客户端数量低于Barrier的阈值，那么则允许新的客户端进入Barrier，否则不允许进入。因此Double Barrier可以用于限流，实际上就是一个令牌桶算法。Zookeeper可以通过监听机制来控制客户端是否进入Barrier，客户端监听节点b，当子节点状态发生变化时，就可以判段节点数量，然后看是否满足阈值。而对于监听客户端离开Barrier，只需要监听节点b下对应子节点状态即可。
+
+### 3. Zookeeper Application
+
+接下来我们会介绍一些使用Zookeeper的应用，并且简单地解释一下这些应用是如何使用Zookeeper的。使用Zookeeper的功能点我们会进行特别标记。
+
+`The Fetching Service`。对于
