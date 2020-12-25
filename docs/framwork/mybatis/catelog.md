@@ -10,5 +10,5 @@
 
 了解了基本功能后，我们就会对这个框架如何实现的这些基础功能产生了兴趣。紧接着，笔者会对实现第一节中基础功能的实现进行源码解析。
 
-[2.mybatis基础功能源码解析](2.mybatis基础功能源码解析)
+[2.SqlSessionFactory的创建](./2.SqlSessionFactory的创建/2.SqlSessionFactory的创建.md)
 
