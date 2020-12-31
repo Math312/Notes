@@ -14,4 +14,5 @@
 
 而SqlSessionFactory的创建离不开Mybatis的配置解析，这也是SqlSessionFactory创建的重要一步，因此，笔者在此对一些比较重要的配置解析模块进行分析，如果你不了解这部分功能也没有关系，笔者会整合Mybatis的文档，对这部分功能的使用进行简单介绍，帮助理解：
 
-[2-1.类型别名功能的解析](../mybatis/2.SqlSessionFactory的创建/2-1.typeAlias的解析.md)
+- [2-1.类型别名功能源码解析](../mybatis/2.SqlSessionFactory的创建/2-1.typeAlias的解析.md)
+- [2-2.类型处理器功能源码解析](./2.SqlSessionFactory的创建/2-2.typerHandler源码解析.md)
