@@ -11,4 +11,4 @@ Dubbo作为一个RPC框架，现已被国内广泛应用，在2020年，常见�
 
 本系列文章主要介绍Dubbo。
 
-在介绍Dubbo前，笔者首先对论文[Implementing Remote Procedure Calls](http://web.eecs.umich.edu/~mosharaf/Readings/RPC.pdf)进行简单的介绍，论文的原文翻译在[如下链接](../../../paper/rpc/Implementing%20Remote%20Procedure%20Calls.md)。
+在介绍Dubbo前，笔者首先对论文[Implementing Remote Procedure Calls](http://web.eecs.umich.edu/~mosharaf/Readings/RPC.pdf)进行简单的介绍，论文的原文翻译在[如下链接](../../../paper/rpc/Implementing_Remote_Procedure_Calls.md)。
