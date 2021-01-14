@@ -4,3 +4,4 @@
 2. [Dubbo SPI](1.SPI/1-0.SPI.md)
    1. [1-1 获取扩展类实现](1.SPI/1-1.获取扩展类实现.md)
    2. [1-2 获取自适应扩展](1.SPI/1-2.获取自适应扩展.md)
+3. [Dubbo Provider](2.Provider/2.Provider.md)
