@@ -367,3 +367,257 @@ slice的定义（分配空间）有三种方式：
 4. `var s []int`：赋值nil，使用时转化为slice
 5. `s := []int{}`：赋值为nil，使用时转化为slice
 
+### 2. 随机访问
+
+slice本身支持数据的随机访问，计算机基础知识告诉我们，底层是通过计算目标数据的地址直接访问的，这里我们做实验验证一下，查看如下代码：
+
+```go
+// main.go
+package main
+
+import "fmt"
+
+func main() {
+	s := []int{1,2,3,4,5}
+	s[2] = 10
+	s[10] = 9
+	fmt.Println(s)
+}
+```
+
+上面的例子创建了一个`slice s`，并对其第3和第10个元素进行访问，明显前者是正确访问的，后者会导致程序崩溃，我们通过反汇编查看该过程。
+
+```plan9
+        main.go:7       0x418318        488d0561950000          lea rax, ptr [rip+0x9561]
+        main.go:7       0x41831f        90                      nop
+        # 创建slice底层数组，并为其填充数据
+        main.go:7       0x418320        e81b53f6ff              call $runtime.newobject
+        main.go:7       0x418325        4889442428              mov qword ptr [rsp+0x28], rax
+        main.go:7       0x41832a        48c70001000000          mov qword ptr [rax], 0x1
+        main.go:7       0x418331        488b4c2428              mov rcx, qword ptr [rsp+0x28]
+        main.go:7       0x418336        8401                    test byte ptr [rcx], al
+        main.go:7       0x418338        48c7410802000000        mov qword ptr [rcx+0x8], 0x2
+        main.go:7       0x418340        488b4c2428              mov rcx, qword ptr [rsp+0x28]
+        main.go:7       0x418345        8401                    test byte ptr [rcx], al
+        main.go:7       0x418347        48c7411003000000        mov qword ptr [rcx+0x10], 0x3
+        main.go:7       0x41834f        488b4c2428              mov rcx, qword ptr [rsp+0x28]
+        main.go:7       0x418354        8401                    test byte ptr [rcx], al
+        main.go:7       0x418356        48c7411804000000        mov qword ptr [rcx+0x18], 0x4
+        main.go:7       0x41835e        488b4c2428              mov rcx, qword ptr [rsp+0x28]
+        main.go:7       0x418363        8401                    test byte ptr [rcx], al
+        main.go:7       0x418365        48c7412005000000        mov qword ptr [rcx+0x20], 0x5
+        main.go:7       0x41836d        488b4c2428              mov rcx, qword ptr [rsp+0x28]
+        main.go:7       0x418372        8401                    test byte ptr [rcx], al
+        main.go:7       0x418374        eb00                    jmp 0x418376
+        # 创建slice对象
+        main.go:7       0x418376        48894c2440              mov qword ptr [rsp+0x40], rcx
+        main.go:7       0x41837b        48c744244805000000      mov qword ptr [rsp+0x48], 0x5
+        main.go:7       0x418384        48c744245005000000      mov qword ptr [rsp+0x50], 0x5
+        main.go:8       0x41838d        eb00                    jmp 0x41838f
+        # 通过计算s[2]的地址访问s[2]的值
+        main.go:8       0x41838f        48c741100a000000        mov qword ptr [rcx+0x10], 0xa
+=>      main.go:9       0x418397*       488b4c2448              mov rcx, qword ptr [rsp+0x48]
+        main.go:9       0x41839c        488b542440              mov rdx, qword ptr [rsp+0x40]
+        # 使用索引与s的len比较
+        main.go:9       0x4183a1        4883f90a                cmp rcx, 0xa
+        # 如果没有问题，则将数据放入slice
+        main.go:9       0x4183a5        7705                    jnbe 0x4183ac
+        # 索引越界，程序处理出错，跳转到错误处理
+        main.go:9       0x4183a7        e998000000              jmp 0x418444
+        main.go:9       0x4183ac        48c7425009000000        mov qword ptr [rdx+0x50], 0x9
+```
+
+通过这部分反汇编代码，我们就可以清楚地看到随机访问的整个过程。
+
+### 3. 追加
+
+slice本身是可以进行修改的，go提供了`append([]T, T...)`方法用于岁slice进行数据追加，同时也通过该方法实现了slice的扩容，接下来我们通过下面的例子对slice的追加策略进行探究。
+
+```go
+// main.go
+package main
+
+import "fmt"
+
+func main() {
+	s := []int{}
+	s = append(s, 1)
+	s = append(s, 2)
+	s = append(s, 3)
+	fmt.Println(s)
+}
+```
+
+这里为了通用性，我们分析第9行代码`s = append(s, 2)`，因为第8行`s = append(s, 1)`必定需要扩容，所以不能代表全部情况，现在查看第9行反汇编代码：
+
+```plan9
+        main.go:9       0xa58378        488d7302                        lea rsi, ptr [rbx+0x2]
+        main.go:9       0xa5837c        0f1f4000                        nop dword ptr [rax], eax
+        # 比较slice当前cap和需要的容量
+        main.go:9       0xa58380        4839f1                          cmp rcx, rsi
+        # 如果当前容量够用，直接插入数据
+        main.go:9       0xa58383        7302                            jnb 0xa58387
+        # 如果当前容量不够用，进行扩容
+        main.go:9       0xa58385        eb02                            jmp 0xa58389
+        main.go:9       0xa58387        eb27                            jmp 0xa583b0
+        # 扩容代码
+        main.go:8       0xa58389        48895c2440                      mov qword ptr [rsp+0x40], rbx
+        main.go:9       0xa5838e        4889c3                          mov rbx, rax
+        main.go:9       0xa58391        4889cf                          mov rdi, rcx
+        main.go:9       0xa58394        488d05c5830000                  lea rax, ptr [rip+0x83c5]
+        main.go:9       0xa5839b        4889d1                          mov rcx, rdx
+        main.go:9       0xa5839e        6690                            data16 nop
+        main.go:9       0xa583a0        e87b45faff                      call $runtime.growslice
+        main.go:9       0xa583a5        488d7301                        lea rsi, ptr [rbx+0x1]
+        main.go:9       0xa583a9        488b5c2440                      mov rbx, qword ptr [rsp+0x40]
+        main.go:9       0xa583ae        eb00                            jmp 0xa583b0
+        # 插入新数据代码
+        main.go:9       0xa583b0        488d14d8                        lea rdx, ptr [rax+rbx*8]
+        main.go:9       0xa583b4        488d5208                        lea rdx, ptr [rdx+0x8]
+        # s = append(s,T)，将新的slice放回到原地址中
+        main.go:9       0xa583b8        48c70202000000                  mov qword ptr [rdx], 0x2
+        main.go:9       0xa583bf        4889442470                      mov qword ptr [rsp+0x70], rax
+        main.go:9       0xa583c4        4889742478                      mov qword ptr [rsp+0x78], rsi
+        main.go:9       0xa583c9        48898c2480000000                mov qword ptr [rsp+0x80], rcx
+```
+
+可以看到，go语言中slice是否需要扩容的判断并不是在go中实现的，而扩容的具体逻辑是`runtime.growslice()`函数。下面查看`runtime.growslice()`源码：
+
+```go
+// runtime/slice.go
+
+// growslice handles slice growth during append.
+// It is passed the slice element type, the old slice, and the desired new minimum capacity,
+// and it returns a new slice with at least that capacity, with the old data
+// copied into it.
+// The new slice's length is set to the old slice's length,
+// NOT to the new requested capacity.
+// This is for codegen convenience. The old slice's length is used immediately
+// to calculate where to write new values during an append.
+// TODO: When the old backend is gone, reconsider this decision.
+// The SSA backend might prefer the new length or to return only ptr/cap and save stack space.
+func growslice(et *_type, old slice, cap int) slice {
+	...
+    
+	if cap < old.cap {
+		panic(errorString("growslice: cap out of range"))
+	}
+    ...
+
+	newcap := old.cap    
+	doublecap := newcap + newcap
+	if cap > doublecap {
+		newcap = cap
+	} else {
+        // 1. 计算新slice的容量
+		// (1) 如果原容量小于256，则是原容量的2倍
+        const threshold = 256
+		if old.cap < threshold {
+			newcap = doublecap
+		} else {
+			// Check 0 < newcap to detect overflow
+			// and prevent an infinite loop.
+			for 0 < newcap && newcap < cap {
+                // （2）否则每次增加 old.cap/4 + 192
+				// Transition from growing 2x for small slices
+				// to growing 1.25x for large slices. This formula
+				// gives a smooth-ish transition between the two.
+				newcap += (newcap + 3*threshold) / 4
+			}
+			// Set newcap to the requested cap when
+			// the newcap calculation overflowed.
+			if newcap <= 0 {
+				newcap = cap
+			}
+		}
+	}
+
+	var overflow bool
+	var lenmem, newlenmem, capmem uintptr
+    // 2. 根据新容量快速算出是否需要多少内存
+	// Specialize for common values of et.size.
+	// For 1 we don't need any division/multiplication.
+	// For goarch.PtrSize, compiler will optimize division/multiplication into a shift by a constant.
+	// For powers of 2, use a variable shift.
+	switch {
+	case et.size == 1:
+		lenmem = uintptr(old.len)
+		newlenmem = uintptr(cap)
+		capmem = roundupsize(uintptr(newcap))
+		overflow = uintptr(newcap) > maxAlloc
+		newcap = int(capmem)
+	case et.size == goarch.PtrSize:
+		lenmem = uintptr(old.len) * goarch.PtrSize
+		newlenmem = uintptr(cap) * goarch.PtrSize
+		capmem = roundupsize(uintptr(newcap) * goarch.PtrSize)
+		overflow = uintptr(newcap) > maxAlloc/goarch.PtrSize
+		newcap = int(capmem / goarch.PtrSize)
+	case isPowerOfTwo(et.size):
+		var shift uintptr
+		if goarch.PtrSize == 8 {
+			// Mask shift for better code generation.
+			shift = uintptr(sys.Ctz64(uint64(et.size))) & 63
+		} else {
+			shift = uintptr(sys.Ctz32(uint32(et.size))) & 31
+		}
+		lenmem = uintptr(old.len) << shift
+		newlenmem = uintptr(cap) << shift
+		capmem = roundupsize(uintptr(newcap) << shift)
+		overflow = uintptr(newcap) > (maxAlloc >> shift)
+		newcap = int(capmem >> shift)
+	default:
+		lenmem = uintptr(old.len) * et.size
+		newlenmem = uintptr(cap) * et.size
+		capmem, overflow = math.MulUintptr(et.size, uintptr(newcap))
+		capmem = roundupsize(capmem)
+		newcap = int(capmem / et.size)
+	}
+
+	// The check of overflow in addition to capmem > maxAlloc is needed
+	// to prevent an overflow which can be used to trigger a segfault
+	// on 32bit architectures with this example program:
+	//
+	// type T [1<<27 + 1]int64
+	//
+	// var d T
+	// var s []T
+	//
+	// func main() {
+	//   s = append(s, d, d, d, d)
+	//   print(len(s), "\n")
+	// }
+	if overflow || capmem > maxAlloc {
+		panic(errorString("growslice: cap out of range"))
+	}
+
+	var p unsafe.Pointer
+	if et.ptrdata == 0 {
+		p = mallocgc(capmem, nil, false)
+		// The append() that calls growslice is going to overwrite from old.len to cap (which will be the new length).
+		// Only clear the part that will not be overwritten.
+		memclrNoHeapPointers(add(p, newlenmem), capmem-newlenmem)
+	} else {
+        // 3. 分配新slice的物理空间
+		// Note: can't use rawmem (which avoids zeroing of memory), because then GC can scan uninitialized memory.
+		p = mallocgc(capmem, et, true)
+		if lenmem > 0 && writeBarrier.enabled {
+			// Only shade the pointers in old.array since we know the destination slice p
+			// only contains nil pointers because it has been cleared during alloc.
+			bulkBarrierPreWriteSrcOnly(uintptr(p), uintptr(old.array), lenmem-et.size+et.ptrdata)
+		}
+	}
+    // 4. 将旧数据拷贝到新空间中
+	memmove(p, old.array, lenmem)
+    // 5. 返回生成的slice
+	return slice{p, old.len, newcap}
+}
+```
+
+通过上面的分析，我们可以看到，slice的扩容策略是：
+
+1. 旧slice容量 < 256，则newSlice.cap两倍递增
+2. 旧slice容量 >= 256，则newSlice.cap = (old.cap + 3 * 256)/4
+
+而且注意，这里产生了一个新的指针，新指针与旧指针指向的位置不同，因此才需要s = append(s, T)。
+
+至此，slice的内容基本分析完毕。
