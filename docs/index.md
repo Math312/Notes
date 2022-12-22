@@ -27,3 +27,6 @@ At the following, I will support the catalog to help you read with enjoyment.
   
 4. Paper
    - [Raft](./paper/raft/Raft_Leader_Election.md)
+
+5. Golang
+   - [list源码分析](go/list/slice详解.md)
