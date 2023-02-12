@@ -30,3 +30,4 @@ At the following, I will support the catalog to help you read with enjoyment.
 
 5. Golang
    - [list源码分析](go/list/slice详解.md)
+   - [channel source analyzing](go/channel/channel_introduction.md)
